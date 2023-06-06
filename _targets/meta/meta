@@ -1,0 +1,4 @@
+name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
+.Random.seed|object|007e0d180bab7929|||||||||||||||
+dir|object|7594843b4f10f127|||||||||||||||
+yml|stem|5a8a75490c06de68|26c9aedf6ab30b34|1618c6a888639f52|-788017771||t19514.9419754918s|4c59dd5e206ded9d|524|rds|local|vector|||0.004||
