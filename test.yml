@@ -3,14 +3,14 @@
 # The following parameters are required to be set by the user unless otherwise indicated.
 
 local_settings:
-- data_dir: "./NASA-NW/data/spatialData/" # point to the directory where your location information is stored - this path must end with a '/'
+- data_dir: "~/Documents/GitHub/NASA-NW/data/spatialData/" # point to the directory where your location information is stored - this path must end with a '/'
 - location_file: "NW_regional_collated_locations_v2023-05-16.csv" # name of the file that contains the location information
 - unique_id: "rowid" # this is the column that stores the unique identifier for each site, should not contain any special characters
 - latitude: "Latitude" # this is the column that stores the latitude of the site, must be in decimal degrees
 - longitude: "Longitude" # this is the column that stores the longitude of the site, must be in decimal degrees
 - location_crs: "EPSG:4326" # this is the coordinate reference system of the location data, must be in EPSG format (e.g. EPSG:4326)
 - lake_poly: "True" # optional. True or False - if True, you have lake polygon shapefiles for each site.
-- lake_poly_dir: "./NASA-NW/spatialData/shapefiles/" # optional. point to the directory where your lake polygon shapefiles are stored - this path must end with a '/'
+- lake_poly_dir: "~/Documents/GitHub/NASA-NW/spatialData/shapefiles/" # optional. point to the directory where your lake polygon shapefiles are stored - this path must end with a '/'
 - lake_poly_file: "NHDPlusHR_allNWlakes_v2023-05-16.shp" # optional. name of the shapefile that contains the lake polygons. 
 
 google_settings:
