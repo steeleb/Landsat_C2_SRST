@@ -31,9 +31,8 @@ if(!dir.exists('env')) {
 
 # Source functions --------------------------------------------------------
 
-source('data_acquisition/general_functions.R')
-source('data_acquisition/gee_functions.R')
-
+source('data_acquisition/0_functions/src/general_functions.R')
+source_python('data_acquisition/0_functions/src/gee_functions.py')
 
 # Define {targets} workflow -----------------------------------------------
 
@@ -42,22 +41,52 @@ tar_option_set(packages = "tidyverse")
 
 # target objects in workflow
 list(
-
-  tar_target(yml,
-             formatYaml(yaml_file),
-             packages = 'yaml',
-             memory = 'persistent'),
+  # load, format, save yml as a csv
+  tar_target(name = ymlSave,
+             command = formatYaml(yaml_file),
+             packages = c('yaml', 'readr')),
   
-  tar_target(name = locs,
+  # track the yml file
+  tar_file_read(name = yml,
+                command = tar_read(ymlSave),
+                read = read_csv(!!.x),
+                packages = 'readr'),
+  
+  # load, format, save locs as an updated csv
+  tar_target(name = locsSave,
              command = grabLocs(yml),
-             packages = c('readr')),
+             packages = 'readr'),
+
+  # track locs file
+  tar_file_read(name = locs,
+                command = tar_read(locsSave),
+                read = read_csv(!!.x),
+                packages = 'readr'),
+
+  # run the landsat pull
+  tar_target(name = eeRun,
+             command = { # here, we include dependencies so that this runs in the proper order
+               yml
+               locs
+               addRadMask
+               srCloudMask
+               maximum_no_of_tasks
+               Mbsrv
+               Ndvi
+               applyScaleFactors
+               Awesh
+               dpBuff
+               CalcHillShadows
+               cfMask
+               DSWE
+               removeGeo
+               Mbsrn
+               RefPull457
+               CalcHillShades
+               Mndwi
+               csv_to_eeFeat
+               source_python('data_acquisition/1_prepare/src/df2Feature.py')
+               },
+             packages = 'reticulate')
   
-  #tar_target()
-  
-  tar_target(file,
-             print(locs))
-  
-  # tar_target()
-  # tar_file()
-  # tar_render()
 )
