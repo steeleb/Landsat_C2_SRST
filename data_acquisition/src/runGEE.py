@@ -11,8 +11,8 @@ ee.Initialize()
 
 
 # get locations and yml from data folder
-locs = read_csv('data_acquisition/1_prepare/data/locs.csv')
-yml = read_csv('data_acquisition/1_prepare/data/yml.csv')
+locs = read_csv('data_acquisition/in/locs.csv')
+yml = read_csv('data_acquisition/in/yml.csv')
 
 # get EE/Google settings from yml file
 proj = yml['proj'][0]
@@ -42,7 +42,7 @@ if 'lake' in extent:
   #if lake is in extent, check for shapefile
   shapefile = yml['lake_poly'][0]
   
-  # if shapefile exists, 
+  # if shapefile provided by user 
   if shapefile == 'True':
     # pull directory path from yml
     shpDir = yml['lake_poly_dir'][0]
@@ -58,8 +58,12 @@ if 'lake' in extent:
     
     # Create an ee.FeatureCollection from the ee.Features
     lakes_feat = ee.FeatureCollection(features)
+    
+    #else: pull in poly file from getNHD in R (out directory)
+      
 
-
+#if 'center' in extent:
+  
 
 
 

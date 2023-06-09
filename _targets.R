@@ -23,7 +23,7 @@ yaml_file = 'test.yml'
 # Set up python virtual environment ---------------------------------------
 
 if(!dir.exists('env')) {
-  source('data_acquisition/pySetup.R')
+  source('data_acquisition/src/pySetup.R')
 } else {
   use_condaenv(file.path(getwd(), 'env'))
 }
@@ -31,8 +31,8 @@ if(!dir.exists('env')) {
 
 # Source functions --------------------------------------------------------
 
-source('data_acquisition/0_functions/src/general_functions.R')
-source_python('data_acquisition/0_functions/src/gee_functions.py')
+source('data_acquisition/src/general_functions.R')
+source_python('data_acquisition/src/gee_functions.py')
 
 # Define {targets} workflow -----------------------------------------------
 
@@ -62,12 +62,36 @@ list(
                 command = tar_read(locsSave),
                 read = read_csv(!!.x),
                 packages = 'readr'),
+  
+  # use location to get polygons for NHD
+  tar_target(name = polySave,
+             command = getNHD(locs, yml),
+             packages = c('nhdplusTools', 'sf', 'readr')),
+  
+  # track polygons file
+  tar_file_read(name = polygon,
+                command = tar_read(polySave),
+                read = read_sf(!!.x),
+                packages = 'sf'),
+  
+  # use polygon to calculate centers
+  tar_target(name = centersSave,
+             command = calcCenter(polygon),
+             packages =  c('sf', 'polylabelr')),
+  
+  # track centers file
+  tar_file_read(name = centers,
+                command = tar_read(centersSave),
+                read = read_sf(!!.x),
+                packages = 'sf'),
 
   # run the landsat pull
   tar_target(name = eeRun,
              command = { # here, we include dependencies so that this runs in the proper order
                yml
                locs
+               polygon
+               centers
                addRadMask
                srCloudMask
                maximum_no_of_tasks
@@ -85,7 +109,7 @@ list(
                CalcHillShades
                Mndwi
                csv_to_eeFeat
-               source_python('data_acquisition/1_prepare/src/df2Feature.py')
+               source_python('data_acquisition/src/runGEE.py')
                },
              packages = 'reticulate')
   

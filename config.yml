@@ -3,8 +3,8 @@
 # The following parameters are required to be set by the user unless otherwise indicated.
 
 local_settings:
-- data_dir: "" # point to the directory where your location information is stored - this path must end with a '/'
-- location_file: "" # name of the file that contains the location information
+- data_dir: "" # point to the *full* directory path where your location information is stored - this path must end with a '/'
+- location_file: "" # name of the *.csv* file that contains the location information
 - unique_id: "" # this is the column that stores the unique identifier for each site, should not contain any special characters
 - latitude: "" # this is the column that stores the latitude of the site, must be in decimal degrees
 - longitude: "" # this is the column that stores the longitude of the site, must be in decimal degrees
