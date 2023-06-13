@@ -2,9 +2,7 @@ library(targets)
 library(tarchetypes)
 library(reticulate)
 
-# point to the yaml file that holds your configurations
-
-yaml_file = 'test.yml'
+yaml_file = 'config.yml'
 
 # MUST READ ---------------------------------------------------------------
 
@@ -41,50 +39,84 @@ tar_option_set(packages = "tidyverse")
 
 # target objects in workflow
 list(
+  tar_target(name = checkYmlMod,
+             command = return(file.info(yaml_file)$mtime),
+             cue = tar_cue('always')), 
+  
+  tar_target(name = readYmlMod,
+             command = tar_read(checkYmlMod),
+             cue = tar_cue('always')),
+  
   # load, format, save yml as a csv
   tar_target(name = ymlSave,
-             command = formatYaml(yaml_file),
+             command = {
+               readYmlMod
+               formatYaml(yaml_file)
+               },
              packages = c('yaml', 'readr')),
   
   # track the yml file
   tar_file_read(name = yml,
-                command = tar_read(ymlSave),
+                command = {
+                  readYmlMod
+                  tar_read(ymlSave)
+                  },
                 read = read_csv(!!.x),
                 packages = 'readr'),
   
   # load, format, save locs as an updated csv
   tar_target(name = locsSave,
-             command = grabLocs(yml),
+             command = {
+               readYmlMod
+               grabLocs(yml)
+               },
              packages = 'readr'),
 
   # track locs file
   tar_file_read(name = locs,
-                command = tar_read(locsSave),
+                command = {
+                  readYmlMod
+                  tar_read(locsSave)
+                  },
                 read = read_csv(!!.x),
                 packages = 'readr'),
   
   # use location to get polygons for NHD
   tar_target(name = polySave,
-             command = getNHD(locs, yml),
+             command = {
+               readYmlMod
+               getNHD(locsSave, ymlSave)
+               },
              packages = c('nhdplusTools', 'sf', 'readr')),
   
   # track polygons file
-  tar_file_read(name = polygon,
-                command = tar_read(polySave),
+  tar_file_read(name = polygon, # this will throw an error if the configure extent does not include polygon
+                command = {
+                  readYmlMod
+                  tar_read(polySave)
+                  },
                 read = read_sf(!!.x),
-                packages = 'sf'),
+                packages = 'sf',
+                error = 'null'),
   
   # use polygon to calculate centers
   tar_target(name = centersSave,
-             command = calcCenter(polygon),
+             command = {
+               readYmlMod
+               calcCenter(polySave, ymlSave)
+               },
              packages =  c('sf', 'polylabelr')),
   
   # track centers file
-  tar_file_read(name = centers,
-                command = tar_read(centersSave),
+  tar_file_read(name = centers, # this will throw an error if the configure extent does not include center.
+                command = {
+                  readYmlMod
+                  tar_read(centersSave)
+                  },
                 read = read_sf(!!.x),
-                packages = 'sf'),
-
+                packages = 'sf',
+                error = 'null'),
+  
   # run the landsat pull
   tar_target(name = eeRun,
              command = { # here, we include dependencies so that this runs in the proper order
@@ -92,23 +124,25 @@ list(
                locs
                polygon
                centers
-               addRadMask
-               srCloudMask
-               maximum_no_of_tasks
+               csv_to_eeFeat
+               applyScaleFactors
+               dpBuff
+               DSWE
                Mbsrv
                Ndvi
-               applyScaleFactors
-               Awesh
-               dpBuff
-               CalcHillShadows
-               cfMask
-               DSWE
-               removeGeo
                Mbsrn
-               RefPull457
-               CalcHillShades
                Mndwi
-               csv_to_eeFeat
+               Awesh
+               addRadMask
+               srCloudMask
+               srAerosol
+               cfMask
+               CalcHillShadows
+               CalcHillShades
+               removeGeo
+               maximum_no_of_tasks
+               RefPull457
+               RefPull89
                source_python('data_acquisition/src/runGEE.py')
                },
              packages = 'reticulate')

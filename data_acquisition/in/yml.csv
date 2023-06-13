@@ -1,2 +1,2 @@
-data_dir,location_file,unique_id,latitude,longitude,location_crs,lake_poly,lake_poly_dir,lake_poly_file,proj,proj_folder,start_date,end_date,extent,site_buffer,export_NHD_info,cloud_filter,cloud_thresh,water_detection,DSWE_setting
-~/Documents/GitHub/NASA-NW/data/spatialData/,NW_regional_collated_locations_v2023-05-16.csv,rowid,Latitude,Longitude,EPSG:4326,True,~/Documents/GitHub/NASA-NW/spatialData/shapefiles/,NHDPlusHR_allNWlakes_v2023-05-16.shp,Northern,NASA-NW,1983-01-01,today,site+lake,90,True,True,95,DSWE,1
+data_dir,location_file,unique_id,latitude,longitude,location_crs,polygon,poly_dir,poly_file,proj,proj_folder,start_date,end_date,extent,site_buffer,cloud_filter,cloud_thresh,water_detection,DSWE_setting
+~/Documents/GitHub/Landsat_C2_SRST/data_acquisition/in/,locs_test_2.csv,id,Latitude,Longitude,EPSG:4326,False,,,TEST,TEST,1983-01-01,today,site,90,True,95,DSWE,1

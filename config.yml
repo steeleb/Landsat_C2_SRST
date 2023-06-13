@@ -3,31 +3,32 @@
 # The following parameters are required to be set by the user unless otherwise indicated.
 
 local_settings:
-- data_dir: "" # point to the *full* directory path where your location information is stored - this path must end with a '/'
-- location_file: "" # name of the *.csv* file that contains the location information
-- unique_id: "" # this is the column that stores the unique identifier for each site, should not contain any special characters
-- latitude: "" # this is the column that stores the latitude of the site, must be in decimal degrees
-- longitude: "" # this is the column that stores the longitude of the site, must be in decimal degrees
-- location_crs: "" # this is the coordinate reference system of the location data, must be in EPSG format (e.g. EPSG:4326)
-- lake_poly: "" # optional. True or False - if True, you have lake polygon shapefiles for each site.
-- lake_poly_dir: "" # optional. point to the directory where your lake polygon shapefiles are stored - this path must end with a '/'
-- lake_poly_file: "" # optional. name of the shapefile that contains the lake polygons. 
+- data_dir: "~/Documents/GitHub/Landsat_C2_SRST/data_acquisition/in/" # point to the directory where your location information is stored - this path must end with a '/'
+- location_file: "locs_test_2.csv" # name of the file that contains the location information
+- unique_id: "id" # this is the column that stores the unique identifier for each site, should not contain any special characters
+- latitude: "Latitude" # this is the column that stores the latitude of the site, must be in decimal degrees
+- longitude: "Longitude" # this is the column that stores the longitude of the site, must be in decimal degrees
+- location_crs: "EPSG:4326" # this is the coordinate reference system of the location data, must be in EPSG format (e.g. EPSG:4326)
+- polygon: 'False' # optional. True or False - if True, you have lake polygon shapefiles for each site.
+- poly_dir: "" # optional. point to the directory where your lake polygon shapefiles are stored - this path must end with a '/'
+- poly_file: "" # optional. name of the shapefile that contains the lake polygons. 
 
 google_settings:
-- proj: "" # this is a short name for file naming conventions. All output files will include this prefix.
-- proj_folder: "" # this is the folder name where the GEE data will be save to Google Drive. If it doesn't exist, it will be created.
+- proj: "TEST" # this is a short name for file naming conventions. All output files will include this prefix.
+- proj_folder: "TEST" # this is the folder name where the GEE data will be save to Google Drive. If it doesn't exist, it will be created.
 
+
+###############################################################################
 # The following parameters are optional and have default values listed below. 
 # If these key-values remain unaltered, data will be acquired for the entire satellite data record at the specified location only.
 
 temporal_settings:
 - start_date: "1983-01-01" # earliest data of satellite data to be acquired; earliest data available is 1983-01-01
-- end_date: "today" # latest data of satellite data to be acquired; if 'today' is used, the date will be set to the current date
+- end_date: "today" # latest date of satellite data to be acquired; if 'today' is used, the date will be set to the current date
 
 spatial_settings: 
-- extent: "site" # options: "site", "lake", "lakecenter", "site+lake", "site+lake+lakecenter", "lake+lakecenter" - at this time lake and lake center can only be calculated for lakes in the US
+- extent: "site" # options: "site", "polygon", "polycenter", "site+polygon", etc
 - site_buffer: 90 # buffer distance in meters around the site
-- export_NHD_info: "True" # True or False - if True, and the user has selected a lake or lake center extent, the NHD information will be exported to the data_dir indicated above
 
 gee_settings:
 - cloud_filter: "True" # True or False - if True, scenes will be filtered by scene-level cloudy value provided in the metadata
