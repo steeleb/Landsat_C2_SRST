@@ -17,12 +17,15 @@ google_settings:
 - proj: "" # this is a short name for file naming conventions. All output files will include this prefix.
 - proj_folder: "" # this is the folder name where the GEE data will be save to Google Drive. If it doesn't exist, it will be created.
 
-# The following parameters are optional and have default values listed below. 
-# If these key-values remain unaltered, data will be acquired for the entire satellite data record at the specified location only.
 
-temporal_settings:
+# The following parameters are optional and have default values listed below. 
+# If these key-values remain unaltered, date will be acquired for the entire satellite data record at the specified location only.
+
+temporal_settings: 
 - start_date: "1983-01-01" # earliest data of satellite data to be acquired; earliest data available is 1983-01-01
 - end_date: "today" # latest data of satellite data to be acquired; if 'today' is used, the date will be set to the current date
+#  ^^ these have not yet been integrated into workflow
+
 
 spatial_settings: 
 - extent: "site" # options: "site", "polygon", "polycenter", "site+poly", "site+polygon+polycenter", "polygon+polycenter" - at this time lake and lake center can only be calculated for lakes in the US

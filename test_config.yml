@@ -27,7 +27,7 @@ temporal_settings:
 - end_date: "today" # latest date of satellite data to be acquired; if 'today' is used, the date will be set to the current date
 
 spatial_settings: 
-- extent: "site" # options: "site", "polygon", "polycenter", "site+polygon", etc
+- extent: "site" # options: "site", "polygon", "polycenter", "site+polygon", etc - only site/polygon function right now
 - site_buffer: 90 # buffer distance in meters around the site
 
 gee_settings:
