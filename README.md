@@ -18,6 +18,10 @@ This repository is powered by {targets}, an r-based workflow manager. In order t
 
 ## Completing the config.yml file
 
+Configuration of the config.yml file is necessary for this workflow to function.
+
+**[[this section to contain a bunch more info later]]**
+
 ### Local Settings
 
 location file: must contain lat, lon, uniqueid

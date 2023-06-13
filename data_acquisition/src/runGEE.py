@@ -57,6 +57,7 @@ if 'polygon' in extent:
     # Create an ee.FeatureCollection from the ee.Features
     lakes_feat = ee.FeatureCollection(features)
     
+
 # if 'center' in extent:
 #   
 #   if 'site' in extent:
@@ -139,6 +140,7 @@ pr_457_site = [i for i in pr_457_site if i not in done] #this removes pathrow va
 
 ## run the pull for LS457
 if 'site' in extent:
+  
   print('Starting Landsat 4, 5, 7 acquisition for site locations')
   
   for tiles in pr_457_site:
@@ -178,8 +180,8 @@ if 'site' in extent:
     
     print('completed Landsat 4, 5, 7 stack acquisitions for site location')
   
-  else: 
-    print('no sites to extract Landsat 4, 5, 7')
+else: 
+  print('no sites to extract Landsat 4, 5, 7')
 
 
 
@@ -229,8 +231,8 @@ if 'site' in extent:
 
     print('completed Landsat 8, 9 stack acquisitions for site location')
   
-  else:
-    print('no sites to extract Landsat 8, 9')
+else:
+  print('no sites to extract Landsat 8, 9')
 
 
 ##############################################

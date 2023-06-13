@@ -2,7 +2,7 @@ library(targets)
 library(tarchetypes)
 library(reticulate)
 
-yaml_file = 'config.yml'
+yaml_file = 'test_config.yml'
 
 # MUST READ ---------------------------------------------------------------
 
