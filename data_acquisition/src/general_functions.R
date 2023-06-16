@@ -133,6 +133,24 @@ calcCenter <- function(poly, yaml) {
 }
   
   
+### getWRSTiles: function to get all WRS tiles for branching
+
+getWRSTiles <- function(loc, yml) {
+  locations <- read_csv(loc) 
+  yml <- read_csv(yml)
+  locations <- st_as_sf(locations, coords = c('Longitude', 'Latitude'))
+  st_crs(locations) <- yml$location_crs
+  WRS <- read_sf('data_acquisition/in/WRS2_descending.shp')
+  WRS_subset <- WRS[locations,]
+  write_csv(st_drop_geometry(WRS_subset), 'data_acquisition/out/WRS_subset_list.csv')
+  WRS_subset$PR
+}
   
-  
-  
+
+### runGEEperTile: function to run a single tile through the 'runGEE.py' file
+
+runGEEperTile <- function(WRS_tile) {
+  tile <- WRS_tile
+  write_lines(tile, 'data_acquisition/out/current_tile.txt', sep = '')
+  source_python('data_acquisition/src/runGEEperTile.py')
+}

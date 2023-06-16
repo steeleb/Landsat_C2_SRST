@@ -207,9 +207,9 @@ def RefPull457(image):
   # band where dswe is 3 and apply all masks
   dswe3 = d.eq(3).rename('dswe3').updateMask(f.eq(0)).updateMask(r.eq(1)).updateMask(s.eq(0)).selfMask()
   #calculate hillshade
-  h = CalcHillShades(image, tile.geometry()).select('hillShade')
+  h = CalcHillShades(image, wrs.geometry()).select('hillShade')
   #calculate hillshadow
-  hs = CalcHillShadows(image, tile.geometry()).select('hillShadow')
+  hs = CalcHillShadows(image, wrs.geometry()).select('hillShadow')
   
   pixOut = (# make some dummy bands for the reducer
             image.select(['Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2', 'SurfaceTemp', 'temp_qa'],
@@ -268,9 +268,9 @@ def RefPull89(image):
   # band where dswe is 3 and apply all masks
   dswe3 = d.eq(3).rename('dswe3').updateMask(f.eq(0)).updateMask(r.eq(1)).selfMask()
   #calculate hillshade
-  h = CalcHillShades(image, tile.geometry()).select('hillShade')
+  h = CalcHillShades(image, wrs.geometry()).select('hillShade')
   #calculate hillshadow
-  hs = CalcHillShadows(image, tile.geometry()).select('hillShadow')
+  hs = CalcHillShadows(image, wrs.geometry()).select('hillShadow')
   pixOut = (image.select(['Aerosol','Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2', 'SurfaceTemp', 'temp_qa'],
             ['med_Aerosol','med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa'])
             .addBands(image.select(['Aerosol','Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2', 'SurfaceTemp', 'temp_qa', 'ST_CDIST'],
