@@ -122,63 +122,31 @@ list(
              command = getWRSTiles(locs_file, yml_file),
              packages = c('readr', 'sf')),
   
-  # # run the landsat pull
-  # tar_target(name = eeRun,
-  #            command = { # here, we include dependencies so that this runs in the proper order
-  #              WRS_tiles
-  #              yml
-  #              locs
-  #              polygon
-  #              centers
-  #              csv_to_eeFeat
-  #              applyScaleFactors
-  #              dpBuff
-  #              DSWE
-  #              Mbsrv
-  #              Ndvi
-  #              Mbsrn
-  #              Mndwi
-  #              Awesh
-  #              addRadMask
-  #              srCloudMask
-  #              srAerosol
-  #              cfMask
-  #              CalcHillShadows
-  #              CalcHillShades
-  #              removeGeo
-  #              maximum_no_of_tasks
-  #              RefPull457
-  #              RefPull89
-  #              source_python('data_acquisition/src/runGEE.py')
-  #              },
-  #            pattern = map(WRS_tiles),
-  #            packages = 'reticulate')
-  
-  # run the landsat pull as function
+  # run the landsat pull as function per tile
   tar_target(name = eeRun,
              command = {
                locs
                polygon
                centers
-              csv_to_eeFeat
-              applyScaleFactors
-              dpBuff
-              DSWE
-              Mbsrv
-              Ndvi
-              Mbsrn
-              Mndwi
-              Awesh
-              addRadMask
-              srCloudMask
-              srAerosol
-              cfMask
-              CalcHillShadows
-              CalcHillShades
-              removeGeo
-              maximum_no_of_tasks
-              RefPull457
-              RefPull89
+               csv_to_eeFeat
+               applyScaleFactors
+               dpBuff
+               DSWE
+               Mbsrv
+               Ndvi
+               Mbsrn
+               Mndwi
+               Awesh
+               addRadMask
+               srCloudMask
+               srAerosol
+               cfMask
+               CalcHillShadows
+               CalcHillShades
+               removeGeo
+               maximum_no_of_tasks
+               RefPull457
+               RefPull89
                runGEEperTile(WRS_tiles)
                },
              pattern = map(WRS_tiles),

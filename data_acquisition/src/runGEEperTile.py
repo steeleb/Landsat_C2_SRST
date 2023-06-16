@@ -1,7 +1,7 @@
 #import modules
 import ee
 import time
-from datetime import date
+from datetime import date, datetime
 import os 
 import fiona
 from pandas import read_csv
@@ -15,7 +15,7 @@ yml = read_csv('data_acquisition/in/yml.csv')
 
 with open('data_acquisition/out/current_tile.txt', 'r') as file:
   tiles = file.read()
-    
+
 # get EE/Google settings from yml file
 proj = yml['proj'][0]
 proj_folder = yml['proj_folder'][0]
@@ -24,11 +24,8 @@ proj_folder = yml['proj_folder'][0]
 yml_start = yml['start_date'][0]
 yml_end = yml['end_date'][0]
 
-# configure for run
-start_date_457 = '1983-01-01'
-end_date_457 = '2022-04-06'
-start_date_89 = '2013-01-01'
-end_date_89 = date.today().strftime('%Y-%m-%d')
+if yml_end == 'today':
+  yml_end = date.today().strftime('%Y-%m-%d')
 
 # gee processing settings
 buffer = yml['site_buffer'][0]
@@ -83,15 +80,15 @@ wrs = (ee.FeatureCollection('users/sntopp/wrs2_asc_desc')
 l7 = (ee.ImageCollection('LANDSAT/LE07/C02/T1_L2')
     .map(applyScaleFactors)
     .filter(ee.Filter.lt('CLOUD_COVER', ee.Number.parse(str(cloud_thresh))))
-    .filterDate(start_date_457, end_date_457))
+    .filterDate(yml_start, yml_end))
 l5 = (ee.ImageCollection('LANDSAT/LT05/C02/T1_L2')
     .map(applyScaleFactors)
     .filter(ee.Filter.lt('CLOUD_COVER', ee.Number.parse(str(cloud_thresh))))
-    .filterDate(start_date_457, end_date_457))
+    .filterDate(yml_start, yml_end))
 l4 = (ee.ImageCollection('LANDSAT/LT04/C02/T1_L2')
     .map(applyScaleFactors)
     .filter(ee.Filter.lt('CLOUD_COVER', ee.Number.parse(str(cloud_thresh))))
-    .filterDate(start_date_457, end_date_457))
+    .filterDate(yml_start, yml_end))
     
 # merge collections by image processing groups
 ls457 = (ee.ImageCollection(l4.merge(l5).merge(l7))
@@ -110,11 +107,11 @@ ls457 = ls457.select(bn457, bns)
 l8 = (ee.ImageCollection('LANDSAT/LC08/C02/T1_L2')
     .map(applyScaleFactors)
     .filter(ee.Filter.lt('CLOUD_COVER', ee.Number.parse(str(cloud_thresh))))
-    .filterDate(start_date_89, end_date_89))
+    .filterDate(yml_start, yml_end))
 l9 = (ee.ImageCollection('LANDSAT/LC09/C02/T1_L2')
     .map(applyScaleFactors)
     .filter(ee.Filter.lt('CLOUD_COVER', ee.Number.parse(str(cloud_thresh))))
-    .filterDate(start_date_89, end_date_89))
+    .filterDate(yml_start, yml_end))
 
 # merge collections by image processing groups
 ls89 = ee.ImageCollection(l8.merge(l9)).filterBounds(wrs)  
