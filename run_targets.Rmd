@@ -1,0 +1,68 @@
+---
+title: "Run Targets - Landsat Collection 2 SR/ST Acquisition"
+author: "ROSSyndicate"
+output: html_document
+---
+# Purpose
+
+This script loads all necessary packages to run the targets pipeline, then runs it! The map function for checking for all packages requires {dplyr}, so we need to check and load {tidyverse} first.
+
+```{r check for tidyverse, echo = F}
+if ('tidyverse' %in% installed.packages()) {
+  library(tidyverse)
+} else {
+  install.packages('tidyverse')
+  library(tidyverse)
+}
+```
+
+## Install necessary packages
+
+Define package installer function
+
+``` {r package_installer}
+package_installer <- function(x) {
+  if (x %in% installed.packages()) {
+    print(paste0('{', x ,'} package is already installed.'))
+    } else {
+      install.packages(x)
+      print(paste0('{', x ,'} package has been installed.'))
+    }
+  }
+```
+
+List packages that need to be checked for install, and walk the function along them all.
+
+``` {r walk package_installer}
+packages <- c('reticulate',
+              'targets',
+              'tarchetypes',
+              'yaml',
+              'readr',
+              'nhdplusTools',
+              'polylabelr',
+              'sf')
+
+walk(packages, package_installer)
+```
+
+## Run the targets pipeline and output a network graph.
+
+``` {r}
+library(targets)
+
+# run the pipeline
+tar_make()
+```
+
+Errors are okay in the pipeline, they are by design. Only errors that prematurely end the pipeline need to be addressed. Check the network diagram in the next section to confirm you've successfully run the pipeline.
+
+### Create a network diagram of the workflow.
+
+```{r}
+tar_visnetwork()
+```
+
+Depending on how your config file is set up, you may have a few red circles on this graph. The important part is that the square on the right hand side is either orange or green.
+
+
