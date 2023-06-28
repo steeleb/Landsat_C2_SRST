@@ -3,7 +3,7 @@
 # The following parameters are required to be set by the user unless otherwise indicated.
 
 local_settings:
-- data_dir: "~/Documents/GitHub/Landsat_C2_SRST/data_acquisition/in/" # point to the directory where your location information is stored - this path must end with a '/'
+- data_dir: "data_acquisition/in/" # point to the directory where your location information is stored - this path must end with a '/'
 - location_file: "locs_test_2.csv" # name of the file that contains the location information
 - unique_id: "id" # this is the column that stores the unique identifier for each site, should not contain any special characters
 - latitude: "Latitude" # this is the column that stores the latitude of the site, must be in decimal degrees
