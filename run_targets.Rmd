@@ -5,16 +5,7 @@ output: html_document
 ---
 # Purpose
 
-This script loads all necessary packages to run the targets pipeline, then runs it! The map function for checking for all packages requires {dplyr}, so we need to check and load {tidyverse} first.
-
-```{r check for tidyverse, echo = F}
-if ('tidyverse' %in% installed.packages()) {
-  library(tidyverse)
-} else {
-  install.packages('tidyverse')
-  library(tidyverse)
-}
-```
+This script loads all necessary packages to run the targets pipeline, then runs it! 
 
 ## Install necessary packages
 
@@ -34,7 +25,8 @@ package_installer <- function(x) {
 List packages that need to be checked for install, and walk the function along them all.
 
 ``` {r walk package_installer}
-packages <- c('reticulate',
+packages <- c('tidyverse',
+              'reticulate',
               'targets',
               'tarchetypes',
               'yaml',
@@ -42,8 +34,7 @@ packages <- c('reticulate',
               'nhdplusTools',
               'polylabelr',
               'sf')
-
-walk(packages, package_installer)
+lapply(packages, package_installer)
 ```
 
 ## Run the targets pipeline and output a network graph.
