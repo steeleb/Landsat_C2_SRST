@@ -1,0 +1,8 @@
+# general R stuff
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# python environment files
+env/
