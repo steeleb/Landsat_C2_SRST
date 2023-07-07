@@ -1,9 +1,9 @@
 library(yaml)
 library(tidyverse)
 
-# formatYaml: Function to read in yaml, reformat and pivot for easy use in scripts ----
+# format_yaml: Function to read in yaml, reformat and pivot for easy use in scripts ----
 
-formatYaml <-  function(yml_file) {
+format_yaml <-  function(yml_file) {
   yaml <-  read_yaml(yml_file)
   # create a nested tibble from the yaml file
   nested <-  map_dfr(names(yaml), 
@@ -31,9 +31,9 @@ formatYaml <-  function(yml_file) {
 }
 
 
-# grabLocs: Load in and format location file using yaml file ----
+# grab_locs: Load in and format location file using yaml file ----
 
-grabLocs <- function(yaml) {
+grab_locs <- function(yaml) {
   locs <- read_csv(file.path(yaml$data_dir, yaml$location_file))
   # store yaml info as objects
   lat <- yaml$latitude
@@ -47,9 +47,9 @@ grabLocs <- function(yaml) {
 }
 
 
-# getNHD: if user desires lake extent and does not provide lake polygons, use NHDPlus to grab and export polygons
+# get_NHD: if user desires lake extent and does not provide lake polygons, use NHDPlus to grab and export polygons
 
-getNHD <- function(locs, yaml) {
+get_NHD <- function(locs, yaml) {
   # read in files
   locations = read_csv(locs)
   yaml = read_csv(yaml)
@@ -82,9 +82,8 @@ getNHD <- function(locs, yaml) {
   }
 }
 
-
-# calcCenter
-calcCenter <- function(poly, yaml) {
+# calc_center
+calc_center <- function(poly, yaml) {
   yaml = read_csv(yaml)
   if (grepl('center', yaml$extent[1])) {
     # load polygon
@@ -133,6 +132,24 @@ calcCenter <- function(poly, yaml) {
 }
   
   
+### get_WRS_tiles: function to get all WRS tiles for branching
+
+get_WRS_tiles <- function(loc, yml) {
+  locations <- read_csv(loc) 
+  yml <- read_csv(yml)
+  locations <- st_as_sf(locations, coords = c('Longitude', 'Latitude'))
+  st_crs(locations) <- yml$location_crs
+  WRS <- read_sf('data_acquisition/in/WRS2_descending.shp')
+  WRS_subset <- WRS[locations,]
+  write_csv(st_drop_geometry(WRS_subset), 'data_acquisition/out/WRS_subset_list.csv')
+  WRS_subset$PR
+}
   
-  
-  
+
+### run_GEE_per_tile: function to run a single tile through the 'run_GEE.py' file
+
+run_GEE_per_tile <- function(WRS_tile) {
+  tile <- WRS_tile
+  write_lines(tile, 'data_acquisition/out/current_tile.txt', sep = '')
+  source_python('data_acquisition/src/runGEEperTile.py')
+}

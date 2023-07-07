@@ -15,18 +15,18 @@ def csv_to_eeFeat(df, proj):
 
 
 ## per GEE code to scale SR 
-def applyScaleFactors(image):
+def apply_scale_factors(image):
   opticalBands = image.select('SR_B.').multiply(0.0000275).add(-0.2)
   thermalBands = image.select('ST_B.*').multiply(0.00341802).add(149.0)
   return image.addBands(opticalBands, None, True).addBands(thermalBands, None,True)
 
 
 ## Buffer the lake sites
-def dpBuff(i):
+def dp_buff(i):
   return i.buffer(ee.Number.parse(str(buffer)))
 
 
-def addRadMask(image):
+def add_rad_mask(image):
   #grab the radsat band
   satQA = image.select('radsat_qa')
   # all must be non-saturated per pixel
@@ -34,7 +34,7 @@ def addRadMask(image):
   return image.addBands(satMask).updateMask(satMask)
 
 
-def cfMask(image):
+def cf_mask(image):
   #grab just the pixel_qa info
   qa = image.select('pixel_qa')
   cloudqa = (qa.bitwiseAnd(1 << 1).rename('cfmask') #dialated clouds value 1
@@ -44,7 +44,7 @@ def cfMask(image):
   return image.addBands(cloudqa)
 
 
-def srCloudMask(image):
+def sr_cloud_mask(image):
   srCloudQA = image.select('cloud_qa')
   srMask = (srCloudQA.bitwiseAnd(1 << 1).rename('sr_cloud') # cloud
     .where(srCloudQA.bitwiseAnd(1 << 2), ee.Image(2)) # cloud shadow
@@ -54,7 +54,7 @@ def srCloudMask(image):
 
 # grabbing qualitative measure of aerosol Level
 
-def srAerosol(image):
+def sr_aerosol(image):
   aerosolQA = image.select('aerosol_qa')
   medHighAero = aerosolQA.bitwiseAnd(1 << 7).rename('medHighAero')# pull out mask out where aeorosol is med and high
   return image.addBands(medHighAero)
@@ -167,7 +167,7 @@ def DSWE(i):
   return iDswe.rename('dswe')
 
 
-def CalcHillShades(image, geo):
+def calc_hill_shades(image, geo):
   MergedDEM = ee.Image("users/eeProject/MERIT").clip(geo.buffer(3000))
   hillShade = ee.Terrain.hillshade(MergedDEM, 
     ee.Number(image.get('SUN_AZIMUTH')), 
@@ -176,7 +176,7 @@ def CalcHillShades(image, geo):
   return hillShade
 
 
-def CalcHillShadows(image, geo):
+def calc_hill_shadows(image, geo):
   MergedDEM = ee.Image("users/eeProject/MERIT").clip(geo.buffer(3000))
   hillShadow = ee.Terrain.hillShadow(MergedDEM, 
     ee.Number(image.get('SUN_AZIMUTH')),
@@ -187,12 +187,12 @@ def CalcHillShadows(image, geo):
 
 
 ## Remove geometries
-def removeGeo(i):
+def remove_geo(i):
   return i.setGeometry(None)
 
 
 ## Set up the reflectance pull
-def RefPull457(image):
+def ref_pull_457(image):
   # process image with the radsat mask
   r = addRadMask(image).select('radsat')
   # process image with cfmask
@@ -207,9 +207,9 @@ def RefPull457(image):
   # band where dswe is 3 and apply all masks
   dswe3 = d.eq(3).rename('dswe3').updateMask(f.eq(0)).updateMask(r.eq(1)).updateMask(s.eq(0)).selfMask()
   #calculate hillshade
-  h = CalcHillShades(image, tile.geometry()).select('hillShade')
+  h = CalcHillShades(image, wrs.geometry()).select('hillShade')
   #calculate hillshadow
-  hs = CalcHillShadows(image, tile.geometry()).select('hillShadow')
+  hs = CalcHillShadows(image, wrs.geometry()).select('hillShadow')
   
   pixOut = (# make some dummy bands for the reducer
             image.select(['Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2', 'SurfaceTemp', 'temp_qa'],
@@ -253,7 +253,7 @@ def RefPull457(image):
   return out
 
 
-def RefPull89(image):
+def ref_pull_89(image):
   # process image with the radsat mask
   r = addRadMask(image).select('radsat')
   # process image with cfmask
@@ -268,9 +268,9 @@ def RefPull89(image):
   # band where dswe is 3 and apply all masks
   dswe3 = d.eq(3).rename('dswe3').updateMask(f.eq(0)).updateMask(r.eq(1)).selfMask()
   #calculate hillshade
-  h = CalcHillShades(image, tile.geometry()).select('hillShade')
+  h = CalcHillShades(image, wrs.geometry()).select('hillShade')
   #calculate hillshadow
-  hs = CalcHillShadows(image, tile.geometry()).select('hillShadow')
+  hs = CalcHillShadows(image, wrs.geometry()).select('hillShadow')
   pixOut = (image.select(['Aerosol','Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2', 'SurfaceTemp', 'temp_qa'],
             ['med_Aerosol','med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa'])
             .addBands(image.select(['Aerosol','Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2', 'SurfaceTemp', 'temp_qa', 'ST_CDIST'],
@@ -334,7 +334,3 @@ def maximum_no_of_tasks(MaxNActive, waitingPeriod):
         NActive += 1
   return()
 
-
-  
-  
-  
