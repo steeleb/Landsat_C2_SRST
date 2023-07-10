@@ -21,7 +21,7 @@ yaml_file <- "test_config.yml"
 # Set up python virtual environment ---------------------------------------
 
 if (!dir.exists("env")) {
-  source("data_acquisition/src/pySetup.R")
+  tar_source("data_acquisition/src/pySetup.R")
 } else {
   use_condaenv(file.path(getwd(), "env"))
 }
@@ -29,7 +29,7 @@ if (!dir.exists("env")) {
 
 # Source functions --------------------------------------------------------
 
-source("data_acquisition/src/general_functions.R")
+tar_source("data_acquisition/src/general_functions.R")
 source_python("data_acquisition/src/gee_functions.py")
 
 # Define {targets} workflow -----------------------------------------------

@@ -1,8 +1,4 @@
-library(yaml)
-library(tidyverse)
-
 # format_yaml: Function to read in yaml, reformat and pivot for easy use in scripts ----
-
 format_yaml <-  function(yml_file) {
   yaml <-  read_yaml(yml_file)
   # create a nested tibble from the yaml file
