@@ -7,7 +7,6 @@ CalcHillShadows|function|261db2cc8bcbeb1f|||||||||||||||
 centersSave|stem|47201228c935c6d9|ff01f2536f6b06fe|74a2e0cdc02daf14|-770865819||t19536.9459177637s|a3c4b57a6f0085ec|90|rds|local|vector|||0.037||
 cfMask|function|a4ff5d1c59c73a0c|||||||||||||||
 checkYmlMod|stem|bbf4001d1512aef7|c8297c1b10a8e0e8|f44d7a933526f890|-670392468||t19536.9612285124s|9903306e1685fb67|94|rds|local|vector|||0.001||
-config_file|stem|c608fdbb78b3e6b9|88fd04c5ca833a32|eec8c16acea4a9b8|-1322601883||t19536.9812483331s|bd4e379ac09c3636|464|rds|local|vector|||0||
 dpBuff|function|c7d6124b7c4aa3f1|||||||||||||||
 eeRun|pattern|33316e3ef37324bb|3b2861e233dd001a||1593566452||||43|rds|local|vector||eeRun_fdccd8bb|16.413||
 eeRun_fdccd8bb|branch|d36ea1299fa8d732|bf88ef8e1112db30|1921c5c41cfc85b4|867255619||t19524.7977686071s|44e327d1ee1978d7|43|rds|local|vector|eeRun||6.582||
@@ -25,17 +24,12 @@ removeGeo|function|c7d6124b7c4aa3f1|||||||||||||||
 runGEEperTile|function|45b8c9f26c371f4a|||||||||||||||
 srAerosol|function|a4ff5d1c59c73a0c|||||||||||||||
 srCloudMask|function|a4ff5d1c59c73a0c|||||||||||||||
-yml|stem|65b2b0f0cbc8e0a0|e9deeb1e792e7275|8ea36fbf0a04d49b|-788017771||t19536.9459129676s|c23f758b3a400cb1|638|rds|local|vector|||0.04||
 ymlSave|stem|1ae1f8dfda4812fc|062dc20440cdc13d|948475658e9f02bc|235742484||t19536.9459124487s|8619def19bb20a44|79|rds|local|vector|||0.125||
-locs_save|stem|26dec75987e95e3b|a4fb0fb6a17d0726|fecd3b879627c089|1927713145||t19536.9821034535s|6281f79619f6778a|80|rds|local|vector|||0.047||
 poly_save|stem|69ea75d19fd2c2e5|8e09d0caed8a0f0f|67da0a4fba4eab9c|1705308789||t19536.9821071623s|e7d9c43b1c994be3|87|rds|local|vector|||0.316||
-WRS_tiles|stem|24d79cfa997fdb2a|d3f9b387cd1cc7c0|e9c1943daf71558c|1777638514||t19536.9821184209s|00c37fc0166b3b11|58|rds|local|vector||WRS_tiles_da187f5f|0.971||
 centers_save|stem|47201228c935c6d9|c962e8a5b8affe74|589db8a3171283ca|-523742561||t19536.9821194851s|a3c4b57a6f0085ec|90|rds|local|vector|||0.089||
-config_file_file|stem|193421a2a9714b0c|c348a46c8e45a69b|a34990cc27fe81ab|-509113220|test_config.yml|t19524.8024822729s|e1da2f533c22ed54|2893|file|local|vector|||0||
-yml_save|stem|1ae1f8dfda4812fc|5d96acd3c911ff3f|d01d2e233ded2f7d|130168930||t19536.9838036936s|8619def19bb20a44|79|rds|local|vector|||0.11||
 calc_hill_shades|function|261db2cc8bcbeb1f|||||||||||||||
 grab_locs|function|38fdfff1efe1a497|||||||||||||||
-.Random.seed|object|7630cabec4674e27|||||||||||||||
+.Random.seed|object|b575291643062af4|||||||||||||||
 get_WRS_tiles|function|233e6dd7144eb301|||||||||||||||
 get_NHD|function|4ffecc9cbd2435d8|||||||||||||||
 apply_scale_factors|function|a4ff5d1c59c73a0c|||||||||||||||
@@ -61,15 +55,21 @@ Mbsrv|function|a4ff5d1c59c73a0c|||||||||||||||
 DSWE|function|c7d6124b7c4aa3f1|||||||||||||||
 sr_cloud_mask|function|a4ff5d1c59c73a0c|||||||||||||||
 dp_buff|function|c7d6124b7c4aa3f1|||||||||||||||
-yml_file|stem|9a80117d2cd3aa05|ec723c299807901b|23014d4980e56453|-275184963|data_acquisition/in/yml.csv|t19536.983803686s|e334c4b74a456131|365|file|local|vector|||0.001||
-locs_file|stem|2118bdc5197e80a1|159650b9ea32d64c|f2d16d661450db95|-911341027|data_acquisition/in/locs.csv|t19536.9821034492s|ce9b4a225e799bab|165|file|local|vector|||0||
-polygon_file|stem|error|b383efdd6b148ab0|5721fc906d2494d8|-999238938|Not configured to use polygon area.|t19536.9865485913s||0|file|local|vector|||||_paths_ missing files Not configured to use polygon area.
-centers_file|stem|error|409c134cb70d89af|58932b0ea43cb6ed|-958185631|Not configured to pull polygon center.|t19536.9865487907s||0|file|local|vector|||||_paths_ missing files Not configured to pull polygon center.
-polygon|stem|error|14a2f83821731cd5|4f16d9fb58bcf44c|1352034301||t19536.9865488671s|44e327d1ee1978d7|43|rds|local|vector|||0.004||Cannot open Not configured to use polygon area. The file doesnt seem to exist.
-centers|stem|error|c1ba0e51c2f278c0|0f47380d59d68dcc|-572771654||t19536.9865489366s|44e327d1ee1978d7|43|rds|local|vector|||0.004||Cannot open Not configured to pull polygon center. The file doesnt seem to exist.
+config_file_file|stem|89347becd79a0aca|c348a46c8e45a69b|a34990cc27fe81ab|-509113220|test_config.yml|t19536.9930519219s|7dcd493014f5ce27|2858|file|local|vector|||0||
+config_file|stem|891fc2e867b21781|88fd04c5ca833a32|600423117570cbd1|-1322601883||t19536.9932489108s|fc758f98d8866839|429|rds|local|vector|||0||
+yml_save|stem|1ae1f8dfda4812fc|5d96acd3c911ff3f|5c66b565472503f4|130168930||t19536.993250215s|8619def19bb20a44|79|rds|local|vector|||0.111||
+yml_file|stem|db538a6a2c252bdc|ec723c299807901b|23014d4980e56453|-275184963|data_acquisition/in/yml.csv|t19536.9932502107s|73e9d248c95c1f30|330|file|local|vector|||0||
+yml|stem|648a809c92955978|e9deeb1e792e7275|1bac653cd9f58dbf|-788017771||t19536.9932506748s|710c613aa5de3636|608|rds|local|vector|||0.037||
+locs_save|stem|26dec75987e95e3b|a4fb0fb6a17d0726|1890b6b3b3f58f68|1927713145||t19536.99325103s|6281f79619f6778a|80|rds|local|vector|||0.028||
+locs_file|stem|2118bdc5197e80a1|159650b9ea32d64c|f2d16d661450db95|-911341027|data_acquisition/in/locs.csv|t19536.9932510254s|ce9b4a225e799bab|165|file|local|vector|||0||
+WRS_tiles|stem|24d79cfa997fdb2a|d3f9b387cd1cc7c0|e4b8dd0b14edddd4|1777638514||t19536.9932651617s|00c37fc0166b3b11|58|rds|local|vector||WRS_tiles_da187f5f|1.217||
+polygon_file|stem|error|b383efdd6b148ab0|5721fc906d2494d8|-999238938|Not configured to use polygon area.|t19536.9932656525s||0|file|local|vector|||||_paths_ missing files Not configured to use polygon area.
+centers_file|stem|error|409c134cb70d89af|58932b0ea43cb6ed|-958185631|Not configured to pull polygon center.|t19536.9932658394s||0|file|local|vector|||||_paths_ missing files Not configured to pull polygon center.
+polygon|stem|error|14a2f83821731cd5|4f16d9fb58bcf44c|1352034301||t19536.9932659063s|44e327d1ee1978d7|43|rds|local|vector|||0.005||Cannot open Not configured to use polygon area. The file doesnt seem to exist.
+centers|stem|error|c1ba0e51c2f278c0|0f47380d59d68dcc|-572771654||t19536.9932659742s|44e327d1ee1978d7|43|rds|local|vector|||0.004||Cannot open Not configured to pull polygon center. The file doesnt seem to exist.
 calc_hill_shades|function|261db2cc8bcbeb1f
 grab_locs|function|38fdfff1efe1a497
-.Random.seed|object|b575291643062af4
+.Random.seed|object|d512fe6588641e25
 get_WRS_tiles|function|233e6dd7144eb301
 get_NHD|function|4ffecc9cbd2435d8
 apply_scale_factors|function|a4ff5d1c59c73a0c
@@ -95,19 +95,11 @@ Mbsrv|function|a4ff5d1c59c73a0c
 DSWE|function|c7d6124b7c4aa3f1
 sr_cloud_mask|function|a4ff5d1c59c73a0c
 dp_buff|function|c7d6124b7c4aa3f1
-config_file_file|stem|89347becd79a0aca|c348a46c8e45a69b|a34990cc27fe81ab|-509113220|test_config.yml|t19536.9930519219s|7dcd493014f5ce27|2858|file|local|vector|||0||
-config_file|stem|891fc2e867b21781|88fd04c5ca833a32|600423117570cbd1|-1322601883||t19536.9932489108s|fc758f98d8866839|429|rds|local|vector|||0||
-yml_save|stem|1ae1f8dfda4812fc|5d96acd3c911ff3f|5c66b565472503f4|130168930||t19536.993250215s|8619def19bb20a44|79|rds|local|vector|||0.111||
-yml_file|stem|db538a6a2c252bdc|ec723c299807901b|23014d4980e56453|-275184963|data_acquisition/in/yml.csv|t19536.9932502107s|73e9d248c95c1f30|330|file|local|vector|||0||
-yml|stem|648a809c92955978|e9deeb1e792e7275|1bac653cd9f58dbf|-788017771||t19536.9932506748s|710c613aa5de3636|608|rds|local|vector|||0.037||
-locs_save|stem|26dec75987e95e3b|a4fb0fb6a17d0726|1890b6b3b3f58f68|1927713145||t19536.99325103s|6281f79619f6778a|80|rds|local|vector|||0.028||
-locs_file|stem|2118bdc5197e80a1|159650b9ea32d64c|f2d16d661450db95|-911341027|data_acquisition/in/locs.csv|t19536.9932510254s|ce9b4a225e799bab|165|file|local|vector|||0||
-WRS_tiles|stem|24d79cfa997fdb2a|d3f9b387cd1cc7c0|e4b8dd0b14edddd4|1777638514||t19536.9932651617s|00c37fc0166b3b11|58|rds|local|vector||WRS_tiles_da187f5f|1.217||
-polygon_file|stem|error|b383efdd6b148ab0|5721fc906d2494d8|-999238938|Not configured to use polygon area.|t19536.9865485913s||0|file|local|vector|||||_paths_ missing files Not configured to use polygon area.
 polygon_file|stem|error|b383efdd6b148ab0|5721fc906d2494d8|-999238938|Not configured to use polygon area.|t19536.9932656525s||0|file|local|vector|||||_paths_ missing files Not configured to use polygon area.
-centers_file|stem|error|409c134cb70d89af|58932b0ea43cb6ed|-958185631|Not configured to pull polygon center.|t19536.9865487907s||0|file|local|vector|||||_paths_ missing files Not configured to pull polygon center.
+polygon_file|stem|error|b383efdd6b148ab0|5721fc906d2494d8|-999238938|Not configured to use polygon area.|t19548.7964759906s||0|file|local|vector|||||_paths_ missing files Not configured to use polygon area.
 centers_file|stem|error|409c134cb70d89af|58932b0ea43cb6ed|-958185631|Not configured to pull polygon center.|t19536.9932658394s||0|file|local|vector|||||_paths_ missing files Not configured to pull polygon center.
-polygon|stem|error|14a2f83821731cd5|4f16d9fb58bcf44c|1352034301||t19536.9865488671s|44e327d1ee1978d7|43|rds|local|vector|||0.005||Cannot open Not configured to use polygon area. The file doesnt seem to exist.
-polygon|stem|error|14a2f83821731cd5|4f16d9fb58bcf44c|1352034301||t19536.9932659063s|44e327d1ee1978d7|43|rds|local|vector|||0.005||Cannot open Not configured to use polygon area. The file doesnt seem to exist.
-centers|stem|error|c1ba0e51c2f278c0|0f47380d59d68dcc|-572771654||t19536.9865489366s|44e327d1ee1978d7|43|rds|local|vector|||0.004||Cannot open Not configured to pull polygon center. The file doesnt seem to exist.
+centers_file|stem|error|409c134cb70d89af|58932b0ea43cb6ed|-958185631|Not configured to pull polygon center.|t19548.7964764667s||0|file|local|vector|||||_paths_ missing files Not configured to pull polygon center.
+polygon|stem|error|14a2f83821731cd5|4f16d9fb58bcf44c|1352034301||t19536.9932659063s|44e327d1ee1978d7|43|rds|local|vector|||0.015||Cannot open Not configured to use polygon area. The file doesnt seem to exist.
+polygon|stem|error|14a2f83821731cd5|4f16d9fb58bcf44c|1352034301||t19548.7964766605s|44e327d1ee1978d7|43|rds|local|vector|||0.015||Cannot open Not configured to use polygon area. The file doesnt seem to exist.
 centers|stem|error|c1ba0e51c2f278c0|0f47380d59d68dcc|-572771654||t19536.9932659742s|44e327d1ee1978d7|43|rds|local|vector|||0.004||Cannot open Not configured to pull polygon center. The file doesnt seem to exist.
+centers|stem|error|c1ba0e51c2f278c0|0f47380d59d68dcc|-572771654||t19548.7964767298s|44e327d1ee1978d7|43|rds|local|vector|||0.004||Cannot open Not configured to pull polygon center. The file doesnt seem to exist.
