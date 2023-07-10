@@ -3,15 +3,16 @@ title: "Run Targets - Landsat Collection 2 SR/ST Acquisition"
 author: "ROSSyndicate"
 output: html_document
 ---
+
 # Purpose
 
-This script loads all necessary packages to run the targets pipeline, then runs it! 
+This script loads all necessary packages to run the targets pipeline, then runs it!
 
 ## Install necessary packages
 
 Define package installer function
 
-``` {r package_installer}
+```{r package_installer}
 package_installer <- function(x) {
   if (x %in% installed.packages()) {
     print(paste0('{', x ,'} package is already installed.'))
@@ -24,7 +25,7 @@ package_installer <- function(x) {
 
 List packages that need to be checked for install, and walk the function along them all.
 
-``` {r walk package_installer}
+```{r walk package_installer}
 packages <- c('tidyverse',
               'reticulate',
               'targets',
@@ -37,9 +38,29 @@ packages <- c('tidyverse',
 lapply(packages, package_installer)
 ```
 
+## Authenitcate and initialize Earth Engine
+
+You will need to have [installed and initialized the `gcloud CLI`](https://cloud.google.com/sdk/docs/install) and have a [Google Earth Engine account](https://code.earthengine.google.com/register) prior to running this workflow. Some common troubleshooting solutions [can be found here](https://github.com/rossyndicate/ROSS_RS_mini_tools/blob/main/helps/CommonIssues.md).
+
+### Authentication
+
+To authenticate your GEE account, you must execute the following command in your **zsh** terminal and follow the prompts in your browser:
+
+`earthengine authenticate`
+
+When complete, your terminal will read:
+
+`Successfully saved authorization token.`
+
+This token is valid for 7 days from the time of authentication.
+
+### Initializing your instance of GEE
+
+Initialization through the Python command `ee.Initialize()` is automatically completed in the workflow.
+
 ## Run the targets pipeline and output a network graph.
 
-``` {r}
+```{r}
 library(targets)
 
 # run the pipeline
@@ -55,5 +76,3 @@ tar_visnetwork()
 ```
 
 Depending on how your config file is set up, you may have a few red circles on this graph. The important part is that the square on the right hand side is either orange or green.
-
-

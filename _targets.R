@@ -14,8 +14,7 @@ yaml_file <- "test_config.yml"
 
 # RUNNING {TARGETS}:
 #
-# run tar_make() to run the pipeline
-# run tar_visnetwork() to see visual summary
+# use the file 'run_targets.Rmd', which includes EE authentication.
 
 
 # Set up python virtual environment ---------------------------------------
@@ -31,6 +30,7 @@ if (!dir.exists("env")) {
 
 tar_source("data_acquisition/src/general_functions.R")
 source_python("data_acquisition/src/gee_functions.py")
+
 
 # Define {targets} workflow -----------------------------------------------
 
