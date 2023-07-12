@@ -16,7 +16,7 @@ local_settings:
 google_settings:
 - proj: "" # this is a short name for file naming conventions. All output files will include this prefix.
 - proj_folder: "" # this is the folder name where the GEE data will be save to Google Drive. If it doesn't exist, it will be created.
-
+- ee_proj: "" # this is the ee project name you are running your pulls from
 
 # The following parameters are optional and have default values listed below. 
 # If these key-values remain unaltered, date will be acquired for the entire satellite data record at the specified location only.
@@ -29,12 +29,11 @@ temporal_settings:
 
 spatial_settings: 
 - extent: "site" # options: "site", "polygon", "polycenter", "site+poly", "site+polygon+polycenter", "polygon+polycenter" - at this time lake and lake center can only be calculated for lakes in the US
-- site_buffer: 90 # buffer distance in meters around the site or poly center
+- site_buffer: 120 # buffer distance in meters around the site or poly center
 
 gee_settings:
 - cloud_filter: "True" # True or False - if True, scenes will be filtered by scene-level cloudy value provided in the metadata
 - cloud_thresh: 95 # scenes with a cloud value greater than this threshold will be filtered out
 - water_detection: "DSWE" # "DSWE" is currently the only option for water detection. Future iterations may include Peckel water instance or another method.
-- DSWE_setting: "1" # DSWE 1 only summarizes high confidence water pixels. While DSWE 1 is the only option, future iterations may also incorporate DSWE 3, which indicates possibly-vegetated pixesl (aka, macrophytes)
-
+- DSWE_setting: "1" # 1, 3, or 1+3. DSWE 1 only summarizes high confidence water pixels; DSWE 3 summarized vegetated pixels. 
 
