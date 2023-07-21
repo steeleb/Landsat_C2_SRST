@@ -3,20 +3,21 @@
 # The following parameters are required to be set by the user unless otherwise indicated.
 
 local_settings:
-- data_dir: "" # point to the *full* directory path where your location information is stored - this path must end with a '/'
+- data_dir: "data_acquisition/in/" # point to the *full* directory path where your location information is stored - this path must end with a '/'
 - location_file: "" # name of the *.csv* file that contains the location information
-- unique_id: "" # this is the column that stores the unique identifier for each site, should not contain any special characters
+- unique_id: "split_id" # this is the column that stores the unique identifier for each site, should not contain any special characters
 - latitude: "" # this is the column that stores the latitude of the site, must be in decimal degrees
 - longitude: "" # this is the column that stores the longitude of the site, must be in decimal degrees
 - location_crs: "" # this is the coordinate reference system of the location data, must be in EPSG format (e.g. EPSG:4326)
-- polygon: "" # optional. True or False - if True, you have lake polygon shapefiles for each site.
-- poly_dir: "" # optional. point to the directory where your lake polygon shapefiles are stored - this path must end with a '/'
-- poly_file: "" # optional. name of the shapefile that contains the lake polygons. 
+- polygon: "True" # optional. True or False - if True, you have lake polygon shapefiles for each site.
+- poly_dir: "data_acquisition/in/" # optional. point to the directory where your lake polygon shapefiles are stored - this path must end with a '/'
+- poly_file: "loire_split_reaches.shp" # optional. name of the shapefile that contains the lake polygons. 
 
 google_settings:
-- proj: "" # this is a short name for file naming conventions. All output files will include this prefix.
-- proj_folder: "" # this is the folder name where the GEE data will be save to Google Drive. If it doesn't exist, it will be created.
-- ee_proj: "" # this is the ee project name you are running your pulls from
+- proj: "Loire" # this is a short name for file naming conventions. All output files will include this prefix.
+- proj_folder: "Loire_prelim_pull" # this is the folder name where the GEE data will be save to Google Drive. If it doesn't exist, it will be created.
+- ee_proj: "ee-ross-loire" # this is the ee project that you are running your data through
+
 
 # The following parameters are optional and have default values listed below. 
 # If these key-values remain unaltered, date will be acquired for the entire satellite data record at the specified location only.
@@ -28,12 +29,12 @@ temporal_settings:
 
 
 spatial_settings: 
-- extent: "site" # options: "site", "polygon", "polycenter", "site+poly", "site+polygon+polycenter", "polygon+polycenter" - at this time lake and lake center can only be calculated for lakes in the US
+- extent: "polygon" # options: "site", "polygon", "polycenter", "site+poly", "site+polygon+polycenter", "polygon+polycenter" - at this time lake and lake center can only be calculated for lakes in the US
 - site_buffer: 120 # buffer distance in meters around the site or poly center
 
 gee_settings:
 - cloud_filter: "True" # True or False - if True, scenes will be filtered by scene-level cloudy value provided in the metadata
 - cloud_thresh: 95 # scenes with a cloud value greater than this threshold will be filtered out
 - water_detection: "DSWE" # "DSWE" is currently the only option for water detection. Future iterations may include Peckel water instance or another method.
-- DSWE_setting: "1" # 1, 3, or 1+3. DSWE 1 only summarizes high confidence water pixels; DSWE 3 summarized vegetated pixels. 
+- DSWE_setting: "1+3" # 1, 3, or 1+3. DSWE 1 only summarizes high confidence water pixels; DSWE 3 summarized vegetated pixels. 
 

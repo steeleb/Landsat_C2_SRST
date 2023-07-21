@@ -1,8 +1,4 @@
-library(yaml)
-library(tidyverse)
-
 # format_yaml: Function to read in yaml, reformat and pivot for easy use in scripts ----
-
 format_yaml <-  function(yml_file) {
   yaml <-  read_yaml(yml_file)
   # create a nested tibble from the yaml file
@@ -34,31 +30,33 @@ format_yaml <-  function(yml_file) {
 # grab_locs: Load in and format location file using yaml file ----
 
 grab_locs <- function(yaml) {
-  locs <- read_csv(file.path(yaml$data_dir, yaml$location_file))
-  # store yaml info as objects
-  lat <- yaml$latitude
-  lon <- yaml$longitude
-  id <- yaml$unique_id
-  # apply objects to tibble
-  locs <- locs %>% 
-    rename_with(~c('Latitude', 'Longitude', 'id'), any_of(c(lat, lon, id)))
-  write_csv(locs, 'data_acquisition/in/locs.csv')
-  'data_acquisition/in/locs.csv'
+  if (grepl('site', yaml$extent[1])) {
+    locs <- read_csv(file.path(yaml$data_dir, yaml$location_file))
+    # store yaml info as objects
+    lat <- yaml$latitude
+    lon <- yaml$longitude
+    id <- yaml$unique_id
+    # apply objects to tibble
+    locs <- locs %>% 
+      rename_with(~c('Latitude', 'Longitude', 'id'), any_of(c(lat, lon, id)))
+    write_csv(locs, 'data_acquisition/in/locs.csv')
+    return('data_acquisition/in/locs.csv')
+  } else {
+    message('Not configured to use site locations.')
+  }
 }
 
 
 # get_NHD: if user desires lake extent and does not provide lake polygons, use NHDPlus to grab and export polygons
 
 get_NHD <- function(locs, yaml) {
-  # read in files
-  locations = read_csv(locs)
   yaml = read_csv(yaml)
   if (grepl('poly', yaml$extent[1])) { # if polygon is specified in desired extent - either polycenter or polgon
-    # create sf
-    wbd_pts = st_as_sf(locations, crs = yaml$location_crs[1], coords = c('Longitude', 'Latitude'))
-    id = locations$id
-    
     if (yaml$polygon[1] == 'FALSE') { # and no polygon is provided, then use nhdplustools
+      locations = read_csv(locs)
+      # create sf
+      wbd_pts = st_as_sf(locations, crs = yaml$location_crs[1], coords = c('Longitude', 'Latitude'))
+      id = locations$id
       for(w in 1:length(id)) {
         aoi_name = wbd_pts[wbd_pts$id == id[w],]
         lake = get_waterbodies(AOI = aoi_name)
@@ -71,14 +69,19 @@ get_NHD <- function(locs, yaml) {
       all_lakes = all_lakes %>% select(id, comid, gnis_id:elevation, meandepth:maxdepth)
       write_csv(st_drop_geometry(all_lakes), 'data_acquisition/out/NHDPlus_stats_lakes.csv')
       all_lakes = all_lakes %>% select(id, comid, gnis_name)
+      st_write(all_lakes, 'data_acquisition/out/NHDPlus_polygon.shp')
+      return('data_acquisition/out/NHDPlus_polygon.shp')
     } else { # otherwise read in specified file
-      all_lakes = read_sf(file.path(yaml$lake_poly_dir[1], yaml$lake_poly_file[1])) 
-      write_csv(st_drop_geometry(all_lakes) %>% rowid_to_column('id'), 'data_acquisition/out/user_lakes_withrowid.csv')
+      polygons = read_sf(file.path(yaml$poly_dir[1], yaml$poly_file[1])) 
+      st_drop_geometry(polygons) %>% 
+        rowid_to_column('id') %>% 
+        mutate(id = id-1) %>% 
+        write_csv(., 'data_acquisition/out/user_polygon_withrowid.csv')
+      st_write(polygons, 'data_acquisition/out/user_polygon.shp')
+      return('data_acquisition/out/user_polygon.shp')
     }
-    st_write(all_lakes, 'data_acquisition/out/lakes.shp')
-    return('data_acquisition/out/lakes.shp')
   } else {
-    return(print('Not configured to use polygon area.'))
+    return(message('Not configured to use polygon area.'))
   }
 }
 
@@ -127,22 +130,61 @@ calc_center <- function(poly, yaml) {
       return('data_acquisition/out/user_polygon_centers.shp')
     }
   } else {
-    return(print('Not configured to pull polygon center.'))
+    return(message('Not configured to pull polygon center.'))
   }
 }
   
-  
+
+### get_WRS_detection: function to name the file to grab WRS tiles
+
+# points are the easiest, so prioritize those.
+get_WRS_detection <- function(yml) {
+  yml = read_csv(yml)
+  extent = yml$extent[1]
+  if (grepl('site', extent)) {
+    return('site')
+  } else {
+    if (grepl('center', extent)) {
+      return('center')
+    } else {
+      if (grepl('poly', extent)) {
+        return('polygon')
+      }
+    }
+  }
+}
+
 ### get_WRS_tiles: function to get all WRS tiles for branching
 
-get_WRS_tiles <- function(loc, yml) {
-  locations <- read_csv(loc) 
+get_WRS_tiles <- function(detection, yml) {
   yml <- read_csv(yml)
-  locations <- st_as_sf(locations, coords = c('Longitude', 'Latitude'))
-  st_crs(locations) <- yml$location_crs
-  WRS <- read_sf('data_acquisition/in/WRS2_descending.shp')
-  WRS_subset <- WRS[locations,]
-  write_csv(st_drop_geometry(WRS_subset), 'data_acquisition/out/WRS_subset_list.csv')
-  WRS_subset$PR
+  if (detection == 'site') {
+    locations <- read_csv(tar_read(locs)) 
+    locations <- st_as_sf(locations, coords = c('Longitude', 'Latitude'))
+    st_crs(locations) <- yml$location_crs
+    WRS <- read_sf('data_acquisition/in/WRS2_descending.shp')
+    WRS_subset <- WRS[locations,]
+    write_csv(st_drop_geometry(WRS_subset), 'data_acquisition/out/WRS_subset_list.csv')
+    return(WRS_subset$PR)
+  } else {
+    if (detection == 'centers') {
+      centers <- tar_read(centers)
+      centers_cntrd <- st_centroid(centers)
+      WRS <- read_sf('data_acquisition/in/WRS2_descending.shp')
+      WRS_subset <- WRS[centers_cntrd,]
+      write_csv(st_drop_geometry(WRS_subset), 'data_acquisition/out/WRS_subset_list.csv')
+      return(WRS_subset$PR)
+    } else {
+      if (detection == 'polygon') {
+        poly <- tar_read(polygons)
+        poly_cntrd <- st_centroid(poly)
+        WRS <- read_sf('data_acquisition/in/WRS2_descending.shp')
+        WRS_subset <- WRS[poly_cntrd,]
+        write_csv(st_drop_geometry(WRS_subset), 'data_acquisition/out/WRS_subset_list.csv')
+        return(WRS_subset$PR)
+      }
+    }
+  }
 }
   
 

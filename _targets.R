@@ -2,7 +2,7 @@ library(targets)
 library(tarchetypes)
 library(reticulate)
 
-yaml_file <- "test_config.yml"
+yaml_file <- "loire_config.yml"
 
 # MUST READ ---------------------------------------------------------------
 
@@ -14,14 +14,13 @@ yaml_file <- "test_config.yml"
 
 # RUNNING {TARGETS}:
 #
-# run tar_make() to run the pipeline
-# run tar_visnetwork() to see visual summary
+# use the file 'run_targets.Rmd', which includes EE authentication.
 
 
 # Set up python virtual environment ---------------------------------------
 
 if (!dir.exists("env")) {
-  source("data_acquisition/src/pySetup.R")
+  tar_source("data_acquisition/src/pySetup.R")
 } else {
   use_condaenv(file.path(getwd(), "env"))
 }
@@ -29,8 +28,9 @@ if (!dir.exists("env")) {
 
 # Source functions --------------------------------------------------------
 
-source("data_acquisition/src/general_functions.R")
+tar_source("data_acquisition/src/general_functions.R")
 source_python("data_acquisition/src/gee_functions.py")
+
 
 # Define {targets} workflow -----------------------------------------------
 
@@ -54,7 +54,7 @@ list(
       config_file
       format_yaml(yaml_file)
       },
-    packages = c("yaml", "readr")
+    packages = c("yaml", "readr", "tidyverse") #for some reason, you have to load TV.
   ),
 
   # track the yml file
@@ -79,7 +79,7 @@ list(
     read = read_csv(!!.x),
     packages = "readr"
   ),
-
+  
   # use location to get polygons for NHD
   tar_target(
     name = poly_save,
@@ -89,7 +89,7 @@ list(
 
   # track polygons file
   tar_file_read(
-    name = polygon, # this will throw an error if the configure extent does not include polygon
+    name = polygons, # this will throw an error if the configure extent does not include polygon
     command = tar_read(poly_save),
     read = read_sf(!!.x),
     packages = "sf",
@@ -112,10 +112,22 @@ list(
     error = "null"
   ),
 
+  # get WRS tile acquistion method
+  tar_target(
+    name = WRS_detection_method,
+    command = {
+      locs
+      centers
+      polygons
+      get_WRS_detection(yml_file)
+      },
+    packages = "readr"
+  ),
+  
   # get WRS tiles
   tar_target(
     name = WRS_tiles,
-    command = get_WRS_tiles(locs_file, yml_file),
+    command = get_WRS_tiles(WRS_detection_method, yml_file),
     packages = c("readr", "sf")
   ),
 
@@ -123,8 +135,9 @@ list(
   tar_target(
     name = eeRun,
     command = {
+      yml
       locs
-      polygon
+      polygons
       centers
       csv_to_eeFeat
       apply_scale_factors
@@ -143,8 +156,10 @@ list(
       calc_hill_shades
       remove_geo
       maximum_no_of_tasks
-      ref_pull_457
-      ref_pull_89
+      ref_pull_457_DSWE1
+      ref_pull_89_DSWE1
+      ref_pull_457_DSWE3
+      ref_pull_89_DSWE3
       run_GEE_per_tile(WRS_tiles)
     },
     pattern = map(WRS_tiles),
