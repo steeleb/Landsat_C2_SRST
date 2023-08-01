@@ -1,4 +1,11 @@
-# format_yaml: Function to read in yaml, reformat and pivot for easy use in scripts ----
+#' Function to read in yaml, reformat and pivot for easy use in scripts
+#' 
+#' @param yml_file user-specified file containing configuration details for the
+#' pull.
+#' @returns filepath for the .csv of the reformatted yaml file. Silently saves 
+#' the .csv in the `data_acquisition/in` directory path.
+#' 
+#' 
 format_yaml <-  function(yml_file) {
   yaml <-  read_yaml(yml_file)
   # create a nested tibble from the yaml file
@@ -27,8 +34,15 @@ format_yaml <-  function(yml_file) {
 }
 
 
-# grab_locs: Load in and format location file using yaml file ----
-
+#' Load in and format location file using config settings
+#' 
+#' @param yaml contents of the yaml .csv file
+#' @returns filepath for the .csv of the reformatted location data or the message
+#' 'Not configured to use site locations'. Silently saves 
+#' the .csv in the `data_acquisition/in` directory path if configured for site
+#' acquisition.
+#' 
+#' 
 grab_locs <- function(yaml) {
   if (grepl('site', yaml$extent[1])) {
     locs <- read_csv(file.path(yaml$data_dir, yaml$location_file))
@@ -47,13 +61,20 @@ grab_locs <- function(yaml) {
 }
 
 
-# get_NHD: if user desires lake extent and does not provide lake polygons, use NHDPlus to grab and export polygons
-
-get_NHD <- function(locs, yaml) {
-  yaml = read_csv(yaml)
+#' Use NHDPlusTools to create a polygon shapefile if user wants whole-lake 
+#' summaries, or use the user-specified shapefile.
+#' 
+#' @param yaml contents of the yaml .csv file
+#' @param locations contents of the formatted locations file
+#' @returns filepath for the .shp of the polygons or the message
+#' 'Not configured to use polygons'. Silently saves 
+#' the .shp in the `data_acquisition/in` directory path if configured for polygon
+#' acquisition.
+#' 
+#' 
+get_NHD <- function(locations, yaml) {
   if (grepl('poly', yaml$extent[1])) { # if polygon is specified in desired extent - either polycenter or polgon
     if (yaml$polygon[1] == 'FALSE') { # and no polygon is provided, then use nhdplustools
-      locations = read_csv(locs)
       # create sf
       wbd_pts = st_as_sf(locations, crs = yaml$location_crs[1], coords = c('Longitude', 'Latitude'))
       id = locations$id
@@ -85,12 +106,20 @@ get_NHD <- function(locs, yaml) {
   }
 }
 
-# calc_center
+#' Use polygon and 'point of inaccessibility' function (polylabelr::poi()) to 
+#' determine the equivalent of
+#' Chebyshev center, furthest point from every edge of a polygon
+#' 
+#' @param yaml contents of the yaml .csv file
+#' @param poly sfc object of polygon areas for acquisition
+#' @returns filepath for the .shp of the polygon centers or the message
+#' 'Not configured to use polygon centers'. Silently saves 
+#' the polygon centers shapefile in the `data_acquisition/in` directory path 
+#' if configured for polygon centers acquisition.
+#' 
+#' 
 calc_center <- function(poly, yaml) {
-  yaml = read_csv(yaml)
   if (grepl('center', yaml$extent[1])) {
-    # load polygon
-    polygon = read_sf(poly)
     # create an empty tibble
     cc_df = tibble(
       rowid = integer(),
@@ -98,8 +127,8 @@ calc_center <- function(poly, yaml) {
       lat = numeric(),
       dist = numeric()
     )
-    for (i in 1:length(polygon[[1]])) {
-      coord = polygon[i,] %>% st_coordinates()
+    for (i in 1:length(poly[[1]])) {
+      coord = poly[i,] %>% st_coordinates()
       x = coord[,1]
       y = coord[,2]
       poly_poi = poi(x,y, precision = 0.00001)
@@ -109,24 +138,24 @@ calc_center <- function(poly, yaml) {
       cc_df$lat[i] = poly_poi$y
       cc_df$dist[i] = poly_poi$dist
     }
-    cc_dp <- polygon %>%
+    cc_dp <- poly %>%
       st_drop_geometry() %>% 
       full_join(., cc_dp)
-    cc_geo <- st_as_sf(cc_df, coords = c('lon', 'lat'), crs = st_crs(polygon))
+    cc_geo <- st_as_sf(cc_df, coords = c('lon', 'lat'), crs = st_crs(poly))
     
     if (yaml$lake_poly[1] == FALSE) {
       write_sf(cc_geo, file.path('data_acquisition/out/NHDPlus_polygon_centers.shp'))
       cc_df %>% 
         rename(center_lat = lat,
                center_lon = lon) %>% 
-        write_csv(paste0('data_acquisition/out/NHDPlus_polygon_centers.csv')) 
+        write_csv('data_acquisition/out/NHDPlus_polygon_centers.csv')
       return('data_acquisition/out/NHDPlus_polygon_centers.shp')
       } else {
       write_sf(cc_geo, file.path('data_acquisition/out/user_polygon_centers.shp'))
       cc_df %>% 
         rename(center_lat = lat,
                center_lon = lon) %>% 
-        write_csv(paste0('data_acquisition/out/user_polygon_centers.csv'))
+        write_csv('data_acquisition/out/user_polygon_centers.csv')
       return('data_acquisition/out/user_polygon_centers.shp')
     }
   } else {
@@ -135,50 +164,58 @@ calc_center <- function(poly, yaml) {
 }
   
 
-### get_WRS_detection: function to name the file to grab WRS tiles
-
-# points are the easiest, so prioritize those.
-get_WRS_detection <- function(yml) {
-  yml = read_csv(yml)
-  extent = yml$extent[1]
-  if (grepl('site', extent)) {
-    return('site')
+#' Function to use the yaml file extent to define the optimal shapefile for 
+#' determining the WRS paths that need to be extracted.
+#' 
+#' @param yaml contents of the yaml .csv file
+#' @returns text string
+#' 
+#' @details Polygons are the first choice for WRS overlap, as they cover more
+#' area and are most likely to cross the boundaries of WRS tiles. 
+#' 
+#' 
+get_WRS_detection <- function(yaml) {
+  extent = yaml$extent[1]
+  if (grepl('poly', extent)) {
+    return('polygon')
   } else {
-    if (grepl('center', extent)) {
-      return('center')
+    if (grepl('site', extent)) {
+      return('site')
     } else {
-      if (grepl('poly', extent)) {
-        return('polygon')
+      if (grepl('center', extent)) {
+        return('center')
       }
     }
   }
 }
 
-### get_WRS_tiles: function to get all WRS tiles for branching
 
-get_WRS_tiles <- function(detection, yml) {
-  yml <- read_csv(yml)
-  if (detection == 'site') {
-    locations <- read_csv(tar_read(locs)) 
-    locations <- st_as_sf(locations, coords = c('Longitude', 'Latitude'))
-    st_crs(locations) <- yml$location_crs
-    WRS <- read_sf('data_acquisition/in/WRS2_descending.shp')
+#' Function to use the optimal shapefile from get_WRS_detection() to define
+#' the list of WRS2 tiles for branching
+#' 
+#' @param detection_method optimal shapefile from get_WRS_detection()
+#' @param yaml contents of the yaml .csv file
+#' @returns list of WRS2 tiles
+#' 
+#' 
+get_WRS_tiles <- function(detection_method, yaml) {
+  WRS <- read_sf('data_acquisition/in/WRS2_descending.shp')
+  if (detection_method == 'site') {
+    locations <- tar_read(locs)
     WRS_subset <- WRS[locations,]
     write_csv(st_drop_geometry(WRS_subset), 'data_acquisition/out/WRS_subset_list.csv')
     return(WRS_subset$PR)
   } else {
-    if (detection == 'centers') {
+    if (detection_method == 'centers') {
       centers <- tar_read(centers)
       centers_cntrd <- st_centroid(centers)
-      WRS <- read_sf('data_acquisition/in/WRS2_descending.shp')
       WRS_subset <- WRS[centers_cntrd,]
       write_csv(st_drop_geometry(WRS_subset), 'data_acquisition/out/WRS_subset_list.csv')
       return(WRS_subset$PR)
     } else {
-      if (detection == 'polygon') {
+      if (detection_method == 'polygon') {
         poly <- tar_read(polygons)
         poly_cntrd <- st_centroid(poly)
-        WRS <- read_sf('data_acquisition/in/WRS2_descending.shp')
         WRS_subset <- WRS[poly_cntrd,]
         write_csv(st_drop_geometry(WRS_subset), 'data_acquisition/out/WRS_subset_list.csv')
         return(WRS_subset$PR)
@@ -188,10 +225,14 @@ get_WRS_tiles <- function(detection, yml) {
 }
   
 
-### run_GEE_per_tile: function to run a single tile through the 'run_GEE.py' file
-
+#' Function to run the Landsat Pull for a specified WRS2 tile.
+#' 
+#' @param WRS_tile tile to run the GEE pull on
+#' @returns Silently writes a text file of the current tile (for use in the
+#' Python script). Silently triggers GEE to start stack acquisition per tile.
+#' 
+#' 
 run_GEE_per_tile <- function(WRS_tile) {
-  tile <- WRS_tile
-  write_lines(tile, 'data_acquisition/out/current_tile.txt', sep = '')
+  write_lines(WRS_tile, 'data_acquisition/out/current_tile.txt', sep = '')
   source_python('data_acquisition/src/runGEEperTile.py')
 }

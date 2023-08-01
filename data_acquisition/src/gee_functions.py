@@ -1,7 +1,13 @@
-# Python-based GEE functions
-
-# create an eeFeature from the location info
 def csv_to_eeFeat(df, proj):
+  """Function to create an eeFeature from the location info
+
+  Args:
+      df: point locations .csv file with Latitude and Longitude
+      proj: CRS projection of the points
+
+  Returns:
+      ee.FeatureCollection of the points 
+  """
   features=[]
   for i in range(df.shape[0]):
     x,y = df.Longitude[i],df.Latitude[i]
@@ -14,19 +20,44 @@ def csv_to_eeFeat(df, proj):
   return ee_object
 
 
-## per GEE code to scale SR 
 def apply_scale_factors(image):
+  """ Applies scaling factors for Landsat Collection 2 surface reflectance 
+  and surface temperature products
+
+  Args:
+      image: one ee.Image of an ee.ImageCollection
+
+  Returns:
+      ee.Image with band values overwritten by scaling factors
+  """
   opticalBands = image.select('SR_B.').multiply(0.0000275).add(-0.2)
   thermalBands = image.select('ST_B.*').multiply(0.00341802).add(149.0)
   return image.addBands(opticalBands, None, True).addBands(thermalBands, None,True)
 
 
-## Buffer the lake sites
-def dp_buff(i):
-  return i.buffer(ee.Number.parse(str(buffer)))
+def dp_buff(image):
+  """ Buffer ee.FeatureCollection sites from csv_to_eeFeat by user-specified radius
+
+  Args:
+      image: ee.Image of an ee.ImageCollection
+
+  Returns:
+      ee.FeatureCollection of polygons resulting from buffered points
+  """
+  return image.buffer(ee.Number.parse(str(buffer)))
 
 
 def add_rad_mask(image):
+  """Mask out all pixels that are radiometrically saturated using the QA_RADSAT
+  QA band.
+
+  Args:
+      image: ee.Image of an ee.ImageCollection
+
+  Returns:
+      ee.Image with additional band called 'radsat', where pixels with a value 
+      of 0 are saturated for at least one SR band and a value of 1 is not saturated
+  """
   #grab the radsat band
   satQA = image.select('radsat_qa')
   # all must be non-saturated per pixel
@@ -35,6 +66,16 @@ def add_rad_mask(image):
 
 
 def cf_mask(image):
+  """Masks any pixels obstructed by clouds and snow/ice
+
+  Args:
+      image: ee.Image of an ee.ImageCollection
+
+  Returns:
+      ee.Image with additional band called 'cfmask', where pixels are given values
+      based on the QA_PIXEL band informaiton. Generally speaking, 0 is clear, values 
+      greater than 0 are obstructed by clouds and/or snow/ice
+  """
   #grab just the pixel_qa info
   qa = image.select('pixel_qa')
   cloudqa = (qa.bitwiseAnd(1 << 1).rename('cfmask') #dialated clouds value 1
@@ -45,6 +86,18 @@ def cf_mask(image):
 
 
 def sr_cloud_mask(image):
+  """Masks any pixles in Landsat 4-7 that are contaminated by the inputs of 
+  the atmospheric processing steps
+
+  Args:
+      image: ee.Image of an ee.ImageCollection
+
+  Returns:
+      ee.Image with additional band called 'sr_cloud', where pixels are given values
+      based on the SR_CLOUD_QA band informaiton. Generally speaking, 0 is clear, values
+      greater than 0 are obstructed by clouds and/or snow/ice specifically from atmospheric
+      processing steps
+  """
   srCloudQA = image.select('cloud_qa')
   srMask = (srCloudQA.bitwiseAnd(1 << 1).rename('sr_cloud') # cloud
     .where(srCloudQA.bitwiseAnd(1 << 2), ee.Image(2)) # cloud shadow
@@ -52,43 +105,86 @@ def sr_cloud_mask(image):
     .where(srCloudQA.bitwiseAnd(1 << 4), ee.Image(4))) # snow/ice
   return image.addBands(srMask)
 
-# grabbing qualitative measure of aerosol Level
 
 def sr_aerosol(image):
+  """Flags any pixels in Landsat 8 and 9 that have 'medium' or 'high' aerosol QA flags from the
+  SR_QA_AEROSOL band.
+
+  Args:
+      image: ee.Image of an ee.ImageCollection
+
+  Returns:
+      ee.Image with additional band called 'medHighAero', where pixels are given a value of 1
+      if the aerosol QA flag is medium or high and 0 otherwise
+  """
   aerosolQA = image.select('aerosol_qa')
   medHighAero = aerosolQA.bitwiseAnd(1 << 7).rename('medHighAero')# pull out mask out where aeorosol is med and high
   return image.addBands(medHighAero)
 
 
-
-# modified normalized difference water index
 def Mndwi(image):
+  """calculate the modified normalized difference water index per pixel
+
+  Args:
+      image: ee.Image of an ee.ImageCollection
+
+  Returns:
+      band where values calculated are the MNDWI value per pixel
+  """
   return (image.expression('(GREEN - SWIR1) / (GREEN + SWIR1)', {
     'GREEN': image.select(['Green']),
     'SWIR1': image.select(['Swir1'])
   }))
   
 
-# multi-band Spectral Relationship Visible
 def Mbsrv(image):
+  """calculate the multi-band spectral relationship visible per pixel
+
+  Args:
+      image: ee.Image of an ee.ImageCollection
+
+  Returns:
+      band where values calculated are the MBSRV value per pixel
+  """
   return (image.select(['Green']).add(image.select(['Red'])).rename('mbsrv'))
 
 
-# Multi-band Spectral Relationship Near infrared
 def Mbsrn(image):
+  """calculate the multi-band spectral relationship near infrared per pixel
+
+  Args:
+      image: ee.Image of an ee.ImageCollection
+
+  Returns:
+      band where values calculated are the MBSRN value per pixel
+  """
   return (image.select(['Nir']).add(image.select(['Swir1'])).rename('mbsrn'))
 
 
-# Normalized Difference Vegetation Index
 def Ndvi(image):
+  """calculate the normalized difference vegetation index per pixel
+
+  Args:
+      image: ee.Image of an ee.ImageCollection
+
+  Returns:
+      band where values calculated are the NDVI value per pixel
+  """
   return (image.expression('(NIR - RED) / (NIR + RED)', {
     'RED': image.select(['Red']),
     'NIR': image.select(['Nir'])
   }))
 
 
-# Automated Water Extent Shadow
 def Awesh(image):
+  """calculate the automated water extent shadow per pixel
+
+  Args:
+      image: ee.Image of an ee.ImageCollection
+
+  Returns:
+      band where values calculated are the AWESH value per pixel
+  """
   return (image.expression('Blue + 2.5 * Green + (-1.5) * mbsrn + (-0.25) * Swir2', {
     'Blue': image.select(['Blue']),
     'Green': image.select(['Green']),
@@ -98,16 +194,24 @@ def Awesh(image):
 
 
 ## The DSWE Function itself    
-def DSWE(i):
-  mndwi = Mndwi(i)
-  mbsrv = Mbsrv(i)
-  mbsrn = Mbsrn(i)
-  awesh = Awesh(i)
-  swir1 = i.select(['Swir1'])
-  nir = i.select(['Nir'])
-  ndvi = Ndvi(i)
-  blue = i.select(['Blue'])
-  swir2 = i.select(['Swir2'])
+def DSWE(image):
+  """calculate the dynamic surface water extent per pixel
+  
+  Args:
+      image: ee.Image of an ee.ImageCollection
+      
+  Returns:
+      band where values calculated are the DSWE value per pixel
+  """
+  mndwi = Mndwi(image)
+  mbsrv = Mbsrv(image)
+  mbsrn = Mbsrn(image)
+  awesh = Awesh(image)
+  swir1 = image.select(['Swir1'])
+  nir = image.select(['Nir'])
+  ndvi = Ndvi(image)
+  blue = image.select(['Blue'])
+  swir2 = image.select(['Swir2'])
   # These thresholds are taken from the LS Collection 2 DSWE Data Format Control Book
   # Inputs are meant to be scaled reflectance values 
   t1 = mndwi.gt(0.124) # MNDWI greater than Wetness Index Threshold
@@ -168,6 +272,15 @@ def DSWE(i):
 
 
 def calc_hill_shades(image, geo):
+  """ caluclate the hill shade per pixel
+
+  Args:
+      image: ee.Image of an ee.ImageCollection
+      geo: geometry of the WRS tile as wrs.geometry() in script
+
+  Returns:
+      a band named 'hillShade' where values calculated are the hill shade per pixel
+  """
   MergedDEM = ee.Image("users/eeProject/MERIT").clip(geo.buffer(3000))
   hillShade = ee.Terrain.hillshade(MergedDEM, 
     ee.Number(image.get('SUN_AZIMUTH')), 
@@ -177,6 +290,15 @@ def calc_hill_shades(image, geo):
 
 
 def calc_hill_shadows(image, geo):
+  """ caluclate the hill shadow per pixel
+  
+  Args:
+      image: ee.Image of an ee.ImageCollection
+      geo: geometry of the WRS tile as wrs.geometry() in script
+  
+  Returns:
+      a band named 'hillShadow' where values calculated are the hill shadow per pixel
+  """
   MergedDEM = ee.Image("users/eeProject/MERIT").clip(geo.buffer(3000))
   hillShadow = ee.Terrain.hillShadow(MergedDEM, 
     ee.Number(image.get('SUN_AZIMUTH')),
@@ -187,12 +309,29 @@ def calc_hill_shadows(image, geo):
 
 
 ## Remove geometries
-def remove_geo(i):
-  return i.setGeometry(None)
+def remove_geo(image):
+  """ Funciton to remove the geometry from the image
+  
+  Args:
+      image: ee.Image of an ee.ImageCollection
+      
+  Returns:
+      ee.Image with the geometry removed
+  """
+  return image.setGeometry(None)
 
 
 ## Set up the reflectance pull
 def ref_pull_457_DSWE1(image):
+  """ This function applies all functions to the Landsat 4-7 ee.ImageCollection, extracting
+  summary statistics for each geometry area where the DSWE value is 1 (high confidence water)
+
+  Args:
+      image: ee.Image of an ee.ImageCollection
+
+  Returns:
+      summaries for band data within any given geometry area where the DSWE value is 1
+  """
   # process image with the radsat mask
   r = add_rad_mask(image).select('radsat')
   # process image with cfmask
@@ -251,6 +390,16 @@ def ref_pull_457_DSWE1(image):
   return out
 
 def ref_pull_457_DSWE3(image):
+  """ This function applies all functions to the Landsat 4-7 ee.ImageCollection, extracting
+  summary statistics for each geometry area where the DSWE value is 3 (high confidence
+  vegetated pixel)
+
+  Args:
+      image: ee.Image of an ee.ImageCollection
+
+  Returns:
+      summaries for band data within any given geometry area where the DSWE value is 3
+  """
   # process image with the radsat mask
   r = add_rad_mask(image).select('radsat')
   # process image with cfmask
@@ -310,6 +459,15 @@ def ref_pull_457_DSWE3(image):
 
 
 def ref_pull_89_DSWE1(image):
+  """ This function applies all functions to the Landsat 8 and 9 ee.ImageCollection, extracting
+  summary statistics for each geometry area where the DSWE value is 1 (high confidence water)
+
+  Args:
+      image: ee.Image of an ee.ImageCollection
+
+  Returns:
+      summaries for band data within any given geometry area where the DSWE value is 1
+  """
   # process image with the radsat mask
   r = add_rad_mask(image).select('radsat')
   # process image with cfmask
@@ -338,7 +496,7 @@ def ref_pull_89_DSWE1(image):
             .addBands(image.select(['SurfaceTemp'],
             ['Q3_SurfaceTemp']))
             .addBands(image.select(['Aerosol','Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2', 'SurfaceTemp'],
-            ['sd_Aerosol','sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp', 'sd_temp_qa']))
+            ['sd_Aerosol','sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp']))
             .addBands(image.select(['Aerosol','Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2', 'SurfaceTemp', 'temp_qa', 'ST_CDIST'],
             ['mean_Aerosol','mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist']))
             .addBands(image.select(['SurfaceTemp']))
@@ -368,7 +526,17 @@ def ref_pull_89_DSWE1(image):
   return out
 
 def ref_pull_89_DSWE3(image):
-  # process image with the radsat mask
+  """ This function applies all functions to the Landsat 8 and 9 ee.ImageCollection, extracting
+  summary statistics for each geometry area where the DSWE value is 3 (high confidence vegetated
+  pixels)
+
+  Args:
+      image: ee.Image of an ee.ImageCollection
+
+  Returns:
+      summaries for band data within any given geometry area where the DSWE value is 3
+  """
+# process image with the radsat mask
   r = add_rad_mask(image).select('radsat')
   # process image with cfmask
   f = cf_mask(image).select('cfmask')
@@ -396,7 +564,7 @@ def ref_pull_89_DSWE3(image):
             .addBands(image.select(['SurfaceTemp'],
             ['Q3_SurfaceTemp']))
             .addBands(image.select(['Aerosol','Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2', 'SurfaceTemp'],
-            ['sd_Aerosol','sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp', 'sd_temp_qa']))
+            ['sd_Aerosol','sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp']))
             .addBands(image.select(['Aerosol','Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2', 'SurfaceTemp', 'temp_qa', 'ST_CDIST'],
             ['mean_Aerosol','mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist']))
             .addBands(image.select(['SurfaceTemp']))
@@ -429,6 +597,15 @@ def ref_pull_89_DSWE3(image):
 ##Function for limiting the max number of tasks sent to
 #earth engine at one time to avoid time out errors
 def maximum_no_of_tasks(MaxNActive, waitingPeriod):
+  """ Function to limit the number of tasks sent to Earth Engine at one time to avoid time out errors
+  
+  Args:
+      MaxNActive: maximum number of tasks that can be active in Earth Engine at one time
+      waitingPeriod: time to wait between checking if tasks are completed, in seconds
+      
+  Returns:
+      None.
+  """
   ##maintain a maximum number of active tasks
   ## initialize submitting jobs
   ts = list(ee.batch.Task.list())
