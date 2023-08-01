@@ -39,7 +39,7 @@ tar_option_set(packages = "tidyverse")
 
 # target objects in workflow
 list(
-  #track the config file
+  # read and track the config file
   tar_file_read(
     name = config_file,
     command = yaml_file,
@@ -51,13 +51,14 @@ list(
   tar_target(
     name = yml_save,
     command = {
-      config_file
+      # make sure that {targets} runs the config_file target before this target
+      config_file 
       format_yaml(yaml_file)
       },
-    packages = c("yaml", "readr", "tidyverse") #for some reason, you have to load TV.
+    packages = c("yaml", "tidyverse") #for some reason, you have to load TV.
   ),
 
-  # track the yml file
+  # read in and track the formatted yml .csv file
   tar_file_read(
     name = yml,
     command = yml_save,
@@ -65,14 +66,14 @@ list(
     packages = "readr"
   ),
 
-  # load, format, save locs as an updated csv
+  # load, format, save user locations as an updated csv called locs.csv
   tar_target(
     name = locs_save,
     command = grab_locs(yml),
     packages = "readr"
   ),
 
-  # track locs file
+  # read and track formatted locations shapefile
   tar_file_read(
     name = locs,
     command = locs_save,
@@ -80,14 +81,14 @@ list(
     packages = "readr"
   ),
   
-  # use location to get polygons for NHD
+  # use location shapefile and configurations to get polygons from NHDPlusv2
   tar_target(
     name = poly_save,
-    command = get_NHD(locs_save, yml_save),
-    packages = c("nhdplusTools", "sf", "readr")
+    command = get_NHD(locs, yml),
+    packages = c("nhdplusTools", "sf", "tidyverse")
   ),
 
-  # track polygons file
+  # load and track polygons file
   tar_file_read(
     name = polygons, # this will throw an error if the configure extent does not include polygon
     command = tar_read(poly_save),
@@ -96,10 +97,10 @@ list(
     error = "null"
   ),
 
-  # use polygon to calculate centers
+  # use `polygons` sfc to calculate Chebyshev centers
   tar_target(
     name = centers_save,
-    command = calc_center(poly_save, yml_save),
+    command = calc_center(polygons, yml),
     packages = c("sf", "polylabelr")
   ),
 
@@ -112,14 +113,14 @@ list(
     error = "null"
   ),
 
-  # get WRS tile acquistion method
+  # get WRS tile acquisition method from yaml
   tar_target(
     name = WRS_detection_method,
     command = {
       locs
       centers
       polygons
-      get_WRS_detection(yml_file)
+      get_WRS_detection(yml)
       },
     packages = "readr"
   ),
@@ -127,7 +128,7 @@ list(
   # get WRS tiles
   tar_target(
     name = WRS_tiles,
-    command = get_WRS_tiles(WRS_detection_method, yml_file),
+    command = get_WRS_tiles(WRS_detection_method, yml_save),
     packages = c("readr", "sf")
   ),
 
