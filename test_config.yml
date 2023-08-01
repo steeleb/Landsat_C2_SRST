@@ -28,7 +28,7 @@ temporal_settings:
 
 spatial_settings: 
 - extent: "site" # options: "site", "polygon", "polycenter", "site+polygon", etc - only site/polygon function right now
-- site_buffer: 90 # buffer distance in meters around the site
+- site_buffer: 120 # buffer distance in meters around the site
 
 gee_settings:
 - cloud_filter: "True" # True or False - if True, scenes will be filtered by scene-level cloudy value provided in the metadata
