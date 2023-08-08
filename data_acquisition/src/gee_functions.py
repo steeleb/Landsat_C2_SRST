@@ -279,7 +279,8 @@ def calc_hill_shades(image, geo):
       geo: geometry of the WRS tile as wrs.geometry() in script
 
   Returns:
-      a band named 'hillShade' where values calculated are the hill shade per pixel
+      a band named 'hillShade' where values calculated are the hill shade per 
+      pixel. output is 0-255. 
   """
   MergedDEM = ee.Image("users/eeProject/MERIT").clip(geo.buffer(3000))
   hillShade = ee.Terrain.hillshade(MergedDEM, 
@@ -297,7 +298,8 @@ def calc_hill_shadows(image, geo):
       geo: geometry of the WRS tile as wrs.geometry() in script
   
   Returns:
-      a band named 'hillShadow' where values calculated are the hill shadow per pixel
+      a band named 'hillShadow' where values calculated are the hill shadow per 
+      pixel. output 1 where pixels are illumunated and 0 where they are shadowed.
   """
   MergedDEM = ee.Image("users/eeProject/MERIT").clip(geo.buffer(3000))
   hillShadow = ee.Terrain.hillShadow(MergedDEM, 
@@ -369,10 +371,13 @@ def ref_pull_457_DSWE1(image):
             .updateMask(r.eq(1)) #1 == no saturated pixels
             .updateMask(f.eq(0)) #no snow or clouds
             .updateMask(s.eq(0)) # no SR processing artefacts
+            .updateMask(hs.eq(1)) # only illuminated pixels
             .addBands(dswe1)
             .addBands(dswe3)
             .addBands(clouds) 
-            .addBands(hs)) 
+            .addBands(hs)
+            .addBands(h)
+            ) 
   combinedReducer = (ee.Reducer.median().unweighted().forEachBand(pixOut.select(['med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa']))
     .combine(ee.Reducer.min().unweighted().forEachBand(pixOut.select(['min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist'])), sharedInputs = False)
     .combine(ee.Reducer.max().unweighted().forEachBand(pixOut.select(['max_SurfaceTemp', 'max_temp_qa'])), sharedInputs = False)
@@ -382,7 +387,9 @@ def ref_pull_457_DSWE1(image):
     .combine(ee.Reducer.mean().unweighted().forEachBand(pixOut.select(['mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist'])), sharedInputs = False)
     .combine(ee.Reducer.kurtosis().unweighted().forEachBand(pixOut.select(['SurfaceTemp'])), outputPrefix = 'kurt_', sharedInputs = False)
     .combine(ee.Reducer.count().unweighted().forEachBand(pixOut.select(['dswe1', 'dswe3'])), outputPrefix = 'pCount_', sharedInputs = False)
-    .combine(ee.Reducer.mean().unweighted().forEachBand(pixOut.select(['clouds', 'hillShadow'])), outputPrefix = 'prop_', sharedInputs = False))
+    .combine(ee.Reducer.mean().unweighted().forEachBand(pixOut.select(['clouds', 'hillShadow'])), outputPrefix = 'prop_', sharedInputs = False)
+    .combine(ee.Reducer.mean().unweighted().forEachBand(pixOut.select(['hillShade'])), outputPrefix = 'mean_', sharedInputs = False)
+    )
   # Collect median reflectance and occurance values
   # Make a cloud score, and get the water pixel count
   lsout = (pixOut.reduceRegions(feat, combinedReducer, 30))
@@ -437,10 +444,13 @@ def ref_pull_457_DSWE3(image):
             .updateMask(r.eq(1)) #1 == no saturated pixels
             .updateMask(f.eq(0)) #no snow or clouds
             .updateMask(s.eq(0)) # no SR processing artefacts
+            .updateMask(hs.eq(1)) # only illuminated pixels
             .addBands(dswe1)
             .addBands(dswe3)
             .addBands(clouds) 
-            .addBands(hs)) 
+            .addBands(hs)
+            .addBands(h)
+            ) 
   combinedReducer = (ee.Reducer.median().unweighted().forEachBand(pixOut.select(['med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa']))
     .combine(ee.Reducer.min().unweighted().forEachBand(pixOut.select(['min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist'])), sharedInputs = False)
     .combine(ee.Reducer.max().unweighted().forEachBand(pixOut.select(['max_SurfaceTemp', 'max_temp_qa'])), sharedInputs = False)
@@ -450,7 +460,9 @@ def ref_pull_457_DSWE3(image):
     .combine(ee.Reducer.mean().unweighted().forEachBand(pixOut.select(['mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist'])), sharedInputs = False)
     .combine(ee.Reducer.kurtosis().unweighted().forEachBand(pixOut.select(['SurfaceTemp'])), outputPrefix = 'kurt_', sharedInputs = False)
     .combine(ee.Reducer.count().unweighted().forEachBand(pixOut.select(['dswe1', 'dswe3'])), outputPrefix = 'pCount_', sharedInputs = False)
-    .combine(ee.Reducer.mean().unweighted().forEachBand(pixOut.select(['clouds', 'hillShadow'])), outputPrefix = 'prop_', sharedInputs = False))
+    .combine(ee.Reducer.mean().unweighted().forEachBand(pixOut.select(['clouds', 'hillShadow'])), outputPrefix = 'prop_', sharedInputs = False)
+    .combine(ee.Reducer.mean().unweighted().forEachBand(pixOut.select(['hillShade'])), outputPrefix = 'mean_', sharedInputs = False)
+    )
   # Collect median reflectance and occurance values
   # Make a cloud score, and get the water pixel count
   lsout = (pixOut.reduceRegions(feat, combinedReducer, 30))
@@ -503,12 +515,13 @@ def ref_pull_89_DSWE1(image):
             .updateMask(d.eq(1)) # only high confidence water
             .updateMask(r.eq(1)) #1 == no saturated pixels
             .updateMask(f.eq(0)) #no snow or clouds
+            .updateMask(hs.eq(1)) # only illuminated pixels
             .addBands(dswe1)
             .addBands(dswe3)
             .addBands(clouds)
             .addBands(hs)
+            .addBands(h)
             ) 
-            
   combinedReducer = (ee.Reducer.median().unweighted().forEachBand(pixOut.select(['med_Aerosol','med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa']))
     .combine(ee.Reducer.min().unweighted().forEachBand(pixOut.select(['min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist'])), sharedInputs = False)
     .combine(ee.Reducer.max().unweighted().forEachBand(pixOut.select(['max_SurfaceTemp', 'max_temp_qa'])), sharedInputs = False)
@@ -518,7 +531,9 @@ def ref_pull_89_DSWE1(image):
     .combine(ee.Reducer.mean().unweighted().forEachBand(pixOut.select(['mean_Aerosol', 'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist'])), sharedInputs = False)
     .combine(ee.Reducer.kurtosis().unweighted().forEachBand(pixOut.select(['SurfaceTemp'])), outputPrefix = 'kurt_', sharedInputs = False)
     .combine(ee.Reducer.count().unweighted().forEachBand(pixOut.select(['dswe1', 'dswe3'])), outputPrefix = 'pCount_', sharedInputs = False)
-    .combine(ee.Reducer.mean().unweighted().forEachBand(pixOut.select(['clouds', 'hillShadow'])), outputPrefix = 'prop_', sharedInputs = False))
+    .combine(ee.Reducer.mean().unweighted().forEachBand(pixOut.select(['clouds', 'hillShadow'])), outputPrefix = 'prop_', sharedInputs = False)
+    .combine(ee.Reducer.mean().unweighted().forEachBand(pixOut.select(['hillShade'])), outputPrefix = 'mean_', sharedInputs = False)
+    )
   # Collect median reflectance and occurance values
   # Make a cloud score, and get the water pixel count
   lsout = (pixOut.reduceRegions(feat, combinedReducer, 30))
@@ -571,12 +586,13 @@ def ref_pull_89_DSWE3(image):
             .updateMask(d.eq(3)) # only vegetated water
             .updateMask(r.eq(1)) #1 == no saturated pixels
             .updateMask(f.eq(0)) #no snow or clouds
+            .updateMask(hs.eq(1)) # only illuminated pixels
             .addBands(dswe1)
             .addBands(dswe3)
             .addBands(clouds)
             .addBands(hs)
+            .addBands(h)
             ) 
-            
   combinedReducer = (ee.Reducer.median().unweighted().forEachBand(pixOut.select(['med_Aerosol','med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa']))
     .combine(ee.Reducer.min().unweighted().forEachBand(pixOut.select(['min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist'])), sharedInputs = False)
     .combine(ee.Reducer.max().unweighted().forEachBand(pixOut.select(['max_SurfaceTemp', 'max_temp_qa'])), sharedInputs = False)
@@ -586,16 +602,15 @@ def ref_pull_89_DSWE3(image):
     .combine(ee.Reducer.mean().unweighted().forEachBand(pixOut.select(['mean_Aerosol', 'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist'])), sharedInputs = False)
     .combine(ee.Reducer.kurtosis().unweighted().forEachBand(pixOut.select(['SurfaceTemp'])), outputPrefix = 'kurt_', sharedInputs = False)
     .combine(ee.Reducer.count().unweighted().forEachBand(pixOut.select(['dswe1', 'dswe3'])), outputPrefix = 'pCount_', sharedInputs = False)
-    .combine(ee.Reducer.mean().unweighted().forEachBand(pixOut.select(['clouds', 'hillShadow'])), outputPrefix = 'prop_', sharedInputs = False))
-  # Collect median reflectance and occurance values
+    .combine(ee.Reducer.mean().unweighted().forEachBand(pixOut.select(['clouds', 'hillShadow'])), outputPrefix = 'prop_', sharedInputs = False)
+    .combine(ee.Reducer.mean().unweighted().forEachBand(pixOut.select(['hillShade'])), outputPrefix = 'mean_', sharedInputs = False)
+    )
   # Make a cloud score, and get the water pixel count
   lsout = (pixOut.reduceRegions(feat, combinedReducer, 30))
   out = lsout.map(remove_geo)
   return out
 
 
-##Function for limiting the max number of tasks sent to
-#earth engine at one time to avoid time out errors
 def maximum_no_of_tasks(MaxNActive, waitingPeriod):
   """ Function to limit the number of tasks sent to Earth Engine at one time to avoid time out errors
   

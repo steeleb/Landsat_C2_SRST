@@ -159,6 +159,7 @@ if 'site' in extent:
   # map the refpull function across the 'stack', flatten to an array
   if '1' in dswe:
     locs_out_457_D1 = locs_stack_ls457.map(ref_pull_457_DSWE1).flatten()
+    locs_out_457_D1 = locs_out_457_D1.filter(ee.Filter.notNull(['med_Blue']))
     locs_srname_457_D1 = proj+'_point_LS457_C2_SRST_DSWE1_'+str(tiles)+'_v'+str(date.today())
     locs_dataOut_457_D1 = (ee.batch.Export.table.toDrive(collection = locs_out_457_D1,
                                             description = locs_srname_457_D1,
@@ -170,9 +171,10 @@ if 'site' in extent:
                                             'Q1_SurfaceTemp', 
                                             'Q3_SurfaceTemp', 
                                             'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
-                                            'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 'mean_SurfaceTemp', 'mean_temp_qa', 
-                                            'kurt_SurfaceTemp','prop_clouds','prop_hillShadow',
-                                            'pCount_dswe1', 'pCount_dswe3', 'mean_cloud_dist','system:index']))
+                                            'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
+                                            'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist',
+                                            'kurt_SurfaceTemp', 'pCount_dswe1', 'pCount_dswe3', 
+                                            'prop_clouds','prop_hillShadow','mean_hillShade', 'system:index']))
     #Check how many existing tasks are running and take a break of 120 secs if it's >25 
     maximum_no_of_tasks(10, 120)
     #Send next task.                                        
@@ -183,6 +185,7 @@ if 'site' in extent:
   
   if '3' in dswe:
     locs_out_457_D3 = locs_stack_ls457.map(ref_pull_457_DSWE3).flatten()
+    locs_out_457_D3 = locs_out_457_D3.filter(ee.Filter.notNull(['med_Blue']))
     locs_srname_457_D3 = proj+'_point_LS457_C2_SRST_DSWE3_'+str(tiles)+'_v'+str(date.today())
     locs_dataOut_457_D3 = (ee.batch.Export.table.toDrive(collection = locs_out_457_D3,
                                             description = locs_srname_457_D3,
@@ -194,9 +197,10 @@ if 'site' in extent:
                                             'Q1_SurfaceTemp', 
                                             'Q3_SurfaceTemp', 
                                             'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
-                                            'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 'mean_SurfaceTemp', 'mean_temp_qa', 
-                                            'kurt_SurfaceTemp','prop_clouds','prop_hillShadow',
-                                            'pCount_dswe1', 'pCount_dswe3', 'mean_cloud_dist','system:index']))
+                                            'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
+                                            'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist',
+                                            'kurt_SurfaceTemp', 'pCount_dswe1', 'pCount_dswe3', 
+                                            'prop_clouds','prop_hillShadow','mean_hillShade', 'system:index']))
     #Check how many existing tasks are running and take a break of 120 secs if it's >25 
     maximum_no_of_tasks(10, 120)
     #Send next task.                                        
@@ -229,6 +233,7 @@ if 'site' in extent:
   
   if '1' in dswe:
     locs_out_89_D1 = locs_stack_ls89.map(ref_pull_89_DSWE1).flatten()
+    locs_out_89_D1 = locs_out_89_D1.filter(ee.Filter.notNull(['med_Blue']))
     locs_srname_89_D1 = proj+'_point_LS89_C2_SRST_DSWE1_'+str(tiles)+'_v'+str(date.today())
     locs_dataOut_89_D1 = (ee.batch.Export.table.toDrive(collection = locs_out_89_D1,
                                             description = locs_srname_89_D1,
@@ -239,10 +244,11 @@ if 'site' in extent:
                                             'max_SurfaceTemp', 'max_temp_qa',
                                             'Q1_SurfaceTemp', 
                                             'Q3_SurfaceTemp', 
-                                            'sd_Aerosol', 'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
-                                            'mean_Aerosol', 'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 'mean_SurfaceTemp', 'mean_temp_qa', 
-                                            'kurt_SurfaceTemp','prop_clouds','prop_hillShadow',
-                                            'pCount_dswe1', 'pCount_dswe3', 'mean_cloud_dist','system:index']))
+                                            'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
+                                            'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
+                                            'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist',
+                                            'kurt_SurfaceTemp', 'pCount_dswe1', 'pCount_dswe3', 
+                                            'prop_clouds','prop_hillShadow','mean_hillShade', 'system:index']))
     #Check how many existing tasks are running and take a break of 120 secs if it's >25 
     maximum_no_of_tasks(10, 120)
     #Send next task.                                        
@@ -253,6 +259,7 @@ if 'site' in extent:
   
   if '3' in dswe:
     locs_out_89_D3 = locs_stack_ls89.map(ref_pull_89_DSWE3).flatten()
+    locs_out_89_D3 = locs_out_89_D3.filter(ee.Filter.notNull(['med_Blue']))
     locs_srname_89_D3 = proj+'_point_LS89_C2_SRST_DSWE3_'+str(tiles)+'_v'+str(date.today())
     locs_dataOut_89_D3 = (ee.batch.Export.table.toDrive(collection = locs_out_89_D3,
                                             description = locs_srname_89_D3,
@@ -263,10 +270,11 @@ if 'site' in extent:
                                             'max_SurfaceTemp', 'max_temp_qa',
                                             'Q1_SurfaceTemp', 
                                             'Q3_SurfaceTemp', 
-                                            'sd_Aerosol', 'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
-                                            'mean_Aerosol', 'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 'mean_SurfaceTemp', 'mean_temp_qa',
-                                            'kurt_SurfaceTemp','prop_clouds','prop_hillShadow',
-                                            'pCount_dswe1', 'pCount_dswe3', 'mean_cloud_dist','system:index']))
+                                            'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
+                                            'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
+                                            'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist',
+                                            'kurt_SurfaceTemp', 'pCount_dswe1', 'pCount_dswe3', 
+                                            'prop_clouds','prop_hillShadow','mean_hillShade', 'system:index']))
     #Check how many existing tasks are running and take a break of 120 secs if it's >25 
     maximum_no_of_tasks(10, 120)
     #Send next task.                                        
@@ -297,6 +305,7 @@ if 'poly' in extent:
   # map the refpull function across the 'stack', flatten to an array
   if '1' in dswe:
     poly_out_457_D1 = poly_stack_ls457.map(ref_pull_457_DSWE1).flatten()
+    poly_out_457_D1 = poly_out_457_D1.filter(ee.Filter.notNull(['med_Blue']))
     poly_srname_457_D1 = proj+'_poly_LS457_C2_SRST_DSWE1_'+str(tiles)+'_v'+str(date.today())
     poly_dataOut_457_D1 = (ee.batch.Export.table.toDrive(collection = poly_out_457_D1,
                                             description = poly_srname_457_D1,
@@ -308,9 +317,10 @@ if 'poly' in extent:
                                             'Q1_SurfaceTemp', 
                                             'Q3_SurfaceTemp', 
                                             'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
-                                            'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 'mean_SurfaceTemp', 'mean_temp_qa',
-                                            'kurt_SurfaceTemp','prop_clouds','prop_hillShadow',
-                                            'pCount_dswe1', 'pCount_dswe3','mean_cloud_dist','system:index']))
+                                            'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
+                                            'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist',
+                                            'kurt_SurfaceTemp', 'pCount_dswe1', 'pCount_dswe3', 
+                                            'prop_clouds','prop_hillShadow','mean_hillShade', 'system:index']))
     #Check how many existing tasks are running and take a break of 120 secs if it's >25 
     maximum_no_of_tasks(10, 120)
     #Send next task.                                        
@@ -321,20 +331,22 @@ if 'poly' in extent:
   
   if '3' in dswe:
     poly_out_457_D3 = poly_stack_ls457.map(ref_pull_457_DSWE3).flatten()
+    poly_out_457_D3 = poly_out_457_D3.filter(ee.Filter.notNull(['med_Blue']))
     poly_srname_457_D3 = proj+'_poly_LS457_C2_SRST_DSWE3_'+str(tiles)+'_v'+str(date.today())
     poly_dataOut_457_D3 = (ee.batch.Export.table.toDrive(collection = poly_out_457_D3,
                                             description = poly_srname_457_D3,
                                             folder = proj_folder,
                                             fileFormat = 'csv',
                                             selectors = ['med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa',
-                                            'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist', 
+                                            'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
                                             'max_SurfaceTemp', 'max_temp_qa',
                                             'Q1_SurfaceTemp', 
                                             'Q3_SurfaceTemp', 
                                             'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
-                                            'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 'mean_SurfaceTemp', 'mean_temp_qa',
-                                            'kurt_SurfaceTemp','prop_clouds','prop_hillShadow',
-                                            'pCount_dswe1', 'pCount_dswe3','mean_cloud_dist','system:index']))
+                                            'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
+                                            'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist',
+                                            'kurt_SurfaceTemp', 'pCount_dswe1', 'pCount_dswe3', 
+                                            'prop_clouds','prop_hillShadow','mean_hillShade', 'system:index']))
     #Check how many existing tasks are running and take a break of 120 secs if it's >25 
     maximum_no_of_tasks(10, 120)
     #Send next task.                                        
@@ -365,6 +377,7 @@ if 'poly' in extent:
   
   if '1' in dswe:
     poly_out_89_D1 = poly_stack_ls89.map(ref_pull_89_DSWE1).flatten()
+    poly_out_89_D1 = poly_out_89_D1.filter(ee.Filter.notNull(['med_Blue']))
     poly_srname_89_D1 = proj+'_poly_LS89_C2_SRST_DSWE1_'+str(tiles)+'_v'+str(date.today())
     poly_dataOut_89_D1 = (ee.batch.Export.table.toDrive(collection = poly_out_89_D1,
                                             description = poly_srname_89_D1,
@@ -375,10 +388,11 @@ if 'poly' in extent:
                                             'max_SurfaceTemp', 'max_temp_qa',
                                             'Q1_SurfaceTemp', 
                                             'Q3_SurfaceTemp', 
-                                            'sd_Aerosol', 'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
-                                            'mean_Aerosol', 'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 'mean_SurfaceTemp', 'mean_temp_qa',
-                                            'kurt_SurfaceTemp','prop_clouds','prop_hillShadow',
-                                            'pCount_dswe1', 'pCount_dswe3','mean_cloud_dist','system:index']))
+                                            'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
+                                            'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
+                                            'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist',
+                                            'kurt_SurfaceTemp', 'pCount_dswe1', 'pCount_dswe3', 
+                                            'prop_clouds','prop_hillShadow','mean_hillShade', 'system:index']))
     #Check how many existing tasks are running and take a break of 120 secs if it's >25 
     maximum_no_of_tasks(10, 120)
     #Send next task.                                        
@@ -389,6 +403,7 @@ if 'poly' in extent:
   
   if '3' in dswe:
     poly_out_89_D3 = poly_stack_ls89.map(ref_pull_89_DSWE3).flatten()
+    poly_out_89_D3 = poly_out_89_D3.filter(ee.Filter.notNull(['med_Blue']))
     poly_srname_89_D3 = proj+'_poly_LS89_C2_SRST_DSWE3_'+str(tiles)+'_v'+str(date.today())
     poly_dataOut_89_D3 = (ee.batch.Export.table.toDrive(collection = poly_out_89_D3,
                                             description = poly_srname_89_D3,
@@ -399,10 +414,11 @@ if 'poly' in extent:
                                             'max_SurfaceTemp', 'max_temp_qa',
                                             'Q1_SurfaceTemp', 
                                             'Q3_SurfaceTemp', 
-                                            'sd_Aerosol', 'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
-                                            'mean_Aerosol', 'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 'mean_SurfaceTemp', 'mean_temp_qa',
-                                            'kurt_SurfaceTemp','prop_clouds','prop_hillShadow',
-                                            'pCount_dswe1', 'pCount_dswe3','mean_cloud_dist','system:index']))
+                                            'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
+                                            'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
+                                            'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist',
+                                            'kurt_SurfaceTemp', 'pCount_dswe1', 'pCount_dswe3', 
+                                            'prop_clouds','prop_hillShadow','mean_hillShade', 'system:index']))
     #Check how many existing tasks are running and take a break of 120 secs if it's >25 
     maximum_no_of_tasks(10, 120)
     #Send next task.                                        
