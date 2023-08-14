@@ -16,7 +16,7 @@ local_settings:
 google_settings:
 - proj: "TEST" # this is a short name for file naming conventions. All output files will include this prefix.
 - proj_folder: "TEST" # this is the folder name where the GEE data will be save to Google Drive. If it doesn't exist, it will be created.
-
+- ee_proj: "ee-ls-c2-srst" # this is the ee project name you are running your pulls from
 
 ###############################################################################
 # The following parameters are optional and have default values listed below. 
