@@ -202,7 +202,10 @@ get_WRS_tiles <- function(detection_method, yaml) {
   WRS <- read_sf('data_acquisition/in/WRS2_descending.shp')
   if (detection_method == 'site') {
     locations <- tar_read(locs)
-    WRS_subset <- WRS[locations,]
+    locs <- st_as_sf(locations, 
+                     coords = c('Longitude', 'Latitude'), 
+                     crs = yaml$location_crs[1])
+    WRS_subset <- WRS[locs,]
     write_csv(st_drop_geometry(WRS_subset), 'data_acquisition/out/WRS_subset_list.csv')
     return(WRS_subset$PR)
   } else {

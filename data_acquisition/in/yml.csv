@@ -1,2 +1,2 @@
 data_dir,location_file,unique_id,latitude,longitude,location_crs,polygon,poly_dir,poly_file,proj,proj_folder,ee_proj,start_date,end_date,extent,site_buffer,cloud_filter,cloud_thresh,water_detection,DSWE_setting
-data_acquisition/in/,,split_id,,,,True,data_acquisition/in/,loire_split_reaches.shp,Loire,Loire_prelim_pull,ee-ross-loire,1983-01-01,today,polygon,120,True,95,DSWE,1+3
+data_acquisition/in/,locs_test_2.csv,id,Latitude,Longitude,EPSG:4326,False,,,TEST,TEST,ee-ls-c2-srst,1983-01-01,today,site,120,True,95,DSWE,1

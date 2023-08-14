@@ -32,6 +32,7 @@ if yml_end == 'today':
 buffer = yml['site_buffer'][0]
 cloud_filt = yml['cloud_filter'][0]
 cloud_thresh = yml['cloud_thresh'][0]
+
 try: 
   dswe = yml['DSWE_setting'][0].astype(str)
 except AttributeError: 
@@ -40,7 +41,7 @@ except AttributeError:
 # get extent info
 extent = yml['extent'][0]
 
-if 'location' in extent:
+if 'site' in extent:
   locations = read_csv('data_acquisition/in/locs.csv')
   
   # convert locations to an eeFeatureCollection
@@ -150,7 +151,7 @@ if 'site' in extent:
   ## get locs feature and buffer ##
   feat = (locs_feature
     .filterBounds(geo)
-    .map(dpBuff))
+    .map(dp_buff))
       
   ## process 457 stack
   #snip the ls data by the geometry of the location points    
@@ -226,10 +227,10 @@ if 'site' in extent:
   ## get locs feature and buffer ##
   feat = (locs_feature
     .filterBounds(geo)
-    .map(dpBuff))
+    .map(dp_buff))
   
   # snip the ls data by the geometry of the location points    
-  locs_stack_89 = ls89.filterBounds(feat.geometry()) 
+  locs_stack_ls89 = ls89.filterBounds(feat.geometry()) 
   
   if '1' in dswe:
     locs_out_89_D1 = locs_stack_ls89.map(ref_pull_89_DSWE1).flatten()
