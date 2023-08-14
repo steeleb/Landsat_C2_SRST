@@ -5,6 +5,7 @@ from datetime import date, datetime
 import os 
 import fiona
 from pandas import read_csv
+from pandas import write_csv
 
 # get locations and yml from data folder
 yml = read_csv('data_acquisition/in/yml.csv')
@@ -85,10 +86,10 @@ if 'poly' in extent:
 ##############################################
 
 
-wrs = (ee.FeatureCollection('users/sntopp/wrs2_asc_desc')
-  .filterMetadata('PR', 'equals', int(tiles)))
+wrs = (ee.FeatureCollection('projects/ee-ls-c2-srst/assets/WRS2_descending')
+  .filterMetadata('PR', 'equals', tiles))
 
-#grab images and apply scaling factors
+wrs#grab images and apply scaling factors
 l7 = (ee.ImageCollection('LANDSAT/LE07/C02/T1_L2')
     .map(apply_scale_factors)
     .filter(ee.Filter.lt('CLOUD_COVER', ee.Number.parse(str(cloud_thresh))))
@@ -473,3 +474,18 @@ meta_dataOut_89.start()
   
   
 print('completed Landsat 8, 9 metadata acquisition for tile ' + str(tiles))
+
+
+#############################################
+##---- DOCUMENT Landsat IDs ACQUIRED   ----##
+#############################################
+
+id_stack = ls89.aggregate_array('L1_LANDSAT_PRODUCT_ID').getInfo()
+
+# open file in write mode and save each id as a row
+with open(('data_acquisition/out/L89_stack_ids_v'+str(date.today())+'.txt'), 'w') as fp:
+    for id in id_stack:
+        # write each item on a new line
+        fp.write("%s\n" % id)
+    print('Done')
+    

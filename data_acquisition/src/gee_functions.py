@@ -312,7 +312,7 @@ def calc_hill_shadows(image, geo):
 
 ## Remove geometries
 def remove_geo(image):
-  """ Funciton to remove the geometry from the image
+  """ Funciton to remove the geometry from an ee.Image
   
   Args:
       image: ee.Image of an ee.ImageCollection
