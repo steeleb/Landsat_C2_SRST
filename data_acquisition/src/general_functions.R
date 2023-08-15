@@ -90,15 +90,15 @@ get_NHD <- function(locations, yaml) {
       all_lakes = all_lakes %>% select(id, comid, gnis_id:elevation, meandepth:maxdepth)
       write_csv(st_drop_geometry(all_lakes), 'data_acquisition/out/NHDPlus_stats_lakes.csv')
       all_lakes = all_lakes %>% select(id, comid, gnis_name)
-      st_write(all_lakes, 'data_acquisition/out/NHDPlus_polygon.shp')
+      st_write(all_lakes, 'data_acquisition/out/NHDPlus_polygon.shp', append = F)
       return('data_acquisition/out/NHDPlus_polygon.shp')
     } else { # otherwise read in specified file
       polygons = read_sf(file.path(yaml$poly_dir[1], yaml$poly_file[1])) 
       st_drop_geometry(polygons) %>% 
         rowid_to_column('id') %>% 
-        mutate(id = id-1) %>% 
+        mutate(id = id-1) %>% #subract 1 so that it matches with Py output
         write_csv(., 'data_acquisition/out/user_polygon_withrowid.csv')
-      st_write(polygons, 'data_acquisition/out/user_polygon.shp')
+      st_write(polygons, 'data_acquisition/out/user_polygon.shp', append = F)
       return('data_acquisition/out/user_polygon.shp')
     }
   } else {
@@ -140,21 +140,24 @@ calc_center <- function(poly, yaml) {
     }
     cc_dp <- poly %>%
       st_drop_geometry() %>% 
-      full_join(., cc_dp)
+      rowid_to_column() %>% 
+      full_join(., cc_df)
     cc_geo <- st_as_sf(cc_df, coords = c('lon', 'lat'), crs = st_crs(poly))
     
-    if (yaml$lake_poly[1] == FALSE) {
+    if (yaml$polygon[1] == FALSE) {
       write_sf(cc_geo, file.path('data_acquisition/out/NHDPlus_polygon_centers.shp'))
       cc_df %>% 
-        rename(center_lat = lat,
-               center_lon = lon) %>% 
+        rename(Latitude = lat,
+               Longitude = lon) %>% 
+        mutate(id = rowid - 1) %>% 
         write_csv('data_acquisition/out/NHDPlus_polygon_centers.csv')
       return('data_acquisition/out/NHDPlus_polygon_centers.shp')
       } else {
       write_sf(cc_geo, file.path('data_acquisition/out/user_polygon_centers.shp'))
       cc_df %>% 
-        rename(center_lat = lat,
-               center_lon = lon) %>% 
+        rename(Latitude = lat,
+               Longitude = lon) %>% 
+        mutate(id = rowid - 1) %>% 
         write_csv('data_acquisition/out/user_polygon_centers.csv')
       return('data_acquisition/out/user_polygon_centers.shp')
     }
