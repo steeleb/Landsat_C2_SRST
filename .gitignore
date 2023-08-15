@@ -6,3 +6,7 @@
 
 # python environment files
 env/
+
+#additional files in 'in' and 'out' folders
+data_acquision/in/
+data_acquision/out/
