@@ -12,6 +12,7 @@ local_settings:
 - longitude: "" # this is the column that stores the longitude of the site, must be in decimal degrees
 - location_crs: "" # this is the coordinate reference system of the location data, must be in EPSG format (e.g. EPSG:4326)
 - polygon: "" # optional. True or False - if True, you have lake polygon shapefiles for each site.
+- poly_crs: "" # this is the coordinate reference system of the polygon data, must be in EPSG format (e.g. EPSG:4326)
 - poly_dir: "" # optional. point to the directory where your lake polygon shapefiles are stored - this path must end with a '/'
 - poly_file: "" # optional. name of the shapefile that contains the lake polygons. 
 

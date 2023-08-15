@@ -43,7 +43,6 @@ extent = yml['extent'][0]
 
 if 'site' in extent:
   locations = read_csv('data_acquisition/in/locs.csv')
-  
   # convert locations to an eeFeatureCollection
   locs_feature = csv_to_eeFeat(locations, yml['location_crs'][0])
 
@@ -72,15 +71,13 @@ if 'poly' in extent:
 if 'center' in extent:
   if yml['polygon'][0] == True:
     centers_csv = read_csv('data_acquisition/out/user_polygon_centers.csv')
-    prj_text = open('data_acquisition/out/user_polygon_centers.prj', 'r').read()
     # load the shapefile into a Fiona object
-    centers = csv_to_eeFeat(centers_csv, )
+    centers = csv_to_eeFeat(centers_csv, yml['poly_crs'][0])
   else: #otherwise use the NHDPlus file
     centers_csv = read_csv('data_acquisition/out/NHDPlus_polygon_centers.csv')
-    prj_text = open('data_acquisition/out/NHDPlus_polygon_centers.prj', 'r').read()
-    centers = csv_to_eeFeat(centers_csv, prj_text)
+    centers = csv_to_eeFeat(centers_csv, 'EPSG:4326')
   # Create an ee.FeatureCollection from the ee.Features
-  ee_centers = ee.FeatureCollection(features)    
+  ee_centers = ee.FeatureCollection(centers)    
 
   
 
