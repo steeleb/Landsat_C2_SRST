@@ -56,12 +56,12 @@ def GetLakeCenters(polygon):
         tileScale=2 
     ).getNumber('distance').int16())
 
-    outputDp = (ee.Feature(dist.addBands(ee.Image.pixelLonLat()).updateMask(dist.gte(maxDistance))
+    outputCSC = (ee.Feature(dist.addBands(ee.Image.pixelLonLat()).updateMask(dist.gte(maxDistance))
                           .sample(geo, scale).first()))
 
-    dp = ee.Geometry.Point([outputDp.get('longitude'), outputDp.get('latitude')])
+    csc = ee.Geometry.Point([outputCSC.get('longitude'), outputCSC.get('latitude')])
 
-    regions = ee.FeatureCollection([ee.Feature(dp, {'type': 'csc'})])
+    regions = ee.FeatureCollection([ee.Feature(csc, {'type': 'csc'})])
 
     output = dist.sampleRegions(
         collection=regions,
@@ -102,19 +102,40 @@ def maximum_no_of_tasks(MaxNActive, waitingPeriod):
 def calc_area(feature):
     return(feature.set('area_calc',feature.area().divide(1e6)))
 
+
+## Remove geometries
+def remove_geo(image):
+  """ Funciton to remove the geometry from an ee.Image
+  
+  Args:
+      image: ee.Image of an ee.ImageCollection
+      
+  Returns:
+      ee.Image with the geometry removed
+  """
+  return image.setGeometry(None)
+
+
+def get_lat_long(feature):
+  lat_lon = feature.geometry().coordinates()
+  lat = lat_lon.get(1)
+  lon = lat_lon.get(0)
+  return (feature.set({
+    'latitude': lat,
+    'longitude': lon}))
+
+
 ## Get NHD Asset Lists
-assets_done = ee.data.listAssets({'parent': 'projects/ee-ls-c2-srst/assets/NHD_centers'})['assets']
-ids_done = [i['id'].split('/')[-1] for i in assets_done]
 state_assets = ee.data.listAssets({'parent': 'projects/sat-io/open-datasets/NHD'})['assets']
-states_left = [i for i in assets_parent if i['id'].split('/')[-1] not in ids_done]
-#assets_parent = [i for i in assets_parent if i['id'].split('/')[-1] not in ['NHD_MO','NHD_TX','NHD_AK']]
+
 
 ## Get State asset
 states = ee.FeatureCollection('TIGER/2018/States')
 
+
 ## for each state, run each grid cell and then export to file
-for i in range(len(states_left)):
-    state_asset = states_left[i]['id']
+for i in range(len(state_assets)):
+    state_asset = state_assets[i]['id']
     state_waterbody = (ee.FeatureCollection(f"{state_asset}/NHDWaterbody")
       .filter(ee.Filter.gte('areasqkm',0.001))
       .filter(ee.Filter.lte('areasqkm',5000))  #Remove Great Lakes
@@ -141,24 +162,19 @@ for i in range(len(states_left)):
       if grid_waterbody.size().getInfo() > 0:
     
         csc = grid_waterbody.map(GetLakeCenters)
-  
-        dataOut = (ee.batch.Export.table.toAsset(collection=dp,
-          description=state_asset.split('/')[-1]+'_'+str(g)+'_'+str(grid_count),
-          assetId=f"projects/ee-ls-c2-srst/assets/NHD_centers/{state_asset.split('/')[-1]}_{str(g)}"))
-  
-        ## Check how many existing tasks are running and take a break if it's >15
-        maximum_no_of_tasks(5, 240)
-        ## Send next task.
-        dataOut.start()
-      
+        csc = ee.FeatureCollection(csc).map(get_lat_long)
+        
+        name = state_asset.split('/')[-1]+'_'+str(g)+'_'+str(grid_count)
+        
+        csc.propertyNames().getInfo()
+        cscOut = (ee.batch.Export.table.toDrive(collection = csc, 
+          description = name,
+          folder = 'EE_CSC_Exports',
+          fileFormat = 'CSV',
+          selectors = ('permanent', 'latitude', 'longitude', 'areasqkm', 'distance', 'type')))
+        maximum_no_of_tasks(15, 60)
+        cscOut.start()
+        
     print(state_asset.split('/')[-1])
 
 
-state_csc = ee.data.listAssets({'parent': 'projects/ee-ls-c2-srst/assets/NHD_centers'})['assets']
-
-for i in state_csc:
-    csc = ee.FeatureCollection(i['id'])
-    id =  i['id'].split('/')[-1]
-    cscOut = ee.batch.Export.table.toDrive(csc,id,'EE_CSC_Exports',id)
-    maximum_no_of_tasks(15, 60)
-    cscOut.start()
