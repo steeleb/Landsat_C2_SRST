@@ -1,7 +1,7 @@
 import ee
 import math
 import time
-ee.Initialize()
+ee.Initialize(project = 'ee-ls-c2-srst')
 
 ## Deepest point calculation adapted from Xiao Yang
 ### https: // doi.org / 10.5281 / zenodo.4136754
@@ -55,7 +55,7 @@ def GetLakeCenters(polygon):
 
     dp = ee.Geometry.Point([outputDp.get('longitude'), outputDp.get('latitude')])
 
-    regions = ee.FeatureCollection([ee.Feature(dp, {'type': 'dp'})])
+    regions = ee.FeatureCollection([ee.Feature(dp, {'type': 'csc'})])
 
     output = dist.sampleRegions(
         collection=regions,
@@ -94,26 +94,28 @@ def maximum_no_of_tasks(MaxNActive, waitingPeriod):
 def calc_area(feature):
     return(feature.set('area_calc',feature.area().divide(1e6)))
 
-assets_done = ee.data.listAssets({'parent': 'projects/earthengine-legacy/assets/users/sntopp/NHD/DeepestPoint'})['assets']
+assets_done = ee.data.listAssets({'parent': 'projects/ee-ls-c2-srst/assets/NHD_centers'})['assets']
 ids_done = [i['id'].split('/')[-1] for i in assets_done]
-assets_parent = ee.data.listAssets({'parent': 'projects/earthengine-legacy/assets/projects/sat-io/open-datasets/NHD'})['assets']
-assets_parent = [i for i in assets_parent if i['id'].split('/')[-1] not in ids_done]
+state_assets = ee.data.listAssets({'parent': 'projects/sat-io/open-datasets/NHD'})['assets']
+states_left = [i for i in assets_parent if i['id'].split('/')[-1] not in ids_done]
 #assets_parent = [i for i in assets_parent if i['id'].split('/')[-1] not in ['NHD_MO','NHD_TX','NHD_AK']]
 
 
-for i in range(len(assets_parent)):
-    state_asset = assets_parent[i]['id']
-    assets_state = (ee.FeatureCollection(f"{state_asset}/NHDWaterbody")
+for i in range(len(states_left)):
+    state_asset = states_left[i]['id']
+    state_waterbody = (ee.FeatureCollection(f"{state_asset}/NHDWaterbody")
     .filter(ee.Filter.gte('areasqkm',0.001))
     .filter(ee.Filter.lte('areasqkm',5000))  #Remove Great Lakes
     .filter(ee.Filter.inList('ftype',[361,436,390])))
 
     ## Added to trouble shoot NM where some of the NHD areas are don't match the actual polygon areas
-    assets_state=ee.FeatureCollection(assets_state.map(calc_area)).filter(ee.Filter.gte('area_calc',0.001))
+    state_waterbody=ee.FeatureCollection(state_waterbody.map(calc_area)).filter(ee.Filter.gte('area_calc',0.001))
 
-    dp = assets_state.map(GetLakeCenters)
+    dp = state_waterbody.map(GetLakeCenters)
 
-    dataOut = ee.batch.Export.table.toAsset(collection=dp,description=state_asset.split('/')[-1],assetId=f"projects/earthengine-legacy/assets/users/sntopp/NHD/DeepestPoint/{state_asset.split('/')[-1]}")
+    dataOut = ee.batch.Export.table.toAsset(collection=dp,
+    description=state_asset.split('/')[-1],
+    assetId=f"projects/ee-ls-c2-srst/assets/NHD_centers/{state_asset.split('/')[-1]}")
 
     ## Check how many existing tasks are running and take a break if it's >15
     maximum_no_of_tasks(15, 240)
@@ -121,14 +123,12 @@ for i in range(len(assets_parent)):
     dataOut.start()
     print(state_asset.split('/')[-1])
 
-#f"projects/earthengine-legacy/assets/users/sntopp/NHD/{state_asset.split('/')[-1]}/NHDDeepestPoint"
 
+state_csc = ee.data.listAssets({'parent': 'projects/ee-ls-c2-srst/assets/NHD_centers'})['assets']
 
-state_dps = ee.data.listAssets({'parent': 'projects/earthengine-legacy/assets/users/sntopp/NHD/DeepestPoint'})['assets']
-
-for i in state_dps:
-    dps = ee.FeatureCollection(i['id'])
+for i in state_csc:
+    csc = ee.FeatureCollection(i['id'])
     id =  i['id'].split('/')[-1]
-    dpsOut = ee.batch.Export.table.toDrive(dps,id,'EE_DP_Exports',id)
+    cscOut = ee.batch.Export.table.toDrive(csc,id,'EE_CSC_Exports',id)
     maximum_no_of_tasks(15, 60)
-    dpsOut.start()
+    cscOut.start()
