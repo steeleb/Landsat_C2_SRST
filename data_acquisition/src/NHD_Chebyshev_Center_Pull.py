@@ -13,10 +13,10 @@ ee.Initialize(project = 'ee-ls-c2-srst')
 ### https: // doi.org / 10.5281 / zenodo.4136754
 ### Functions
 def get_scale(polygon):
-    radius = polygon.get('areasqkm')
-    radius = ee.Number(radius).divide(math.pi).sqrt().multiply(1000)
+    area = polygon.get('areasqkm')
+    radius = ee.Number(area).divide(math.pi).sqrt().multiply(1000)
     scale = radius.divide(20)
-    #scale = ee.Algorithms.If(ee.Number(scale).lte(10),10,scale)
+    scale = ee.Algorithms.If(ee.Number(scale).lte(10),10,scale)
     scale = ee.Algorithms.If(ee.Number(scale).gte(500),500,scale)
     return ee.Number(scale)
 
@@ -53,7 +53,7 @@ def GetLakeCenters(polygon):
         geometry=geo,
         scale=scale,
         bestEffort=True,
-        tileScale=2 
+        tileScale=1
     ).getNumber('distance').int16())
 
     outputCSC = (ee.Feature(dist.addBands(ee.Image.pixelLonLat()).updateMask(dist.gte(maxDistance))
@@ -67,7 +67,7 @@ def GetLakeCenters(polygon):
         collection=regions,
         properties=['type'],
         scale=scale,
-        tileScale=2,
+        tileScale=1,
         geometries=True)
 
     return (ee.Feature(output.first()).copyProperties(polygon,['permanent','areasqkm']))
@@ -137,7 +137,7 @@ states = ee.FeatureCollection('TIGER/2018/States')
 for i in range(len(state_assets)):
     state_asset = state_assets[i]['id']
     state_waterbody = (ee.FeatureCollection(f"{state_asset}/NHDWaterbody")
-      .filter(ee.Filter.gte('areasqkm',0.001))
+      .filter(ee.Filter.gte('areasqkm',0.01))
       .filter(ee.Filter.lte('areasqkm',5000))  #Remove Great Lakes
       .filter(ee.Filter.inList('ftype',[361,436,390]))) #Only grab lakes, ponds, and reservoirs
     
@@ -166,15 +166,14 @@ for i in range(len(state_assets)):
         
         name = state_asset.split('/')[-1]+'_'+str(g)+'_'+str(grid_count)
         
-        csc.propertyNames().getInfo()
         cscOut = (ee.batch.Export.table.toDrive(collection = csc, 
           description = name,
           folder = 'EE_CSC_Exports',
           fileFormat = 'CSV',
           selectors = ('permanent', 'latitude', 'longitude', 'areasqkm', 'distance', 'type')))
-        maximum_no_of_tasks(15, 60)
+        maximum_no_of_tasks(3, 60)
         cscOut.start()
-        
+      
     print(state_asset.split('/')[-1])
 
 
