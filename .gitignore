@@ -8,5 +8,6 @@
 env/
 
 #additional files in 'in' and 'out' folders
-data_acquision/in/
-data_acquision/out/
+data_acquisition/in/*.csv
+data_acquisition/out/*
+!data_acquisition/out/placeholder
