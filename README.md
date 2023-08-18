@@ -5,6 +5,11 @@ products for lakes and reservoirs from point locations or lake polygons. The out
 of this workflow is stored in your Google Drive as tabular summaries of band data 
 for your area of interest.
 
+## Scope of this Repo
+
+This repository acquires historical data for all of EcoRegion Level 3, Zone 21, and all NW lakes/reservoirs.
+
+
 ## Repository Overview
 
 This repository is powered by {targets}, an r-based workflow manager. In order 
