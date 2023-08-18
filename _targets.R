@@ -2,7 +2,7 @@ library(targets)
 library(tarchetypes)
 library(reticulate)
 
-yaml_file <- "example_yml/northern-poudre-config.yml"
+yaml_file <- "example_yml/northern-poudre-regional-config.yml"
 
 # MUST READ ---------------------------------------------------------------
 
