@@ -35,14 +35,10 @@ This token is valid for 7 days from the time of authentication.
 
 ## Completing the config.yml file
 
-See the config file 'poudre-historical.yml'. Note that the name of 
-this yml does not match the pull here (this pull does not contain the entirety)
-of the CLP HUC8 watershed. Renaming this file would invalidate the {targets} 
-workflow, so until this pull is updated, the name will be, unfortunately, 
-ill-fitting. This pull only gathers the polygon-Chebyshev center 
-point (aka, point of inaccessibility) for all lakes and reservoirs greater than 
-1 ha in the EcoRegion Level 3, Zone 21 (plus Boulder Reservoir, which is outside
-of the ER Zone).
+See the config file 'northern-poudre-historical-config.yml'. This pull gathers 
+the polygon-Chebyshev center point (aka, point of inaccessibility), full lake area summary,
+and sampling point locations for all NW lakes/reservoirs and all reservoirs 
+within the CLP greater than 1 ha.
 
 ## Running the workflow
 
