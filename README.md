@@ -7,7 +7,8 @@ for your area of interest.
 
 ## Scope of this branch
 
-This repository acquires historical data for all of EcoRegion Level 3, Zone 21, and all NW lakes/reservoirs.
+This repository acquires historical data for all lakes and reservoirs greater 
+than 1 ha for the Cache La Poudre HUC08 watershed.
 
 
 ## Repository Overview
@@ -34,7 +35,7 @@ This token is valid for 7 days from the time of authentication.
 
 ## Completing the config.yml file
 
-See the config file 'northern-poudre-regional-config.yml'. Note that the name of 
+See the config file 'poudre-historical.yml'. Note that the name of 
 this yml does not match the pull here (this pull does not contain the entirety)
 of the CLP HUC8 watershed. Renaming this file would invalidate the {targets} 
 workflow, so until this pull is updated, the name will be, unfortunately, 
