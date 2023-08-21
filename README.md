@@ -5,6 +5,11 @@ products for lakes and reservoirs from point locations or lake polygons. The out
 of this workflow is stored in your Google Drive as tabular summaries of band data 
 for your area of interest.
 
+This repository is covered by the MIT use license. We request that all downstream 
+uses of this work be available to the public when possible.
+
+Primary repository contact: B Steele <b dot steele at colostate dot edu>
+
 ## Repository Overview
 
 This repository is powered by {targets}, an r-based workflow manager. In order 
