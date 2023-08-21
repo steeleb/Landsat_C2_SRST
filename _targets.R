@@ -2,7 +2,7 @@ library(targets)
 library(tarchetypes)
 library(reticulate)
 
-yaml_file <- "loire_config.yml"
+yaml_file <- "example_yml/test_config.yml"
 
 # MUST READ ---------------------------------------------------------------
 
@@ -101,7 +101,7 @@ list(
   tar_target(
     name = centers_save,
     command = calc_center(polygons, yml),
-    packages = c("sf", "polylabelr")
+    packages = c("sf", "polylabelr", "tidyverse")
   ),
 
   # track centers file
@@ -128,7 +128,7 @@ list(
   # get WRS tiles
   tar_target(
     name = WRS_tiles,
-    command = get_WRS_tiles(WRS_detection_method, yml_save),
+    command = get_WRS_tiles(WRS_detection_method, yml),
     packages = c("readr", "sf")
   ),
 

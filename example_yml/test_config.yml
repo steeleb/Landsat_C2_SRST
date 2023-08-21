@@ -11,12 +11,13 @@ local_settings:
 - location_crs: "EPSG:4326" # this is the coordinate reference system of the location data, must be in EPSG format (e.g. EPSG:4326)
 - polygon: 'False' # optional. True or False - if True, you have lake polygon shapefiles for each site.
 - poly_dir: "" # optional. point to the directory where your lake polygon shapefiles are stored - this path must end with a '/'
+- poly_crs: "" # this is the coordinate reference system of the polygon data, must be in EPSG format (e.g. EPSG:4326)
 - poly_file: "" # optional. name of the shapefile that contains the lake polygons. 
 
 google_settings:
 - proj: "TEST" # this is a short name for file naming conventions. All output files will include this prefix.
 - proj_folder: "TEST" # this is the folder name where the GEE data will be save to Google Drive. If it doesn't exist, it will be created.
-
+- ee_proj: "ee-ls-c2-srst" # this is the ee project name you are running your pulls from
 
 ###############################################################################
 # The following parameters are optional and have default values listed below. 
@@ -27,7 +28,7 @@ temporal_settings:
 - end_date: "today" # latest date of satellite data to be acquired; if 'today' is used, the date will be set to the current date
 
 spatial_settings: 
-- extent: "site" # options: "site", "polygon", "polycenter", "site+polygon", etc - only site/polygon function right now
+- extent: "site+polygon+polycenter" # options: "site", "polygon", "polycenter", "site+polygon", etc - only site/polygon function right now
 - site_buffer: 120 # buffer distance in meters around the site
 
 gee_settings:
