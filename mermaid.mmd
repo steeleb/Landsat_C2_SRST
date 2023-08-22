@@ -1,0 +1,81 @@
+graph LR
+  subgraph legend
+    direction LR
+    x4b0c520b8bc07c5b([""Errored""]):::errored --- x0a52b03877696646([""Outdated""]):::outdated
+    x0a52b03877696646([""Outdated""]):::outdated --- x7420bd9270f8d27d([""Up to date""]):::uptodate
+    x7420bd9270f8d27d([""Up to date""]):::uptodate --- xbf4603d6c2c2ad6b([""Stem""]):::none
+    xbf4603d6c2c2ad6b([""Stem""]):::none --- x70a5fa6bea6f298d[""Pattern""]:::none
+    x70a5fa6bea6f298d[""Pattern""]:::none --- xf0bce276fe2b9d3e>""Function""]:::none
+    xf0bce276fe2b9d3e>""Function""]:::none --- x5bffbffeae195fc9{{""Object""}}:::none
+  end
+  subgraph Graph
+    direction LR
+    x605b4f9b832b19d2(["centers_save"]):::outdated --> x1a2814bddf8b0ca2(["centers_file"]):::outdated
+    x51af7669bdf85791(["locs_file"]):::uptodate --> xa291310e0d62e3f7(["locs"]):::uptodate
+    x285b101427facd08(["polygons_file"]):::uptodate --> x5ea9cbb4b07e9251(["polygons"]):::errored
+    x0203b2860c3a0af2(["locs_save"]):::uptodate --> x51af7669bdf85791(["locs_file"]):::uptodate
+    x52cb5a650cec9219(["yml_file"]):::uptodate --> x829f5fc8921a2660(["yml"]):::uptodate
+    xe8fa7c4f9a8a2d3a>"get_WRS_tiles"]:::uptodate --> x46a3c0d9300ba963(["WRS_tiles"]):::outdated
+    x8c38e86e5ebe9f32(["WRS_detection_method"]):::outdated --> x46a3c0d9300ba963(["WRS_tiles"]):::outdated
+    x829f5fc8921a2660(["yml"]):::uptodate --> x46a3c0d9300ba963(["WRS_tiles"]):::outdated
+    xa863d4c29c1b310b(["config_file"]):::uptodate --> x1ac2bc53b9a050e3(["yml_save"]):::uptodate
+    x92238c3a17dd0683>"format_yaml"]:::uptodate --> x1ac2bc53b9a050e3(["yml_save"]):::uptodate
+    xa1154296ccea3e6f{{"yaml_file"}}:::uptodate --> x1ac2bc53b9a050e3(["yml_save"]):::uptodate
+    x68e82685dca54ef1(["config_file_file"]):::uptodate --> xa863d4c29c1b310b(["config_file"]):::uptodate
+    xcb51eb47b492db34(["centers"]):::errored --> x8c38e86e5ebe9f32(["WRS_detection_method"]):::outdated
+    x5b70acc65bd86324>"get_WRS_detection"]:::uptodate --> x8c38e86e5ebe9f32(["WRS_detection_method"]):::outdated
+    xa291310e0d62e3f7(["locs"]):::uptodate --> x8c38e86e5ebe9f32(["WRS_detection_method"]):::outdated
+    x5ea9cbb4b07e9251(["polygons"]):::errored --> x8c38e86e5ebe9f32(["WRS_detection_method"]):::outdated
+    x829f5fc8921a2660(["yml"]):::uptodate --> x8c38e86e5ebe9f32(["WRS_detection_method"]):::outdated
+    x5ef815c8fa47ac54>"add_rad_mask"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    x84453913f719915e>"apply_scale_factors"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    x59edb8b02daa6d5a>"Awesh"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    x0f8de60eae52d53b>"calc_hill_shades"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    xc9dce0355f53dda3>"calc_hill_shadows"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    xcb51eb47b492db34(["centers"]):::errored --> x6a338d38f417c99a["eeRun"]:::outdated
+    x04e4ba55fa00a818>"cf_mask"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    xb44107ce7321b92b>"csv_to_eeFeat"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    x925b016f6a3174cc>"dp_buff"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    xb6d4851cfb2fcb3f>"DSWE"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    xa291310e0d62e3f7(["locs"]):::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    xa1b00a6a24feae90>"maximum_no_of_tasks"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    x5876938c74db089c>"Mbsrn"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    x7a0f4c3c9754d81a>"Mbsrv"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    x26a43ebf63ea10b1>"Mndwi"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    x0fc44cc4a8c12d0e>"Ndvi"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    x5ea9cbb4b07e9251(["polygons"]):::errored --> x6a338d38f417c99a["eeRun"]:::outdated
+    x21da50555a8db890>"ref_pull_457_DSWE1"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    xf518ecaed310b138>"ref_pull_457_DSWE3"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    xa673315c51d8344b>"ref_pull_89_DSWE1"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    x6379cb992a359e9c>"ref_pull_89_DSWE3"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    xe2b9413061edfe7e>"remove_geo"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    x0a305bda65b2a6ae>"run_GEE_per_tile"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    x703be9645c628f4d>"sr_aerosol"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    xde04bbe2fe2a1e81>"sr_cloud_mask"]:::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    x46a3c0d9300ba963(["WRS_tiles"]):::outdated --> x6a338d38f417c99a["eeRun"]:::outdated
+    x829f5fc8921a2660(["yml"]):::uptodate --> x6a338d38f417c99a["eeRun"]:::outdated
+    xe518f438f1fb3cdb>"grab_locs"]:::uptodate --> x0203b2860c3a0af2(["locs_save"]):::uptodate
+    x829f5fc8921a2660(["yml"]):::uptodate --> x0203b2860c3a0af2(["locs_save"]):::uptodate
+    x53c3808453145df9>"calc_center"]:::uptodate --> x605b4f9b832b19d2(["centers_save"]):::outdated
+    x5ea9cbb4b07e9251(["polygons"]):::errored --> x605b4f9b832b19d2(["centers_save"]):::outdated
+    x829f5fc8921a2660(["yml"]):::uptodate --> x605b4f9b832b19d2(["centers_save"]):::outdated
+    x97fa2a63e2e6eff1(["poly_save"]):::uptodate --> x285b101427facd08(["polygons_file"]):::uptodate
+    x1ac2bc53b9a050e3(["yml_save"]):::uptodate --> x52cb5a650cec9219(["yml_file"]):::uptodate
+    xbb1588c48bcf8257>"get_NHD"]:::uptodate --> x97fa2a63e2e6eff1(["poly_save"]):::uptodate
+    xa291310e0d62e3f7(["locs"]):::uptodate --> x97fa2a63e2e6eff1(["poly_save"]):::uptodate
+    x829f5fc8921a2660(["yml"]):::uptodate --> x97fa2a63e2e6eff1(["poly_save"]):::uptodate
+    xa1154296ccea3e6f{{"yaml_file"}}:::uptodate --> x68e82685dca54ef1(["config_file_file"]):::uptodate
+    x1a2814bddf8b0ca2(["centers_file"]):::outdated --> xcb51eb47b492db34(["centers"]):::errored
+    x41ccf6529b0966b6{{"r"}}:::uptodate --> x41ccf6529b0966b6{{"r"}}:::uptodate
+  end
+  classDef errored stroke:#000000,color:#ffffff,fill:#C93312;
+  classDef outdated stroke:#000000,color:#000000,fill:#78B7C5;
+  classDef uptodate stroke:#000000,color:#ffffff,fill:#354823;
+  classDef none stroke:#000000,color:#000000,fill:#94a4ac;
+  linkStyle 0 stroke-width:0px;
+  linkStyle 1 stroke-width:0px;
+  linkStyle 2 stroke-width:0px;
+  linkStyle 3 stroke-width:0px;
+  linkStyle 4 stroke-width:0px;
+  linkStyle 5 stroke-width:0px;
+  linkStyle 62 stroke-width:0px;
