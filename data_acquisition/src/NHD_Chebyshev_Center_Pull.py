@@ -1,16 +1,22 @@
+#in order to successfully run this in RStudio, you will need to initiate the conda env 
+#to do so, type the following in the console:
+#reticulate::use_condaenv(file.path(getwd(), "env"))
+# you will need to have the Landsat_C2_SRST project open.
+
 import ee
 import math
 import time
-ee.Initialize()
+
+ee.Initialize(project = 'ee-ls-c2-srst')
 
 ## Deepest point calculation adapted from Xiao Yang
 ### https: // doi.org / 10.5281 / zenodo.4136754
 ### Functions
 def get_scale(polygon):
-    radius = polygon.get('areasqkm')
-    radius = ee.Number(radius).divide(math.pi).sqrt().multiply(1000)
+    area = polygon.get('areasqkm')
+    radius = ee.Number(area).divide(math.pi).sqrt().multiply(1000)
     scale = radius.divide(20)
-    #scale = ee.Algorithms.If(ee.Number(scale).lte(10),10,scale)
+    scale = ee.Algorithms.If(ee.Number(scale).lte(10),10,scale)
     scale = ee.Algorithms.If(ee.Number(scale).gte(500),500,scale)
     return ee.Number(scale)
 
@@ -50,12 +56,12 @@ def GetLakeCenters(polygon):
         tileScale=1
     ).getNumber('distance').int16())
 
-    outputDp = (ee.Feature(dist.addBands(ee.Image.pixelLonLat()).updateMask(dist.gte(maxDistance))
+    outputCSC = (ee.Feature(dist.addBands(ee.Image.pixelLonLat()).updateMask(dist.gte(maxDistance))
                           .sample(geo, scale).first()))
 
-    dp = ee.Geometry.Point([outputDp.get('longitude'), outputDp.get('latitude')])
+    csc = ee.Geometry.Point([outputCSC.get('longitude'), outputCSC.get('latitude')])
 
-    regions = ee.FeatureCollection([ee.Feature(dp, {'type': 'dp'})])
+    regions = ee.FeatureCollection([ee.Feature(csc, {'type': 'csc'})])
 
     output = dist.sampleRegions(
         collection=regions,
@@ -65,6 +71,7 @@ def GetLakeCenters(polygon):
         geometries=True)
 
     return (ee.Feature(output.first()).copyProperties(polygon,['permanent','areasqkm']))
+
 
 def buff_dp(dp):
     return dp.buffer(dp.getNumber('distance'))
@@ -91,44 +98,82 @@ def maximum_no_of_tasks(MaxNActive, waitingPeriod):
                 NActive += 1
     return ()
 
+
 def calc_area(feature):
     return(feature.set('area_calc',feature.area().divide(1e6)))
 
-assets_done = ee.data.listAssets({'parent': 'projects/earthengine-legacy/assets/users/sntopp/NHD/DeepestPoint'})['assets']
-ids_done = [i['id'].split('/')[-1] for i in assets_done]
-assets_parent = ee.data.listAssets({'parent': 'projects/earthengine-legacy/assets/projects/sat-io/open-datasets/NHD'})['assets']
-assets_parent = [i for i in assets_parent if i['id'].split('/')[-1] not in ids_done]
-#assets_parent = [i for i in assets_parent if i['id'].split('/')[-1] not in ['NHD_MO','NHD_TX','NHD_AK']]
+
+## Remove geometries
+def remove_geo(image):
+  """ Funciton to remove the geometry from an ee.Image
+  
+  Args:
+      image: ee.Image of an ee.ImageCollection
+      
+  Returns:
+      ee.Image with the geometry removed
+  """
+  return image.setGeometry(None)
 
 
-for i in range(len(assets_parent)):
-    state_asset = assets_parent[i]['id']
-    assets_state = (ee.FeatureCollection(f"{state_asset}/NHDWaterbody")
-    .filter(ee.Filter.gte('areasqkm',0.001))
-    .filter(ee.Filter.lte('areasqkm',5000))  #Remove Great Lakes
-    .filter(ee.Filter.inList('ftype',[361,436,390])))
+def get_lat_long(feature):
+  lat_lon = feature.geometry().coordinates()
+  lat = lat_lon.get(1)
+  lon = lat_lon.get(0)
+  return (feature.set({
+    'latitude': lat,
+    'longitude': lon}))
 
+
+## Get NHD Asset Lists
+state_assets = ee.data.listAssets({'parent': 'projects/sat-io/open-datasets/NHD'})['assets']
+
+
+## Get State asset
+states = ee.FeatureCollection('TIGER/2018/States')
+
+
+## for each state, run each grid cell and then export to file
+for i in range(len(state_assets)):
+    state_asset = state_assets[i]['id']
+    state_waterbody = (ee.FeatureCollection(f"{state_asset}/NHDWaterbody")
+      .filter(ee.Filter.gte('areasqkm',0.01))
+      .filter(ee.Filter.lte('areasqkm',5000))  #Remove Great Lakes
+      .filter(ee.Filter.inList('ftype',[361,436,390]))) #Only grab lakes, ponds, and reservoirs
+    
     ## Added to trouble shoot NM where some of the NHD areas are don't match the actual polygon areas
-    assets_state=ee.FeatureCollection(assets_state.map(calc_area)).filter(ee.Filter.gte('area_calc',0.001))
+    state_waterbody=ee.FeatureCollection(state_waterbody.map(calc_area)).filter(ee.Filter.gte('area_calc',0.001))
+    
+    #get the state outline
+    state_usps = state_asset.split('_')[-1]
+    state_bound = states.filter(ee.Filter.eq('STUSPS', state_usps))
 
-    dp = assets_state.map(GetLakeCenters)
+    # break down the state into a grid
+    state_geo = state_bound.geometry()
+    state_grid = ee.Geometry(state_geo).coveringGrid(state_geo.projection())
 
-    dataOut = ee.batch.Export.table.toAsset(collection=dp,description=state_asset.split('/')[-1],assetId=f"projects/earthengine-legacy/assets/users/sntopp/NHD/DeepestPoint/{state_asset.split('/')[-1]}")
+    grid_count = state_grid.size().getInfo()
 
-    ## Check how many existing tasks are running and take a break if it's >15
-    maximum_no_of_tasks(15, 240)
-    ## Send next task.
-    dataOut.start()
+    for g in range(grid_count):
+      grid_cell = state_grid.toList(state_grid.size()).get(g)
+      grid_cell = ee.Feature(grid_cell)
+      grid_waterbody = state_waterbody.filterBounds(grid_cell.geometry())
+      
+      if grid_waterbody.size().getInfo() > 0:
+    
+        csc = grid_waterbody.map(GetLakeCenters)
+        csc = ee.FeatureCollection(csc).map(get_lat_long)
+        
+        name = state_asset.split('/')[-1]+'_'+str(g)+'_'+str(grid_count)
+        
+        cscOut = (ee.batch.Export.table.toDrive(collection = csc, 
+          description = name,
+          folder = 'EE_CSC_Exports',
+          fileFormat = 'CSV',
+          selectors = ('permanent', 'latitude', 'longitude', 'areasqkm', 'distance', 'type')))
+        maximum_no_of_tasks(3, 60)
+        cscOut.start()
+      
     print(state_asset.split('/')[-1])
 
-#f"projects/earthengine-legacy/assets/users/sntopp/NHD/{state_asset.split('/')[-1]}/NHDDeepestPoint"
 
-
-state_dps = ee.data.listAssets({'parent': 'projects/earthengine-legacy/assets/users/sntopp/NHD/DeepestPoint'})['assets']
-
-for i in state_dps:
-    dps = ee.FeatureCollection(i['id'])
-    id =  i['id'].split('/')[-1]
-    dpsOut = ee.batch.Export.table.toDrive(dps,id,'EE_DP_Exports',id)
-    maximum_no_of_tasks(15, 60)
-    dpsOut.start()
