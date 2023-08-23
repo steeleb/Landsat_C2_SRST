@@ -42,7 +42,9 @@ lapply(packages, package_installer)
 
 ## Authenticate and initialize Earth Engine
 
-You will need to have [installed and initialized the `gcloud CLI`](https://cloud.google.com/sdk/docs/install) and have a [Google Earth Engine account](https://code.earthengine.google.com/register) prior to running this workflow. Some common troubleshooting solutions [can be found here](https://github.com/rossyndicate/ROSS_RS_mini_tools/blob/main/helps/CommonIssues.md).
+You will need to have [installed and initialized the `gcloud CLI`](https://cloud.google.com/sdk/docs/install) 
+and have a [Google Earth Engine account](https://code.earthengine.google.com/register) prior to running this workflow. 
+Some common troubleshooting solutions [can be found here]https://github.com/rossyndicate/ROSS_RS_mini_tools/blob/main/helps/CommonIssues.md).
 
 ### Authentication
 
@@ -62,7 +64,10 @@ Initialization through the Python command `ee.Initialize()` is automatically com
 
 ## Run the targets pipeline and output a network graph.
 
-Prior to running this pipeline, you'll need to populate the `config.yml` file with the information for the Landsat Surface Reflectance and Surface Temperature Collection 2 product stack pull. Additionally, you will need to change line 5 of the `_targets.R` file if you have renamed the config file from `config.yml`.
+Prior to running this pipeline, you'll need to populate the `config.yml` file with the 
+information for the Landsat Surface Reflectance and Surface Temperature Collection 2 
+product stack pull. Additionally, you will need to change line 5 of the `_targets.R` file 
+if you have renamed the config file from `config.yml`.
 
 ```{r run_targets}
 library(targets)
@@ -71,7 +76,10 @@ library(targets)
 tar_make()
 ```
 
-Errors are okay in the pipeline, they are by design. Only errors that prematurely end the pipeline need to be addressed. Check the network diagram in the next section to confirm you've successfully run the pipeline.
+Only errors that prematurely 
+end the pipeline need to be addressed. Check the network diagram in the next section 
+to confirm you've successfully run the pipeline. As long as your dialog box reads 'end pipeline' 
+after 'built pattern eeRun', this workflow has successfully completed.
 
 ### Create a network diagram of the workflow.
 
