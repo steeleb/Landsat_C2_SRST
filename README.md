@@ -5,6 +5,11 @@ products for lakes and reservoirs from point locations or lake polygons. The out
 of this workflow is stored in your Google Drive as tabular summaries of band data 
 for your area of interest.
 
+This repository is covered by the MIT use license. We request that all downstream 
+uses of this work be available to the public when possible.
+
+Primary repository contact: B Steele <b dot steele at colostate dot edu>
+
 ## Repository Overview
 
 This repository is powered by {targets}, an r-based workflow manager. In order 
@@ -54,3 +59,12 @@ two steps to this:
 1.  update line 5 of the `_targets.R` file with the name of your config file
 
 2.  run the `run_targets.Rmd` file
+
+## Folder architecture
+
+ * _targets contains output of the _targets.R package and can be ignored.
+ * example_yml contains some example yml files for running this workflow, and the associated
+   location data
+ * data_acquisition contains the sourced functions in the _targets.R workflow, as well as an
+   `in` and `out` folder which store end-user's data, though these files are not tracked (other
+   than the WRS2 shapefile) by GitHub.
