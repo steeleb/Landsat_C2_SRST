@@ -83,12 +83,17 @@ after 'built pattern eeRun', this workflow has successfully completed.
 
 ### Create a network diagram of the workflow.
 
-```{r show_vis}
-tar_visnetwork()
+```{r write_mermaid}
+# save the mmd file
+writeLines(tar_mermaid(), sep = '\n', 'mermaid.mmd')
 ```
 
-Depending on how your config file is set up, you may have a few red circles (errors) on this graph. 
-Errors for `polygons`, `centers`, and `locs` are okay in the pipeline, they are by design: these 
-targets fail if the configuration file is not set up to extract data for these features. Consequently,
-any steps after the failed target will be colored blue or labeled `outdated`. The important part is 
-that the branches were all successfully built and the pipeline ended.
+```{zsh create_mermaid_png}
+mmdc -i mermaid.mmd -o mermaid.png -t dark -w 4000 -H 1000
+```
+
+![](mermaid.png)
+
+In order to view [legible] text, right click the image and open in a new window.
+
+Depending on how your config file is set up, you may have a few red circles on this graph. The important part is that the square on the right hand side is either orange or green.
