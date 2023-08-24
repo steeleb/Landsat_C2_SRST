@@ -74,7 +74,7 @@ grab_locs <- function(yaml) {
 #' 
 get_NHD <- function(locations, yaml) {
   if (grepl('poly', yaml$extent[1])) { # if polygon is specified in desired extent - either polycenter or polgon
-    if (yaml$polygon[1] == 'FALSE') { # and no polygon is provided, then use nhdplustools
+    if (yaml$polygon[1] == 'False') { # and no polygon is provided, then use nhdplustools
       # create sf
       wbd_pts = st_as_sf(locations, crs = yaml$location_crs[1], coords = c('Longitude', 'Latitude'))
       id = locations$id
@@ -94,6 +94,8 @@ get_NHD <- function(locations, yaml) {
       return('data_acquisition/out/NHDPlus_polygon.shp')
     } else { # otherwise read in specified file
       polygons = read_sf(file.path(yaml$poly_dir[1], yaml$poly_file[1])) 
+      polygons = st_zm(polygons)#drop z or m if present
+      polygons = st_make_valid(polygons)
       st_drop_geometry(polygons) %>% 
         rowid_to_column('id') %>% 
         mutate(id = id-1) %>% #subract 1 so that it matches with Py output
@@ -208,21 +210,36 @@ get_WRS_tiles <- function(detection_method, yaml) {
     locs <- st_as_sf(locations, 
                      coords = c('Longitude', 'Latitude'), 
                      crs = yaml$location_crs[1])
-    WRS_subset <- WRS[locs,]
+    if (st_crs(locs) == st_crs(WRS)) {
+      WRS_subset <- WRS[locs,]
+    } else {
+      locs = st_transform(locs, st_crs(WRS))
+      WRS_subset <- WRS[locs,]
+    }
     write_csv(st_drop_geometry(WRS_subset), 'data_acquisition/out/WRS_subset_list.csv')
     return(WRS_subset$PR)
   } else {
     if (detection_method == 'centers') {
       centers <- tar_read(centers)
       centers_cntrd <- st_centroid(centers)
-      WRS_subset <- WRS[centers_cntrd,]
+      if (st_crs(centers_cntrd) == st_crs(WRS)) {
+        WRS_subset <- WRS[centers_cntrd,]
+      } else {
+        centers_cntrd = st_transform(centers_cntrd, st_crs(WRS))
+        WRS_subset <- WRS[centers_cntrd,]
+      }
       write_csv(st_drop_geometry(WRS_subset), 'data_acquisition/out/WRS_subset_list.csv')
       return(WRS_subset$PR)
     } else {
       if (detection_method == 'polygon') {
         poly <- tar_read(polygons)
         poly_cntrd <- st_centroid(poly)
-        WRS_subset <- WRS[poly_cntrd,]
+        if (st_crs(poly_cntrd) == st_crs(WRS)) {
+          WRS_subset <- WRS[poly_cntrd,]
+        } else {
+          poly_cntrd = st_transform(poly_cntrd, st_crs(WRS))
+          WRS_subset <- WRS[poly_cntrd,]
+        }
         write_csv(st_drop_geometry(WRS_subset), 'data_acquisition/out/WRS_subset_list.csv')
         return(WRS_subset$PR)
       }
