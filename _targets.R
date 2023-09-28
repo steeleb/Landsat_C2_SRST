@@ -46,7 +46,7 @@ list(
     read = read_yaml(!!.x),
     packages = 'yaml'
   ),
-
+  
   # load, format, save yml as a csv
   tar_target(
     name = yml_save,
@@ -54,10 +54,10 @@ list(
       # make sure that {targets} runs the config_file target before this target
       config_file 
       format_yaml(yaml_file)
-      },
+    },
     packages = c("yaml", "tidyverse") #for some reason, you have to load TV.
   ),
-
+  
   # read in and track the formatted yml .csv file
   tar_file_read(
     name = yml,
@@ -65,14 +65,14 @@ list(
     read = read_csv(!!.x),
     packages = "readr"
   ),
-
+  
   # load, format, save user locations as an updated csv called locs.csv
   tar_target(
     name = locs_save,
     command = grab_locs(yml),
     packages = "readr"
   ),
-
+  
   # read and track formatted locations shapefile
   tar_file_read(
     name = locs,
@@ -87,7 +87,7 @@ list(
     command = get_NHD(locs, yml),
     packages = c("nhdplusTools", "sf", "tidyverse")
   ),
-
+  
   # load and track polygons file
   tar_file_read(
     name = polygons, # this will throw an error if the configure extent does not include polygon
@@ -96,14 +96,14 @@ list(
     packages = "sf",
     error = "null"
   ),
-
+  
   # use `polygons` sfc to calculate Chebyshev centers
   tar_target(
     name = centers_save,
     command = calc_center(polygons, yml),
     packages = c("sf", "polylabelr", "tidyverse")
   ),
-
+  
   # track centers file
   tar_file_read(
     name = centers, # this will throw an error if the configure extent does not include center.
@@ -112,7 +112,7 @@ list(
     packages = "sf",
     error = "null"
   ),
-
+  
   # get WRS tile acquisition method from yaml
   tar_target(
     name = WRS_detection_method,
@@ -121,7 +121,7 @@ list(
       centers
       polygons
       get_WRS_detection(yml)
-      },
+    },
     packages = "readr"
   ),
   
@@ -131,7 +131,7 @@ list(
     command = get_WRS_tiles(WRS_detection_method, yml),
     packages = c("readr", "sf")
   ),
-
+  
   # run the Landsat pull as function per tile
   tar_target(
     name = eeRun,
@@ -166,5 +166,4 @@ list(
     pattern = map(WRS_tiles),
     packages = "reticulate"
   )
-
 )
