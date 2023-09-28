@@ -5,7 +5,7 @@
 # indicated. All inputs are case-sensitive.
 
 local_settings:
-- data_dir: "~/Documents/GitHub/NW-CLP-RS/0_locs_poly_setup/out/" # point to the *full* directory path where your location information is stored - this path must end with a '/'
+- data_dir: "~/Documents/GitHub/NW-CLP-RS/a_locs_poly_setup/out/" # point to the *full* directory path where your location information is stored - this path must end with a '/'
 - location_file: "NW_CLP_all_points.csv" # name of the *.csv* file that contains the location information
 - unique_id: "rowid" # this is the column that stores the unique identifier for each site, should not contain any special characters
 - latitude: "Latitude" # this is the column that stores the latitude of the site, must be in decimal degrees
@@ -13,12 +13,12 @@ local_settings:
 - location_crs: "EPSG:4326" # this is the coordinate reference system of the location data, must be in EPSG format (e.g. EPSG:4326)
 - polygon: "True" # optional. True or False - if True, you have lake polygon shapefiles for each site.
 - poly_crs: "EPSG:4269" # this is the coordinate reference system of the polygon data, must be in EPSG format (e.g. EPSG:4326)
-- poly_dir: "~/Documents/GitHub/NW-CLP-RS/0_locs_poly_setup/out/" # optional. point to the directory where your lake polygon shapefiles are stored - this path must end with a '/'
+- poly_dir: "~/Documents/GitHub/NW-CLP-RS/a_locs_poly_setup/out/" # optional. point to the directory where your lake polygon shapefiles are stored - this path must end with a '/'
 - poly_file: "CLP_NW_polygons.gpkg" # optional. name of the shapefile that contains the lake polygons. 
 
 google_settings:
 - proj: "NW-Poudre-Historical" # this is a short name for file naming conventions. All output files will include this prefix.
-- proj_folder: "LS-C2-SR-NW_CLP_-Poly-Points-v2023-08-17" # this is the folder name where the GEE data will be save to Google Drive. If it doesn't exist, it will be created.
+- proj_folder: "LS-C2-SR-NW_CLP_Poly-Points-v2023-09-28" # this is the folder name where the GEE data will be save to Google Drive. If it doesn't exist, it will be created.
 - ee_proj: "ee-nasa-nw" # this is the ee project name you are running your pulls from
 
 # The following parameters are optional and have default values listed below. 

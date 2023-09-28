@@ -12,9 +12,7 @@ This script loads all necessary packages to run the targets pipeline, then runs 
 
 ## Install necessary packages
 
-Define package installer function
-
-```{r package_installer}
+```{r package_installer, echo = F}
 package_installer <- function(x) {
   if (x %in% installed.packages()) {
     print(paste0('{', x ,'} package is already installed.'))
@@ -27,7 +25,7 @@ package_installer <- function(x) {
 
 List packages that need to be checked for install, and walk the function along them all.
 
-```{r walk_package_installer}
+```{r walk_package_installer, message = F}
 packages <- c('tidyverse',
               'reticulate',
               'targets',
@@ -37,6 +35,7 @@ packages <- c('tidyverse',
               'nhdplusTools',
               'polylabelr',
               'sf')
+
 lapply(packages, package_installer)
 ```
 
@@ -69,7 +68,7 @@ information for the Landsat Surface Reflectance and Surface Temperature Collecti
 product stack pull. Additionally, you will need to change line 5 of the `_targets.R` file 
 if you have renamed the config file from `config.yml`.
 
-```{r run_targets}
+```{r run_targets, echo = F}
 library(targets)
 
 # run the pipeline
@@ -83,16 +82,21 @@ after 'built pattern eeRun', this workflow has successfully completed.
 
 ### Create a network diagram of the workflow.
 
-```{r write_mermaid}
+```{r create_target_vis, echo = F, message = F}
 # save the mmd file
-writeLines(tar_mermaid(), sep = '\n', 'mermaid.mmd')
+writeLines(tar_mermaid(), sep = '\n', 'mermaid/mermaid.mmd')
+```
+
+```{r write_mermaid, echo = F, message = F}
+# save the mmd file
+writeLines(tar_mermaid(), sep = '\n', 'mermaid/mermaid.mmd')
 ```
 
 ```{zsh create_mermaid_png}
-mmdc -i mermaid.mmd -o mermaid.png -t dark -w 4000 -H 1000
+mmdc -i mermaid/mermaid.mmd -o mermaid/mermaid.png -t dark -w 4000 -H 1000
 ```
 
-![](mermaid.png)
+![](mermaid/mermaid.png)
 
 In order to view [legible] text, right click the image and open in a new window.
 
