@@ -108,13 +108,16 @@ ls457 = (ee.ImageCollection(l4.merge(l5).merge(l7))
     .filterBounds(wrs))  
     
 # existing band names
-bn457 = ['SR_B1', 'SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B7', 'QA_PIXEL', 'SR_CLOUD_QA', 'QA_RADSAT', 'ST_B6', 
-'ST_QA', 'ST_CDIST', 'ST_ATRAN', 'ST_DRAD', 'ST_EMIS',
-                        'ST_EMSD', 'ST_TRAD', 'ST_URAD']
+bn457 = (['SR_B1', 'SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B7', 
+  'QA_PIXEL', 'SR_CLOUD_QA', 'QA_RADSAT', 'ST_B6', 
+  'ST_QA', 'ST_CDIST', 'ST_ATRAN', 'ST_DRAD', 'ST_EMIS',
+  'ST_EMSD', 'ST_TRAD', 'ST_URAD'])
+  
 # new band names
-bns457 = ['Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2', 'pixel_qa', 'cloud_qa', 'radsat_qa', 'SurfaceTemp', 
-'temp_qa', 'ST_CDIST', 'ST_ATRAN', 'ST_DRAD', 'ST_EMIS',
-                        'ST_EMSD', 'ST_TRAD', 'ST_URAD']
+bns457 = (['Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2', 
+  'pixel_qa', 'cloud_qa', 'radsat_qa', 'SurfaceTemp', 
+  'temp_qa', 'ST_CDIST', 'ST_ATRAN', 'ST_DRAD', 'ST_EMIS',
+  'ST_EMSD', 'ST_TRAD', 'ST_URAD'])
   
 # rename bands  
 ls457 = ls457.select(bn457, bns457)
@@ -134,13 +137,16 @@ l9 = (ee.ImageCollection('LANDSAT/LC09/C02/T1_L2')
 ls89 = ee.ImageCollection(l8.merge(l9)).filterBounds(wrs)  
     
 # existing band names
-bn89 = ['SR_B1', 'SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B6', 'SR_B7', 'QA_PIXEL', 'SR_QA_AEROSOL', 'QA_RADSAT', 'ST_B10', 
-'ST_QA', 'ST_CDIST', 'ST_ATRAN', 'ST_DRAD', 'ST_EMIS',
-                        'ST_EMSD', 'ST_TRAD', 'ST_URAD']
+bn89 = (['SR_B1', 'SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B6', 'SR_B7', 
+  'QA_PIXEL', 'SR_QA_AEROSOL', 'QA_RADSAT', 'ST_B10', 
+  'ST_QA', 'ST_CDIST', 'ST_ATRAN', 'ST_DRAD', 'ST_EMIS',
+  'ST_EMSD', 'ST_TRAD', 'ST_URAD'])
+  
 # new band names
-bns89 = ['Aerosol','Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2','pixel_qa', 'aerosol_qa', 'radsat_qa', 'SurfaceTemp', 
-'temp_qa', 'ST_CDIST', 'ST_ATRAN', 'ST_DRAD', 'ST_EMIS',
-                        'ST_EMSD', 'ST_TRAD', 'ST_URAD']
+bns89 = (['Aerosol','Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2',
+  'pixel_qa', 'aerosol_qa', 'radsat_qa', 'SurfaceTemp', 
+  'temp_qa', 'ST_CDIST', 'ST_ATRAN', 'ST_DRAD', 'ST_EMIS',
+  'ST_EMSD', 'ST_TRAD', 'ST_URAD'])
  
 # rename bands  
 ls89 = ls89.select(bn89, bns89)
@@ -174,18 +180,17 @@ if 'site' in extent:
                                             description = locs_srname_457_D1,
                                             folder = proj_folder,
                                             fileFormat = 'csv',
-                                            selectors = ['med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa',
-                                            'med_atran', 'med_drad', 'med_emis',
-            'med_emsd', 'med_trad', 'med_urad',
-                                            'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
-                                            'max_SurfaceTemp', 'max_temp_qa',
-                                            'Q1_SurfaceTemp', 
-                                            'Q3_SurfaceTemp', 
+                                            selectors = ['system:index',
+                                            'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
+                                            'med_SurfaceTemp', 'med_temp_qa', 'med_atran', 'med_drad', 'med_emis',
+                                            'med_emsd', 'med_trad', 'med_urad',
+                                            'min_SurfaceTemp', 'min_cloud_dist',
                                             'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
                                             'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
-                                            'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist',
-                                            'kurt_SurfaceTemp', 'pCount_dswe1', 'pCount_dswe3', 
-                                            'prop_clouds','prop_hillShadow','mean_hillShade', 'system:index']))
+                                            'mean_SurfaceTemp',
+                                            'kurt_SurfaceTemp', 
+                                            'pCount_dswe_gt0', 'pCount_dswe1', 'pCount_dswe3', 
+                                            'prop_clouds','prop_hillShadow','mean_hillShade']))
     #Check how many existing tasks are running and take a break of 120 secs if it's >25 
     maximum_no_of_tasks(10, 120)
     #Send next task.                                        
@@ -203,16 +208,17 @@ if 'site' in extent:
                                             description = locs_srname_457_D3,
                                             folder = proj_folder,
                                             fileFormat = 'csv',
-                                            selectors = ['med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa',
-                                            'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
-                                            'max_SurfaceTemp', 'max_temp_qa',
-                                            'Q1_SurfaceTemp', 
-                                            'Q3_SurfaceTemp', 
+                                            selectors = ['system:index',
+                                            'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
+                                            'med_SurfaceTemp', 'med_temp_qa', 'med_atran', 'med_drad', 'med_emis',
+                                            'med_emsd', 'med_trad', 'med_urad',
+                                            'min_SurfaceTemp', 'min_cloud_dist',
                                             'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
                                             'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
-                                            'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist',
-                                            'kurt_SurfaceTemp', 'pCount_dswe1', 'pCount_dswe3', 
-                                            'prop_clouds','prop_hillShadow','mean_hillShade', 'system:index']))
+                                            'mean_SurfaceTemp',
+                                            'kurt_SurfaceTemp', 
+                                            'pCount_dswe_gt0', 'pCount_dswe1', 'pCount_dswe3', 
+                                            'prop_clouds','prop_hillShadow','mean_hillShade']))
     #Check how many existing tasks are running and take a break of 120 secs if it's >25 
     maximum_no_of_tasks(10, 120)
     #Send next task.                                        
@@ -251,18 +257,17 @@ if 'site' in extent:
                                             description = locs_srname_89_D1,
                                             folder = proj_folder,
                                             fileFormat = 'csv',
-                                            selectors = ['med_Aerosol', 'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa',
-                                            'med_atran', 'med_drad', 'med_emis',
-            'med_emsd', 'med_trad', 'med_urad',
-            'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
-                                            'max_SurfaceTemp', 'max_temp_qa',
-                                            'Q1_SurfaceTemp', 
-                                            'Q3_SurfaceTemp', 
-                                            'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
-                                            'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
-                                            'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist',
-                                            'kurt_SurfaceTemp', 'pCount_dswe1', 'pCount_dswe3', 
-                                            'prop_clouds','prop_hillShadow','mean_hillShade', 'system:index']))
+                                            selectors = ['system:index',
+                                            'med_Aerosol', 'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
+                                            'med_SurfaceTemp', 'med_temp_qa', 'med_atran', 'med_drad', 'med_emis',
+                                            'med_emsd', 'med_trad', 'med_urad',
+                                            'min_SurfaceTemp', 'min_cloud_dist',
+                                            'sd_Aerosol', 'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
+                                            'mean_Aerosol', 'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
+                                            'mean_SurfaceTemp',
+                                            'kurt_SurfaceTemp', 
+                                            'pCount_dswe_gt0', 'pCount_dswe1', 'pCount_dswe3', 
+                                            'prop_clouds','prop_hillShadow','mean_hillShade']))
     #Check how many existing tasks are running and take a break of 120 secs if it's >25 
     maximum_no_of_tasks(10, 120)
     #Send next task.                                        
@@ -280,16 +285,17 @@ if 'site' in extent:
                                             description = locs_srname_89_D3,
                                             folder = proj_folder,
                                             fileFormat = 'csv',
-                                            selectors = ['med_Aerosol', 'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa',
-                                            'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
-                                            'max_SurfaceTemp', 'max_temp_qa',
-                                            'Q1_SurfaceTemp', 
-                                            'Q3_SurfaceTemp', 
-                                            'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
-                                            'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
-                                            'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist',
-                                            'kurt_SurfaceTemp', 'pCount_dswe1', 'pCount_dswe3', 
-                                            'prop_clouds','prop_hillShadow','mean_hillShade', 'system:index']))
+                                            selectors = ['system:index',
+                                            'med_Aerosol', 'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
+                                            'med_SurfaceTemp', 'med_temp_qa', 'med_atran', 'med_drad', 'med_emis',
+                                            'med_emsd', 'med_trad', 'med_urad',
+                                            'min_SurfaceTemp', 'min_cloud_dist',
+                                            'sd_Aerosol', 'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
+                                            'mean_Aerosol', 'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
+                                            'mean_SurfaceTemp',
+                                            'kurt_SurfaceTemp', 
+                                            'pCount_dswe_gt0', 'pCount_dswe1', 'pCount_dswe3', 
+                                            'prop_clouds','prop_hillShadow','mean_hillShade']))
     #Check how many existing tasks are running and take a break of 120 secs if it's >25 
     maximum_no_of_tasks(10, 120)
     #Send next task.                                        
@@ -327,17 +333,17 @@ if 'poly' in extent:
                                             description = poly_srname_457_D1,
                                             folder = proj_folder,
                                             fileFormat = 'csv',
-                                            selectors = ['med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa',
-                                            'med_atran', 'med_drad', 'med_emis',
-            'med_emsd', 'med_trad', 'med_urad', 'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
-                                            'max_SurfaceTemp', 'max_temp_qa',
-                                            'Q1_SurfaceTemp', 
-                                            'Q3_SurfaceTemp', 
+                                            selectors = ['system:index',
+                                            'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
+                                            'med_SurfaceTemp', 'med_temp_qa', 'med_atran', 'med_drad', 'med_emis',
+                                            'med_emsd', 'med_trad', 'med_urad',
+                                            'min_SurfaceTemp', 'min_cloud_dist',
                                             'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
                                             'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
-                                            'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist',
-                                            'kurt_SurfaceTemp', 'pCount_dswe1', 'pCount_dswe3', 
-                                            'prop_clouds','prop_hillShadow','mean_hillShade', 'system:index']))
+                                            'mean_SurfaceTemp',
+                                            'kurt_SurfaceTemp', 
+                                            'pCount_dswe_gt0', 'pCount_dswe1', 'pCount_dswe3', 
+                                            'prop_clouds','prop_hillShadow','mean_hillShade']))
     #Check how many existing tasks are running and take a break of 120 secs if it's >25 
     maximum_no_of_tasks(10, 120)
     #Send next task.                                        
@@ -355,16 +361,17 @@ if 'poly' in extent:
                                             description = poly_srname_457_D3,
                                             folder = proj_folder,
                                             fileFormat = 'csv',
-                                            selectors = ['med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa',
-                                            'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
-                                            'max_SurfaceTemp', 'max_temp_qa',
-                                            'Q1_SurfaceTemp', 
-                                            'Q3_SurfaceTemp', 
+                                            selectors = ['system:index',
+                                            'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
+                                            'med_SurfaceTemp', 'med_temp_qa', 'med_atran', 'med_drad', 'med_emis',
+                                            'med_emsd', 'med_trad', 'med_urad',
+                                            'min_SurfaceTemp', 'min_cloud_dist',
                                             'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
                                             'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
-                                            'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist',
-                                            'kurt_SurfaceTemp', 'pCount_dswe1', 'pCount_dswe3', 
-                                            'prop_clouds','prop_hillShadow','mean_hillShade', 'system:index']))
+                                            'mean_SurfaceTemp',
+                                            'kurt_SurfaceTemp', 
+                                            'pCount_dswe_gt0', 'pCount_dswe1', 'pCount_dswe3', 
+                                            'prop_clouds','prop_hillShadow','mean_hillShade']))
     #Check how many existing tasks are running and take a break of 120 secs if it's >25 
     maximum_no_of_tasks(10, 120)
     #Send next task.                                        
@@ -399,17 +406,17 @@ if 'poly' in extent:
                                             description = poly_srname_89_D1,
                                             folder = proj_folder,
                                             fileFormat = 'csv',
-                                            selectors = ['med_Aerosol', 'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa',
-                                            'med_atran', 'med_drad', 'med_emis',
-            'med_emsd', 'med_trad', 'med_urad', 'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
-                                            'max_SurfaceTemp', 'max_temp_qa',
-                                            'Q1_SurfaceTemp', 
-                                            'Q3_SurfaceTemp', 
-                                            'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
-                                            'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
-                                            'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist',
-                                            'kurt_SurfaceTemp', 'pCount_dswe1', 'pCount_dswe3', 
-                                            'prop_clouds','prop_hillShadow','mean_hillShade', 'system:index']))
+                                            selectors = ['system:index',
+                                            'med_Aerosol', 'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
+                                            'med_SurfaceTemp', 'med_temp_qa', 'med_atran', 'med_drad', 'med_emis',
+                                            'med_emsd', 'med_trad', 'med_urad',
+                                            'min_SurfaceTemp', 'min_cloud_dist',
+                                            'sd_Aerosol', 'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
+                                            'mean_Aerosol', 'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
+                                            'mean_SurfaceTemp',
+                                            'kurt_SurfaceTemp', 
+                                            'pCount_dswe_gt0', 'pCount_dswe1', 'pCount_dswe3', 
+                                            'prop_clouds','prop_hillShadow','mean_hillShade']))
     #Check how many existing tasks are running and take a break of 120 secs if it's >25 
     maximum_no_of_tasks(10, 120)
     #Send next task.                                        
@@ -427,16 +434,17 @@ if 'poly' in extent:
                                             description = poly_srname_89_D3,
                                             folder = proj_folder,
                                             fileFormat = 'csv',
-                                            selectors = ['med_Aerosol', 'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa',
-                                            'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
-                                            'max_SurfaceTemp', 'max_temp_qa',
-                                            'Q1_SurfaceTemp', 
-                                            'Q3_SurfaceTemp', 
-                                            'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
-                                            'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
-                                            'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist',
-                                            'kurt_SurfaceTemp', 'pCount_dswe1', 'pCount_dswe3', 
-                                            'prop_clouds','prop_hillShadow','mean_hillShade', 'system:index']))
+                                            selectors = ['system:index',
+                                            'med_Aerosol', 'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
+                                            'med_SurfaceTemp', 'med_temp_qa', 'med_atran', 'med_drad', 'med_emis',
+                                            'med_emsd', 'med_trad', 'med_urad',
+                                            'min_SurfaceTemp', 'min_cloud_dist',
+                                            'sd_Aerosol', 'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
+                                            'mean_Aerosol', 'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
+                                            'mean_SurfaceTemp',
+                                            'kurt_SurfaceTemp', 
+                                            'pCount_dswe_gt0', 'pCount_dswe1', 'pCount_dswe3', 
+                                            'prop_clouds','prop_hillShadow','mean_hillShade']))
     #Check how many existing tasks are running and take a break of 120 secs if it's >25 
     maximum_no_of_tasks(10, 120)
     #Send next task.                                        
@@ -477,17 +485,17 @@ if 'center' in extent:
                                             description = locs_srname_457_D1,
                                             folder = proj_folder,
                                             fileFormat = 'csv',
-                                            selectors = ['med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa',
-                                            'med_atran', 'med_drad', 'med_emis',
-            'med_emsd', 'med_trad', 'med_urad', 'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
-                                            'max_SurfaceTemp', 'max_temp_qa',
-                                            'Q1_SurfaceTemp', 
-                                            'Q3_SurfaceTemp', 
+                                            selectors = ['system:index',
+                                            'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
+                                            'med_SurfaceTemp', 'med_temp_qa', 'med_atran', 'med_drad', 'med_emis',
+                                            'med_emsd', 'med_trad', 'med_urad',
+                                            'min_SurfaceTemp', 'min_cloud_dist',
                                             'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
                                             'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
-                                            'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist',
-                                            'kurt_SurfaceTemp', 'pCount_dswe1', 'pCount_dswe3', 
-                                            'prop_clouds','prop_hillShadow','mean_hillShade', 'system:index']))
+                                            'mean_SurfaceTemp',
+                                            'kurt_SurfaceTemp', 
+                                            'pCount_dswe_gt0', 'pCount_dswe1', 'pCount_dswe3', 
+                                            'prop_clouds','prop_hillShadow','mean_hillShade']))
     #Check how many existing tasks are running and take a break of 120 secs if it's >25 
     maximum_no_of_tasks(10, 120)
     #Send next task.                                        
@@ -505,16 +513,17 @@ if 'center' in extent:
                                             description = locs_srname_457_D3,
                                             folder = proj_folder,
                                             fileFormat = 'csv',
-                                            selectors = ['med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa',
-                                            'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
-                                            'max_SurfaceTemp', 'max_temp_qa',
-                                            'Q1_SurfaceTemp', 
-                                            'Q3_SurfaceTemp', 
+                                            selectors = ['system:index',
+                                            'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
+                                            'med_SurfaceTemp', 'med_temp_qa', 'med_atran', 'med_drad', 'med_emis',
+                                            'med_emsd', 'med_trad', 'med_urad',
+                                            'min_SurfaceTemp', 'min_cloud_dist',
                                             'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
                                             'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
-                                            'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist',
-                                            'kurt_SurfaceTemp', 'pCount_dswe1', 'pCount_dswe3', 
-                                            'prop_clouds','prop_hillShadow','mean_hillShade', 'system:index']))
+                                            'mean_SurfaceTemp',
+                                            'kurt_SurfaceTemp', 
+                                            'pCount_dswe_gt0', 'pCount_dswe1', 'pCount_dswe3', 
+                                            'prop_clouds','prop_hillShadow','mean_hillShade']))
     #Check how many existing tasks are running and take a break of 120 secs if it's >25 
     maximum_no_of_tasks(10, 120)
     #Send next task.                                        
@@ -553,17 +562,17 @@ if 'center' in extent:
                                             description = locs_srname_89_D1,
                                             folder = proj_folder,
                                             fileFormat = 'csv',
-                                            selectors = ['med_Aerosol', 'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa',
-                                            'med_atran', 'med_drad', 'med_emis',
-            'med_emsd', 'med_trad', 'med_urad', 'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
-                                            'max_SurfaceTemp', 'max_temp_qa',
-                                            'Q1_SurfaceTemp', 
-                                            'Q3_SurfaceTemp', 
-                                            'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
-                                            'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
-                                            'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist',
-                                            'kurt_SurfaceTemp', 'pCount_dswe1', 'pCount_dswe3', 
-                                            'prop_clouds','prop_hillShadow','mean_hillShade', 'system:index']))
+                                            selectors = ['system:index',
+                                            'med_Aerosol', 'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
+                                            'med_SurfaceTemp', 'med_temp_qa', 'med_atran', 'med_drad', 'med_emis',
+                                            'med_emsd', 'med_trad', 'med_urad',
+                                            'min_SurfaceTemp', 'min_cloud_dist',
+                                            'sd_Aerosol', 'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
+                                            'mean_Aerosol', 'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
+                                            'mean_SurfaceTemp',
+                                            'kurt_SurfaceTemp', 
+                                            'pCount_dswe_gt0', 'pCount_dswe1', 'pCount_dswe3', 
+                                            'prop_clouds','prop_hillShadow','mean_hillShade']))
     #Check how many existing tasks are running and take a break of 120 secs if it's >25 
     maximum_no_of_tasks(10, 120)
     #Send next task.                                        
@@ -580,16 +589,17 @@ if 'center' in extent:
                                             description = locs_srname_89_D3,
                                             folder = proj_folder,
                                             fileFormat = 'csv',
-                                            selectors = ['med_Aerosol', 'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa',
-                                            'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
-                                            'max_SurfaceTemp', 'max_temp_qa',
-                                            'Q1_SurfaceTemp', 
-                                            'Q3_SurfaceTemp', 
-                                            'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
-                                            'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
-                                            'mean_SurfaceTemp', 'mean_temp_qa', 'mean_cloud_dist',
-                                            'kurt_SurfaceTemp', 'pCount_dswe1', 'pCount_dswe3', 
-                                            'prop_clouds','prop_hillShadow','mean_hillShade', 'system:index']))
+                                            selectors = ['system:index',
+                                            'med_Aerosol', 'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
+                                            'med_SurfaceTemp', 'med_temp_qa', 'med_atran', 'med_drad', 'med_emis',
+                                            'med_emsd', 'med_trad', 'med_urad',
+                                            'min_SurfaceTemp', 'min_cloud_dist',
+                                            'sd_Aerosol', 'sd_Blue', 'sd_Green', 'sd_Red', 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp',
+                                            'mean_Aerosol', 'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 'mean_Swir1', 'mean_Swir2', 
+                                            'mean_SurfaceTemp',
+                                            'kurt_SurfaceTemp', 
+                                            'pCount_dswe_gt0', 'pCount_dswe1', 'pCount_dswe3', 
+                                            'prop_clouds','prop_hillShadow','mean_hillShade']))
     #Check how many existing tasks are running and take a break of 120 secs if it's >25 
     maximum_no_of_tasks(10, 120)
     #Send next task.                                        
