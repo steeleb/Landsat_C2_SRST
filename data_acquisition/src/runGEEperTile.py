@@ -196,7 +196,7 @@ if 'site' in extent:
     #Send next task.                                        
     locs_dataOut_457_D1.start()
     print('Completed Landsat 4, 5, 7 DSWE 1 stack acquisitions for site location at tile ' + str(tiles))
-  
+    
   else: print('Not configured to acquire DSWE 1 stack for Landsat 4, 5, 7 for sites.')
   
   if '3' in dswe:
@@ -224,7 +224,7 @@ if 'site' in extent:
     #Send next task.                                        
     locs_dataOut_457_D3.start()
     print('Completed Landsat 4, 5, 7 DSWE 3 stack acquisitions for site location at tile ' + str(tiles))
-  
+    
   else: print('Not configured to acquire DSWE 3 stack for Landsat 4, 5, 7 for sites.')
 
 else: 

@@ -534,7 +534,6 @@ def ref_pull_89_DSWE1(image):
           .updateMask(d.eq(3)) # only vegetated water
           .updateMask(r.eq(1)) # 1 == no saturated pixels
           .updateMask(f.eq(0)) # no snow or clouds
-          .updateMask(s.eq(0)) # no SR processing artefacts
           .updateMask(hs.eq(1)) # only illuminated pixels
           .addBands(pCount) 
           .addBands(dswe1)
@@ -613,7 +612,6 @@ def ref_pull_89_DSWE3(image):
           .updateMask(d.eq(3)) # only vegetated water
           .updateMask(r.eq(1)) #1 == no saturated pixels
           .updateMask(f.eq(0)) #no snow or clouds
-          .updateMask(s.eq(0)) # no SR processing artefacts
           .updateMask(hs.eq(1)) # only illuminated pixels
           .addBands(pCount) 
           .addBands(dswe1)
