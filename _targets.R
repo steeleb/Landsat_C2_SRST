@@ -132,7 +132,7 @@ list(
     packages = c("readr", "sf")
   ),
 
-  # run the landsat pull as function per tile
+  # run the Landsat pull as function per tile
   tar_target(
     name = eeRun,
     command = {
@@ -166,4 +166,5 @@ list(
     pattern = map(WRS_tiles),
     packages = "reticulate"
   )
+
 )

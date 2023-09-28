@@ -82,7 +82,7 @@ after 'built pattern eeRun', this workflow has successfully completed.
 
 ### Create a network diagram of the workflow.
 
-```{r create_target_vis, echo = F, message = F}
+```{r create_target_vis, echo=F, message=FALSE}
 # save the mmd file
 writeLines(tar_mermaid(), sep = '\n', 'mermaid/mermaid.mmd')
 ```
