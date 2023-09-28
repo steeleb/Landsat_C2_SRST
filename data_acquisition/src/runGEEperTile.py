@@ -108,9 +108,13 @@ ls457 = (ee.ImageCollection(l4.merge(l5).merge(l7))
     .filterBounds(wrs))  
     
 # existing band names
-bn457 = ['SR_B1', 'SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B7', 'QA_PIXEL', 'SR_CLOUD_QA', 'QA_RADSAT', 'ST_B6', 'ST_QA', 'ST_CDIST']
+bn457 = ['SR_B1', 'SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B7', 'QA_PIXEL', 'SR_CLOUD_QA', 'QA_RADSAT', 'ST_B6', 
+'ST_QA', 'ST_CDIST', 'ST_ATRAN', 'ST_DRAD', 'ST_EMIS',
+                        'ST_EMSD', 'ST_TRAD', 'ST_URAD']
 # new band names
-bns457 = ['Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2', 'pixel_qa', 'cloud_qa', 'radsat_qa', 'SurfaceTemp', 'temp_qa', 'ST_CDIST']
+bns457 = ['Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2', 'pixel_qa', 'cloud_qa', 'radsat_qa', 'SurfaceTemp', 
+'temp_qa', 'ST_CDIST', 'ST_ATRAN', 'ST_DRAD', 'ST_EMIS',
+                        'ST_EMSD', 'ST_TRAD', 'ST_URAD']
   
 # rename bands  
 ls457 = ls457.select(bn457, bns457)
@@ -130,9 +134,13 @@ l9 = (ee.ImageCollection('LANDSAT/LC09/C02/T1_L2')
 ls89 = ee.ImageCollection(l8.merge(l9)).filterBounds(wrs)  
     
 # existing band names
-bn89 = ['SR_B1', 'SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B6', 'SR_B7', 'QA_PIXEL', 'SR_QA_AEROSOL', 'QA_RADSAT', 'ST_B10', 'ST_QA', 'ST_CDIST']
+bn89 = ['SR_B1', 'SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B6', 'SR_B7', 'QA_PIXEL', 'SR_QA_AEROSOL', 'QA_RADSAT', 'ST_B10', 
+'ST_QA', 'ST_CDIST', 'ST_ATRAN', 'ST_DRAD', 'ST_EMIS',
+                        'ST_EMSD', 'ST_TRAD', 'ST_URAD']
 # new band names
-bns89 = ['Aerosol','Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2','pixel_qa', 'aerosol_qa', 'radsat_qa', 'SurfaceTemp', 'temp_qa', 'ST_CDIST']
+bns89 = ['Aerosol','Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2','pixel_qa', 'aerosol_qa', 'radsat_qa', 'SurfaceTemp', 
+'temp_qa', 'ST_CDIST', 'ST_ATRAN', 'ST_DRAD', 'ST_EMIS',
+                        'ST_EMSD', 'ST_TRAD', 'ST_URAD']
  
 # rename bands  
 ls89 = ls89.select(bn89, bns89)
@@ -167,6 +175,8 @@ if 'site' in extent:
                                             folder = proj_folder,
                                             fileFormat = 'csv',
                                             selectors = ['med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa',
+                                            'med_atran', 'med_drad', 'med_emis',
+            'med_emsd', 'med_trad', 'med_urad',
                                             'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
                                             'max_SurfaceTemp', 'max_temp_qa',
                                             'Q1_SurfaceTemp', 
@@ -242,7 +252,9 @@ if 'site' in extent:
                                             folder = proj_folder,
                                             fileFormat = 'csv',
                                             selectors = ['med_Aerosol', 'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa',
-                                            'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
+                                            'med_atran', 'med_drad', 'med_emis',
+            'med_emsd', 'med_trad', 'med_urad',
+            'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
                                             'max_SurfaceTemp', 'max_temp_qa',
                                             'Q1_SurfaceTemp', 
                                             'Q3_SurfaceTemp', 
@@ -316,7 +328,8 @@ if 'poly' in extent:
                                             folder = proj_folder,
                                             fileFormat = 'csv',
                                             selectors = ['med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa',
-                                            'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
+                                            'med_atran', 'med_drad', 'med_emis',
+            'med_emsd', 'med_trad', 'med_urad', 'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
                                             'max_SurfaceTemp', 'max_temp_qa',
                                             'Q1_SurfaceTemp', 
                                             'Q3_SurfaceTemp', 
@@ -387,7 +400,8 @@ if 'poly' in extent:
                                             folder = proj_folder,
                                             fileFormat = 'csv',
                                             selectors = ['med_Aerosol', 'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa',
-                                            'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
+                                            'med_atran', 'med_drad', 'med_emis',
+            'med_emsd', 'med_trad', 'med_urad', 'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
                                             'max_SurfaceTemp', 'max_temp_qa',
                                             'Q1_SurfaceTemp', 
                                             'Q3_SurfaceTemp', 
@@ -464,7 +478,8 @@ if 'center' in extent:
                                             folder = proj_folder,
                                             fileFormat = 'csv',
                                             selectors = ['med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa',
-                                            'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
+                                            'med_atran', 'med_drad', 'med_emis',
+            'med_emsd', 'med_trad', 'med_urad', 'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
                                             'max_SurfaceTemp', 'max_temp_qa',
                                             'Q1_SurfaceTemp', 
                                             'Q3_SurfaceTemp', 
@@ -539,7 +554,8 @@ if 'center' in extent:
                                             folder = proj_folder,
                                             fileFormat = 'csv',
                                             selectors = ['med_Aerosol', 'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa',
-                                            'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
+                                            'med_atran', 'med_drad', 'med_emis',
+            'med_emsd', 'med_trad', 'med_urad', 'min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist',
                                             'max_SurfaceTemp', 'max_temp_qa',
                                             'Q1_SurfaceTemp', 
                                             'Q3_SurfaceTemp', 

@@ -352,8 +352,12 @@ def ref_pull_457_DSWE1(image):
   #calculate hillshadow
   hs = calc_hill_shadows(image, wrs.geometry()).select('hillShadow')
   
-  pixOut = (image.select(['Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2', 'SurfaceTemp', 'temp_qa'],
-            ['med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa'])
+  pixOut = (image.select(['Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2', 
+                        'SurfaceTemp', 'temp_qa', 'ST_ATRAN', 'ST_DRAD', 'ST_EMIS',
+                        'ST_EMSD', 'ST_TRAD', 'ST_URAD'],
+            ['med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
+            'med_SurfaceTemp', 'med_temp_qa', 'med_atran', 'med_drad', 'med_emis',
+            'med_emsd', 'med_trad', 'med_urad'])
             .addBands(image.select(['SurfaceTemp', 'temp_qa', 'ST_CDIST'],
             ['min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist']))
             .addBands(image.select(['SurfaceTemp', 'temp_qa'],
@@ -378,7 +382,8 @@ def ref_pull_457_DSWE1(image):
             .addBands(hs)
             .addBands(h)
             ) 
-  combinedReducer = (ee.Reducer.median().unweighted().forEachBand(pixOut.select(['med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa']))
+  combinedReducer = (ee.Reducer.median().unweighted().forEachBand(pixOut.select(['med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa','med_atran', 'med_drad', 'med_emis',
+            'med_emsd', 'med_trad', 'med_urad']))
     .combine(ee.Reducer.min().unweighted().forEachBand(pixOut.select(['min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist'])), sharedInputs = False)
     .combine(ee.Reducer.max().unweighted().forEachBand(pixOut.select(['max_SurfaceTemp', 'max_temp_qa'])), sharedInputs = False)
     .combine(ee.Reducer.percentile([25]).unweighted().forEachBand(pixOut.select(['Q1_SurfaceTemp'])), sharedInputs = False)
@@ -497,8 +502,12 @@ def ref_pull_89_DSWE1(image):
   h = calc_hill_shades(image, wrs.geometry()).select('hillShade')
   #calculate hillshadow
   hs = calc_hill_shadows(image, wrs.geometry()).select('hillShadow')
-  pixOut = (image.select(['Aerosol','Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2', 'SurfaceTemp', 'temp_qa'],
-            ['med_Aerosol','med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa'])
+  pixOut = (image.select(['Aerosol', 'Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2', 
+                        'SurfaceTemp', 'temp_qa', 'ST_ATRAN', 'ST_DRAD', 'ST_EMIS',
+                        'ST_EMSD', 'ST_TRAD', 'ST_URAD'],
+            ['med_Aerosol', 'med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
+            'med_SurfaceTemp', 'med_temp_qa', 'med_atran', 'med_drad', 'med_emis',
+            'med_emsd', 'med_trad', 'med_urad'])
             .addBands(image.select(['SurfaceTemp', 'temp_qa', 'ST_CDIST'],
             ['min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist']))
             .addBands(image.select(['SurfaceTemp', 'temp_qa'],
@@ -522,7 +531,8 @@ def ref_pull_89_DSWE1(image):
             .addBands(hs)
             .addBands(h)
             ) 
-  combinedReducer = (ee.Reducer.median().unweighted().forEachBand(pixOut.select(['med_Aerosol','med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa']))
+  combinedReducer = (ee.Reducer.median().unweighted().forEachBand(pixOut.select(['med_Aerosol','med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 'med_temp_qa','med_atran', 'med_drad', 'med_emis',
+            'med_emsd', 'med_trad', 'med_urad']))
     .combine(ee.Reducer.min().unweighted().forEachBand(pixOut.select(['min_SurfaceTemp', 'min_temp_qa', 'min_cloud_dist'])), sharedInputs = False)
     .combine(ee.Reducer.max().unweighted().forEachBand(pixOut.select(['max_SurfaceTemp', 'max_temp_qa'])), sharedInputs = False)
     .combine(ee.Reducer.percentile([25]).unweighted().forEachBand(pixOut.select(['Q1_SurfaceTemp'])), sharedInputs = False)
