@@ -7,7 +7,7 @@
 # python environment files
 env/
 
-# symplink data folder
+# symlink data folder
 data/
 
 #additional files in 'in' and 'out' folders
