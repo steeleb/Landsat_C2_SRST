@@ -367,10 +367,10 @@ def ref_pull_457_DSWE1(image):
                                   'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp']))
             .addBands(image.select(['Blue', 'Green', 'Red', 'Nir', 
                                     'Swir1', 'Swir2', 
-                                    'SurfaceTemp', 'temp_qa', 'ST_CDIST'],
+                                    'SurfaceTemp'],
                                   ['mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 
                                   'mean_Swir1', 'mean_Swir2', 
-                                  'mean_SurfaceTemp', 'mean_temp_qa']))
+                                  'mean_SurfaceTemp']))
             .addBands(image.select(['SurfaceTemp']))
             .updateMask(d.eq(1)) # only high confidence water
             .updateMask(r.eq(1)) #1 == no saturated pixels
@@ -433,37 +433,37 @@ def ref_pull_457_DSWE3(image):
   #calculate hillshadow
   hs = calc_hill_shadows(image, wrs.geometry()).select('hillShadow')
   
-    pixOut = (image.select(['Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2', 
-                        'SurfaceTemp', 'temp_qa', 'ST_ATRAN', 'ST_DRAD', 'ST_EMIS',
-                        'ST_EMSD', 'ST_TRAD', 'ST_URAD'],
-                        ['med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
-                        'med_SurfaceTemp', 'med_temp_qa', 'med_atran', 'med_drad', 'med_emis',
-                        'med_emsd', 'med_trad', 'med_urad'])
-            .addBands(image.select(['SurfaceTemp', 'ST_CDIST'],
-                                    ['min_SurfaceTemp', 'min_cloud_dist']))
-            .addBands(image.select(['Blue', 'Green', 'Red', 
-                                    'Nir', 'Swir1', 'Swir2', 'SurfaceTemp'],
-                                  ['sd_Blue', 'sd_Green', 'sd_Red', 
-                                  'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp']))
+  pixOut = (image.select(['Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2', 
+                      'SurfaceTemp', 'temp_qa', 'ST_ATRAN', 'ST_DRAD', 'ST_EMIS',
+                      'ST_EMSD', 'ST_TRAD', 'ST_URAD'],
+                      ['med_Blue', 'med_Green', 'med_Red', 'med_Nir', 'med_Swir1', 'med_Swir2', 
+                      'med_SurfaceTemp', 'med_temp_qa', 'med_atran', 'med_drad', 'med_emis',
+                      'med_emsd', 'med_trad', 'med_urad'])
+          .addBands(image.select(['SurfaceTemp', 'ST_CDIST'],
+                                  ['min_SurfaceTemp', 'min_cloud_dist']))
+          .addBands(image.select(['Blue', 'Green', 'Red', 
+                                  'Nir', 'Swir1', 'Swir2', 'SurfaceTemp'],
+                                ['sd_Blue', 'sd_Green', 'sd_Red', 
+                                'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp']))
             .addBands(image.select(['Blue', 'Green', 'Red', 'Nir', 
                                     'Swir1', 'Swir2', 
-                                    'SurfaceTemp', 'temp_qa', 'ST_CDIST'],
+                                    'SurfaceTemp'],
                                   ['mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 
                                   'mean_Swir1', 'mean_Swir2', 
-                                  'mean_SurfaceTemp', 'mean_temp_qa']))
-            .addBands(image.select(['SurfaceTemp']))
-            .updateMask(d.eq(1)) # only high confidence water
-            .updateMask(r.eq(1)) #1 == no saturated pixels
-            .updateMask(f.eq(0)) #no snow or clouds
-            .updateMask(s.eq(0)) # no SR processing artefacts
-            .updateMask(hs.eq(1)) # only illuminated pixels
-            .addBands(pCount) 
-            .addBands(dswe1)
-            .addBands(dswe3)
-            .addBands(clouds) 
-            .addBands(hs)
-            .addBands(h)
-            ) 
+                                  'mean_SurfaceTemp']))
+          .addBands(image.select(['SurfaceTemp']))
+          .updateMask(d.eq(1)) # only high confidence water
+          .updateMask(r.eq(1)) #1 == no saturated pixels
+          .updateMask(f.eq(0)) #no snow or clouds
+          .updateMask(s.eq(0)) # no SR processing artefacts
+          .updateMask(hs.eq(1)) # only illuminated pixels
+          .addBands(pCount) 
+          .addBands(dswe1)
+          .addBands(dswe3)
+          .addBands(clouds) 
+          .addBands(hs)
+          .addBands(h)
+          ) 
   combinedReducer = (ee.Reducer.median().unweighted().forEachBand(pixOut.select(['med_Blue', 'med_Green', 'med_Red', 
             'med_Nir', 'med_Swir1', 'med_Swir2', 'med_SurfaceTemp', 
             'med_temp_qa','med_atran', 'med_drad', 'med_emis',
@@ -504,7 +504,7 @@ def ref_pull_89_DSWE1(image):
   clouds = f.gte(1).rename('clouds')
   #apply dswe function
   d = DSWE(image).select('dswe')
-  pCount = d.gt(0).rename('dswe_gt0').updateMask(f.eq(0)).updateMask(r.eq(1)).updateMask(s.eq(0)).selfMask()
+  pCount = d.gt(0).rename('dswe_gt0').updateMask(f.eq(0)).updateMask(r.eq(1)).selfMask()
   dswe1 = d.eq(1).rename('dswe1').updateMask(f.eq(0)).updateMask(r.eq(1)).selfMask()
   # band where dswe is 3 and apply all masks
   dswe3 = d.eq(3).rename('dswe3').updateMask(f.eq(0)).updateMask(r.eq(1)).selfMask()
@@ -526,15 +526,14 @@ def ref_pull_89_DSWE1(image):
                                 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp']))
           .addBands(image.select(['Aerosol', 'Blue', 'Green', 'Red', 'Nir', 
                                   'Swir1', 'Swir2', 
-                                  'SurfaceTemp', 'temp_qa', 'ST_CDIST'],
+                                  'SurfaceTemp'],
                                 ['mean_Aerosol', 'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 
                                 'mean_Swir1', 'mean_Swir2', 
-                                'mean_SurfaceTemp', 'mean_temp_qa']))
+                                'mean_SurfaceTemp']))
           .addBands(image.select(['SurfaceTemp']))
           .updateMask(d.eq(3)) # only vegetated water
           .updateMask(r.eq(1)) # 1 == no saturated pixels
           .updateMask(f.eq(0)) # no snow or clouds
-          .updateMask(s.eq(0)) # no SR processing artefacts
           .updateMask(hs.eq(1)) # only illuminated pixels
           .addBands(pCount) 
           .addBands(dswe1)
@@ -583,7 +582,7 @@ def ref_pull_89_DSWE3(image):
   clouds = f.gte(1).rename('clouds')
   #apply dswe function
   d = DSWE(image).select('dswe')
-  pCount = d.gt(0).rename('dswe_gt0').updateMask(f.eq(0)).updateMask(r.eq(1)).updateMask(s.eq(0)).selfMask()
+  pCount = d.gt(0).rename('dswe_gt0').updateMask(f.eq(0)).updateMask(r.eq(1)).selfMask()
   dswe1 = d.eq(1).rename('dswe1').updateMask(f.eq(0)).updateMask(r.eq(1)).selfMask()
   # band where dswe is 3 and apply all masks
   dswe3 = d.eq(3).rename('dswe3').updateMask(f.eq(0)).updateMask(r.eq(1)).selfMask()
@@ -605,15 +604,14 @@ def ref_pull_89_DSWE3(image):
                                 'sd_Nir', 'sd_Swir1', 'sd_Swir2', 'sd_SurfaceTemp']))
           .addBands(image.select(['Aerosol', 'Blue', 'Green', 'Red', 'Nir', 
                                   'Swir1', 'Swir2', 
-                                  'SurfaceTemp', 'temp_qa', 'ST_CDIST'],
+                                  'SurfaceTemp'],
                                 ['mean_Aerosol', 'mean_Blue', 'mean_Green', 'mean_Red', 'mean_Nir', 
                                 'mean_Swir1', 'mean_Swir2', 
-                                'mean_SurfaceTemp', 'mean_temp_qa']))
+                                'mean_SurfaceTemp']))
           .addBands(image.select(['SurfaceTemp']))
           .updateMask(d.eq(3)) # only vegetated water
           .updateMask(r.eq(1)) #1 == no saturated pixels
           .updateMask(f.eq(0)) #no snow or clouds
-          .updateMask(s.eq(0)) # no SR processing artefacts
           .updateMask(hs.eq(1)) # only illuminated pixels
           .addBands(pCount) 
           .addBands(dswe1)
