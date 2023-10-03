@@ -1,3 +1,5 @@
+#' @title Determine WRS selection method
+#' 
 #' @description
 #' Function to use the yaml file extent to define the optimal shapefile for 
 #' determining the WRS paths that need to be extracted.

@@ -1,3 +1,5 @@
+#' @title Make list of WRS tiles to map over
+#' 
 #' @description
 #' Function to use the optimal shapefile from get_WRS_detection() to define
 #' the list of WRS2 tiles for branching

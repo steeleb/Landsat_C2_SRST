@@ -1,3 +1,5 @@
+#' @title Read and foramt yaml file
+#' 
 #' @description 
 #' Function to read in yaml, reformat and pivot for easy use in scripts
 #' 

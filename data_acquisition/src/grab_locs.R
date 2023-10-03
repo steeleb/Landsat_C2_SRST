@@ -1,3 +1,5 @@
+#' @title Load location information
+#' 
 #' @description
 #' Load in and format location file using config settings
 #' 

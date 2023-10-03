@@ -1,3 +1,5 @@
+#' @title Create polygon file using NHDPlusTools
+#' 
 #' @description
 #' Use NHDPlusTools to create a polygon shapefile if user wants whole-lake 
 #' summaries, or use the user-specified shapefile.
