@@ -504,7 +504,7 @@ def ref_pull_89_DSWE1(image):
   clouds = f.gte(1).rename('clouds')
   #apply dswe function
   d = DSWE(image).select('dswe')
-  pCount = d.gt(0).rename('dswe_gt0').updateMask(f.eq(0)).updateMask(r.eq(1)).updateMask(s.eq(0)).selfMask()
+  pCount = d.gt(0).rename('dswe_gt0').updateMask(f.eq(0)).updateMask(r.eq(1)).selfMask()
   dswe1 = d.eq(1).rename('dswe1').updateMask(f.eq(0)).updateMask(r.eq(1)).selfMask()
   # band where dswe is 3 and apply all masks
   dswe3 = d.eq(3).rename('dswe3').updateMask(f.eq(0)).updateMask(r.eq(1)).selfMask()
@@ -582,7 +582,7 @@ def ref_pull_89_DSWE3(image):
   clouds = f.gte(1).rename('clouds')
   #apply dswe function
   d = DSWE(image).select('dswe')
-  pCount = d.gt(0).rename('dswe_gt0').updateMask(f.eq(0)).updateMask(r.eq(1)).updateMask(s.eq(0)).selfMask()
+  pCount = d.gt(0).rename('dswe_gt0').updateMask(f.eq(0)).updateMask(r.eq(1)).selfMask()
   dswe1 = d.eq(1).rename('dswe1').updateMask(f.eq(0)).updateMask(r.eq(1)).selfMask()
   # band where dswe is 3 and apply all masks
   dswe3 = d.eq(3).rename('dswe3').updateMask(f.eq(0)).updateMask(r.eq(1)).selfMask()
