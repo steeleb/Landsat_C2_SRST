@@ -39,7 +39,7 @@ calc_center <- function(poly, yaml) {
       one_wbd_utm = st_transform(one_wbd, 
                                  crs = utm_code)
       # get UTM coordinates
-      coord = one_wbd_utm[i,] %>% st_coordinates()
+      coord = one_wbd_utm %>% st_coordinates()
       x = coord[,1]
       y = coord[,2]
       # using coordinates, get the poi distance
