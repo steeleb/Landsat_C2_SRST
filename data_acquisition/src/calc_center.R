@@ -27,13 +27,19 @@ calc_center <- function(poly, yaml) {
     for (i in 1:length(poly[[1]])) {
       poi_df  <- poi_df %>% add_row()
       one_wbd = wbd[i,]
-      # get coordinates to calculate UTM zone
+      # get coordinates to calculate UTM zone. This is an adaptation of code from
+      # Xiao Yang's code in EE - Yang, Xiao. (2020). Deepest point calculation 
+      # for any given polygon using Google Earth Engine JavaScript API 
+      # (Version v1). Zenodo. https://doi.org/10.5281/zenodo.4136755
       coord_for_UTM = one_wbd %>% st_coordinates()
       mean_x = mean(coord_for_UTM[,1])
       mean_y = mean(coord_for_UTM[,2])
+      # calculate the UTM zone using the mean value of Longitude for the polygon
       utm_suffix = as.character(ceiling((mean_x + 180) / 6))
       utm_code = if_else(mean_y >= 0,
+                         # EPSG prefix for N hemishpere
                          paste0('EPSG:326', utm_suffix),
+                         # for S hemisphere
                          paste0('EPSG:327', utm_suffix))
       # transform wbd to UTM
       one_wbd_utm = st_transform(one_wbd, 
