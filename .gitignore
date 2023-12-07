@@ -13,7 +13,6 @@ data/
 #additional files in 'in' and 'out' folders
 data_acquisition/in/*.csv
 data_acquisition/out/*
-!data_acquisition/out/placeholder
 
 # dumb .DS_Store
 **.DS_Store
