@@ -200,13 +200,16 @@ get_WRS_detection <- function(yaml) {
 #' 
 #' @param detection_method optimal shapefile from get_WRS_detection()
 #' @param yaml contents of the yaml .csv file
+#' @param locs 'locs' target
+#' @param centers 'centers' target
+#' @param polygons 'polygons' target
 #' @returns list of WRS2 tiles
 #' 
 #' 
-get_WRS_tiles <- function(detection_method, yaml) {
+get_WRS_tiles <- function(detection_method, yaml, locs, centers, polygons) {
   WRS <- read_sf('data_acquisition/in/WRS2_descending.shp')
   if (detection_method == 'site') {
-    locations <- tar_read(locs)
+    locations <- locs
     locs <- st_as_sf(locations, 
                      coords = c('Longitude', 'Latitude'), 
                      crs = yaml$location_crs[1])
@@ -220,7 +223,7 @@ get_WRS_tiles <- function(detection_method, yaml) {
     return(WRS_subset$PR)
   } else {
     if (detection_method == 'centers') {
-      centers <- tar_read(centers)
+      centers <- centers
       centers_cntrd <- st_centroid(centers)
       if (st_crs(centers_cntrd) == st_crs(WRS)) {
         WRS_subset <- WRS[centers_cntrd,]
@@ -232,7 +235,7 @@ get_WRS_tiles <- function(detection_method, yaml) {
       return(WRS_subset$PR)
     } else {
       if (detection_method == 'polygon') {
-        poly <- tar_read(polygons)
+        poly <- polygons
         poly_cntrd <- st_centroid(poly)
         if (st_crs(poly_cntrd) == st_crs(WRS)) {
           WRS_subset <- WRS[poly_cntrd,]

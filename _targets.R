@@ -128,7 +128,7 @@ list(
   # get WRS tiles
   tar_target(
     name = WRS_tiles,
-    command = get_WRS_tiles(WRS_detection_method, yml),
+    command = get_WRS_tiles(WRS_detection_method, yml, locs, centers, polygons),
     packages = c("readr", "sf")
   ),
   

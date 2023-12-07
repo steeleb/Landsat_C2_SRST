@@ -18,7 +18,7 @@ local_settings:
 
 google_settings:
 - proj: "NW-Poudre-Historical" # this is a short name for file naming conventions. All output files will include this prefix.
-- proj_folder: "LS-C2-SR-NW_CLP_Poly-Points-v2023-09-28" # this is the folder name where the GEE data will be save to Google Drive. If it doesn't exist, it will be created.
+- proj_folder: "LS-C2-SR-NW_CLP_Poly-Points-v2023-12-07" # this is the folder name where the GEE data will be save to Google Drive. If it doesn't exist, it will be created.
 - ee_proj: "ee-nasa-nw" # this is the ee project name you are running your pulls from
 
 # The following parameters are optional and have default values listed below. 
