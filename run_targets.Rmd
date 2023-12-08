@@ -1,7 +1,7 @@
 ---
 title: "Run Targets - Landsat Collection 2 SR/ST Acquisition"
 subtitle: "Northern Water and Cache La Poudre Branch"
-date: today
+date: "`r Sys.Date()`"
 author: "ROSSyndicate"
 output:
   html_document: default
