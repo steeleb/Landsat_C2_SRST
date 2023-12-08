@@ -1,5 +1,7 @@
 ---
 title: "Run Targets - Landsat Collection 2 SR/ST Acquisition"
+subtitle: "Northern Water and Cache La Poudre Branch"
+date: today
 author: "ROSSyndicate"
 output:
   html_document: default
@@ -9,6 +11,17 @@ output:
 # Purpose
 
 This script loads all necessary packages to run the targets pipeline, then runs it!
+This particular instance pulls the historical Landsat record for Northern Water and
+all reservoirs greater than 0.01km^2 in the Cache La Poudre HUC 8 watershed. The
+locations file referenced in the yaml config file was generated in targets branch
+a of the NW-CLP-RS repository. 
+
+Running this pipeline requires access to both the successfully run a branch of the
+NW-CLP-RS repository and access to the ROSSyndicate Google Account. If attempting to
+reproduce this pipeline, you may need to alter the filepath for the NW-CLP-RS in 
+the yml file. At a future point, when this workflow is stable, this pipeline will 
+be integrated into the NW-CLP-RS pipeline to reduce the interdependence between 
+the two repositories.
 
 ## Install necessary packages
 
@@ -99,5 +112,5 @@ mmdc -i mermaid/mermaid.mmd -o mermaid/mermaid.png -t dark -w 4000 -H 1000
 ![](mermaid/mermaid.png)
 
 In order to view [legible] text, right click the image and open in a new window.
-
-Depending on how your config file is set up, you may have a few red circles on this graph. The important part is that the square on the right hand side is either orange or green.
+The `centers` icon will be marked red as errored - this is because the config file
+is not set to calculate centers for this pipeline. 

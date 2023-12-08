@@ -1,5 +1,7 @@
 graph LR
-  subgraph legend
+  style Legend fill:#FFFFFF00,stroke:#000000;
+  style Graph fill:#FFFFFF00,stroke:#000000;
+  subgraph Legend
     direction LR
     x4b0c520b8bc07c5b([""Errored""]):::errored --- x7420bd9270f8d27d([""Up to date""]):::uptodate
     x7420bd9270f8d27d([""Up to date""]):::uptodate --- x0a52b03877696646([""Outdated""]):::outdated
@@ -10,7 +12,10 @@ graph LR
   end
   subgraph Graph
     direction LR
+    xcb51eb47b492db34(["centers"]):::errored --> x46a3c0d9300ba963(["WRS_tiles"]):::outdated
     xe8fa7c4f9a8a2d3a>"get_WRS_tiles"]:::uptodate --> x46a3c0d9300ba963(["WRS_tiles"]):::outdated
+    xa291310e0d62e3f7(["locs"]):::uptodate --> x46a3c0d9300ba963(["WRS_tiles"]):::outdated
+    x5ea9cbb4b07e9251(["polygons"]):::uptodate --> x46a3c0d9300ba963(["WRS_tiles"]):::outdated
     x8c38e86e5ebe9f32(["WRS_detection_method"]):::outdated --> x46a3c0d9300ba963(["WRS_tiles"]):::outdated
     x829f5fc8921a2660(["yml"]):::uptodate --> x46a3c0d9300ba963(["WRS_tiles"]):::outdated
     x52cb5a650cec9219(["yml_file"]):::uptodate --> x829f5fc8921a2660(["yml"]):::uptodate
@@ -78,4 +83,4 @@ graph LR
   linkStyle 3 stroke-width:0px;
   linkStyle 4 stroke-width:0px;
   linkStyle 5 stroke-width:0px;
-  linkStyle 62 stroke-width:0px;
+  linkStyle 65 stroke-width:0px;
