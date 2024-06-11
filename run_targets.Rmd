@@ -14,6 +14,8 @@ This script loads all necessary packages to run the targets pipeline, then runs 
 
 Running this pipeline requires access to both the successfully run a branch of the NW-CLP-RS repository and access to the ROSSyndicate Google Account. If attempting to reproduce this pipeline, you may need to alter the filepath for the NW-CLP-RS in the yml file. At a future point, when this workflow is stable, this pipeline will be integrated into the NW-CLP-RS pipeline to reduce the interdependence between the two repositories.
 
+For testing purposes, this pipeline (v2) has been modified to remove the SR mask from the LS4-7 pull.
+
 ## Install necessary packages
 
 ```{r package_installer, echo = F}

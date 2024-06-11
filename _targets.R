@@ -2,7 +2,7 @@ library(targets)
 library(tarchetypes)
 library(reticulate)
 
-yaml_file <- "northern-poudre-historical-config.yml"
+yaml_file <- "nw-poudre-v2-config.yml"
 
 # MUST READ ---------------------------------------------------------------
 

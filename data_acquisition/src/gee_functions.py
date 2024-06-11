@@ -338,16 +338,14 @@ def ref_pull_457_DSWE1(image):
   r = add_rad_mask(image).select('radsat')
   # process image with cfmask
   f = cf_mask(image).select('cfmask')
-  # process image with st SR cloud mask
-  s = sr_cloud_mask(image).select('sr_cloud')
   # where the f mask is > 2 (clouds and cloud shadow), call that 1 (otherwise 0) and rename as clouds.
   clouds = f.gte(1).rename('clouds')
   #apply dswe function
   d = DSWE(image).select('dswe')
-  pCount = d.gt(0).rename('dswe_gt0').updateMask(f.eq(0)).updateMask(r.eq(1)).updateMask(s.eq(0)).selfMask()
-  dswe1 = d.eq(1).rename('dswe1').updateMask(f.eq(0)).updateMask(r.eq(1)).updateMask(s.eq(0)).selfMask()
+  pCount = d.gt(0).rename('dswe_gt0').updateMask(f.eq(0)).updateMask(r.eq(1))
+  dswe1 = d.eq(1).rename('dswe1').updateMask(f.eq(0)).updateMask(r.eq(1))
   # band where dswe is 3 and apply all masks
-  dswe3 = d.eq(3).rename('dswe3').updateMask(f.eq(0)).updateMask(r.eq(1)).updateMask(s.eq(0)).selfMask()
+  dswe3 = d.eq(3).rename('dswe3').updateMask(f.eq(0)).updateMask(r.eq(1))
   #calculate hillshade
   h = calc_hill_shades(image, wrs.geometry()).select('hillShade')
   #calculate hillshadow
@@ -375,7 +373,6 @@ def ref_pull_457_DSWE1(image):
             .updateMask(d.eq(1)) # only high confidence water
             .updateMask(r.eq(1)) #1 == no saturated pixels
             .updateMask(f.eq(0)) #no snow or clouds
-            .updateMask(s.eq(0)) # no SR processing artefacts
             .updateMask(hs.eq(1)) # only illuminated pixels
             .addBands(pCount) 
             .addBands(dswe1)
@@ -418,16 +415,14 @@ def ref_pull_457_DSWE3(image):
   r = add_rad_mask(image).select('radsat')
   # process image with cfmask
   f = cf_mask(image).select('cfmask')
-  # process image with st SR cloud mask
-  s = sr_cloud_mask(image).select('sr_cloud')
   # where the f mask is > 2 (clouds and cloud shadow), call that 1 (otherwise 0) and rename as clouds.
   clouds = f.gte(1).rename('clouds')
   #apply dswe function
   d = DSWE(image).select('dswe')
-  pCount = d.gt(0).rename('dswe_gt0').updateMask(f.eq(0)).updateMask(r.eq(1)).updateMask(s.eq(0)).selfMask()
-  dswe1 = d.eq(1).rename('dswe1').updateMask(f.eq(0)).updateMask(r.eq(1)).updateMask(s.eq(0)).selfMask()
+  pCount = d.gt(0).rename('dswe_gt0').updateMask(f.eq(0)).updateMask(r.eq(1))
+  dswe1 = d.eq(1).rename('dswe1').updateMask(f.eq(0)).updateMask(r.eq(1))
   # band where dswe is 3 and apply all masks
-  dswe3 = d.eq(3).rename('dswe3').updateMask(f.eq(0)).updateMask(r.eq(1)).updateMask(s.eq(0)).selfMask()
+  dswe3 = d.eq(3).rename('dswe3').updateMask(f.eq(0)).updateMask(r.eq(1))
   #calculate hillshade
   h = calc_hill_shades(image, wrs.geometry()).select('hillShade')
   #calculate hillshadow
@@ -455,7 +450,6 @@ def ref_pull_457_DSWE3(image):
           .updateMask(d.eq(1)) # only high confidence water
           .updateMask(r.eq(1)) #1 == no saturated pixels
           .updateMask(f.eq(0)) #no snow or clouds
-          .updateMask(s.eq(0)) # no SR processing artefacts
           .updateMask(hs.eq(1)) # only illuminated pixels
           .addBands(pCount) 
           .addBands(dswe1)
