@@ -155,7 +155,7 @@ if 'site' in extent:
   feat = (locs_feature
     .filterBounds(geo)
     .map(dp_buff))
-      
+  
   ## process 457 stack
   #snip the ls data by the geometry of the location points    
   locs_stack_ls457 = (ls457
@@ -164,11 +164,11 @@ if 'site' in extent:
     .map(apply_fill_mask)
     .map(apply_scale_factors)
     .map(apply_realistic_mask)
-    .map(apply_opcaity_mask))
+    .map(apply_opac_mask))
   
   # rename bands for ease
   locs_stack_ls457 = locs_stack_ls457.select(bn457, bns457)
-
+  
   # map the refpull function across the 'stack', flatten to an array
   if '1' in dswe:
     print('Starting Landsat 4, 5, 7 DSWE1 acquisition for site locations at tile ' + str(tiles))
@@ -255,7 +255,6 @@ if 'site' in extent:
   
   # rename bands for ease
   locs_stack_ls89 = locs_stack_ls89.select(bn89, bns89)
-
   
   if '1' in dswe:
     print('Starting Landsat 8, 9 DSWE1 acquisition for site locations at tile ' + str(tiles))
@@ -328,7 +327,7 @@ if 'poly' in extent:
   
   ## get the polygon stack ##
   feat = poly_feat.filterBounds(geo)
-    
+  
   ## process 457 stack
   #snip the ls data by the geometry of the location points    
   locs_stack_ls457 = (ls457
@@ -337,11 +336,11 @@ if 'poly' in extent:
     .map(apply_fill_mask)
     .map(apply_scale_factors)
     .map(apply_realistic_mask)
-    .map(apply_opcaity_mask))
+    .map(apply_opac_mask))
   
   # rename bands for ease
   locs_stack_ls457 = locs_stack_ls457.select(bn457, bns457)
-
+  
   # map the refpull function across the 'stack', flatten to an array
   if '1' in dswe:
     print('Starting Landsat 4, 5, 7 DSWE1 acquisition for polygons at tile ' + str(tiles))
@@ -412,7 +411,7 @@ if 'poly' in extent:
   
   ## get the polygon stack ##
   feat = poly_feat.filterBounds(geo)
-    
+  
   # snip the ls data by the geometry of the location points    
   locs_stack_ls89 = (ls89
     .filterBounds(feat.geometry()) 
@@ -424,8 +423,7 @@ if 'poly' in extent:
   
   # rename bands for ease
   locs_stack_ls89 = locs_stack_ls89.select(bn89, bns89)
-
-
+  
   if '1' in dswe:
     print('Starting Landsat 8, 9 DSWE1 acquisition for polygons at tile ' + str(tiles))
     poly_out_89_D1 = poly_stack_ls89.map(ref_pull_89_DSWE1).flatten()
@@ -499,7 +497,7 @@ if 'center' in extent:
   feat = (ee_centers
     .filterBounds(geo)
     .map(dp_buff))
-      
+   
   ## process 457 stack
   #snip the ls data by the geometry of the location points    
   locs_stack_ls457 = (ls457
@@ -508,11 +506,10 @@ if 'center' in extent:
     .map(apply_fill_mask)
     .map(apply_scale_factors)
     .map(apply_realistic_mask)
-    .map(apply_opcaity_mask))
+    .map(apply_opac_mask))
   
   # rename bands for ease
   locs_stack_ls457 = locs_stack_ls457.select(bn457, bns457)
-
   
   # map the refpull function across the 'stack', flatten to an array
   if '1' in dswe:
@@ -597,11 +594,10 @@ if 'center' in extent:
     .map(apply_fill_mask)
     .map(apply_scale_factors)
     .map(apply_realistic_mask)
-    .map(apply_high_aero_masks))
+    .map(apply_high_aero_mask))
   
   # rename bands for ease
   locs_stack_ls89 = locs_stack_ls89.select(bn89, bns89)
-
   
   if '1' in dswe:
     locs_out_89_D1 = locs_stack_ls89.map(ref_pull_89_DSWE1).flatten()
