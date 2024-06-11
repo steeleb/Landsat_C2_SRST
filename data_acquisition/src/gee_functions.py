@@ -355,6 +355,50 @@ def apply_realistic_mask(image):
     .And(b7_mask.eq(1)))
   return image.updateMask(realistic.eq(1))
 
+# mask high opacity (>0.3 after scaling) pixels
+def apply_opac_mask(image):
+  opac = image.select("SR_ATMOS_OPACITY").multiply(0.001).lt(0.3)
+  return image.updateMask(opac)
+
+
+# function to split QA bits
+def extract_qa_bits(qa_band, start_bit, end_bit, band_name):
+  """
+  Extracts specified quality assurance (QA) bits from a QA band. This function originated
+  from https://calekochenour.github.io/remote-sensing-textbook/03-beginner/chapter13-data-quality-bitmasks.html
+
+  Args:
+      qa_band (ee.Image): The earth engine image QA band to extract the bits from.
+      start_bit (int): The start bit of the QA bits to extract.
+      end_bit (int): The end bit of the QA bits to extract (not inclusive)
+      band_name (str): The name to give to the output band.
+
+  Returns:
+      ee.Image: A single band image of the extracted QA bit values.
+  """
+  # Initialize QA bit string/pattern to check QA band against
+  qa_bits = 0
+  # Add each specified QA bit flag value/string/pattern to the QA bits to check/extract
+  for bit in range(end_bit):
+    qa_bits += (1 << bit)
+  # Return a single band image of the extracted QA bit values
+  return (qa_band
+    # Rename output band to specified name
+    .select([0], [band_name])
+    # Check QA band against specified QA bits to see what QA flag values are set
+    .bitwiseAnd(qa_bits)
+    # Get value that matches bitmask documentation
+    # (0 or 1 for single bit,  0-3 or 0-N for multiple bits)
+    .rightShift(start_bit))
+
+
+# mask for high aerosol
+def apply_high_aero_mask(image):
+  qa_aero = image.select('SR_QA_AEROSOL')
+  aero = extract_qa_bits(qa_aero, 6, 8, 'aero_level')
+  aero_mask = aero.lt(3)
+  return image.updateMask(aero_mask)
+
 
 ## Set up the reflectance pull
 def ref_pull_457_DSWE1(image):

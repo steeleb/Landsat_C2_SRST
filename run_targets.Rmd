@@ -20,6 +20,8 @@ For testing purposes, this pipeline (v3) has been modified from the original ver
 
 2)  fill mask (0 are masked) and realistic values filtered (Rrs \>-0.01)
 
+3)  mask SR_ATMOS_OPACITY \>0.3 and SR_QA_AEROSOL high flags
+
 ## Install necessary packages
 
 ```{r package_installer, echo = F}

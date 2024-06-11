@@ -163,7 +163,8 @@ if 'site' in extent:
     # apply fill mask and scaling factors
     .map(apply_fill_mask)
     .map(apply_scale_factors)
-    .map(apply_realistic_mask))
+    .map(apply_realistic_mask)
+    .map(apply_opcaity_mask))
   
   # rename bands for ease
   locs_stack_ls457 = locs_stack_ls457.select(bn457, bns457)
@@ -249,7 +250,8 @@ if 'site' in extent:
     # apply fill mask and scaling factors
     .map(apply_fill_mask)
     .map(apply_scale_factors)
-    .map(apply_realistic_mask))
+    .map(apply_realistic_mask)
+    .map(apply_high_aero_mask))
   
   # rename bands for ease
   locs_stack_ls89 = locs_stack_ls89.select(bn89, bns89)
@@ -334,7 +336,8 @@ if 'poly' in extent:
     # apply fill mask and scaling factors
     .map(apply_fill_mask)
     .map(apply_scale_factors)
-    .map(apply_realistic_mask))
+    .map(apply_realistic_mask)
+    .map(apply_opcaity_mask))
   
   # rename bands for ease
   locs_stack_ls457 = locs_stack_ls457.select(bn457, bns457)
@@ -416,7 +419,8 @@ if 'poly' in extent:
     # apply fill mask and scaling factors
     .map(apply_fill_mask)
     .map(apply_scale_factors)
-    .map(apply_realistic_mask))
+    .map(apply_realistic_mask)
+    .map(apply_high_aero_mask))
   
   # rename bands for ease
   locs_stack_ls89 = locs_stack_ls89.select(bn89, bns89)
@@ -503,7 +507,8 @@ if 'center' in extent:
     # apply fill mask and scaling factors
     .map(apply_fill_mask)
     .map(apply_scale_factors)
-    .map(apply_realistic_mask))
+    .map(apply_realistic_mask)
+    .map(apply_opcaity_mask))
   
   # rename bands for ease
   locs_stack_ls457 = locs_stack_ls457.select(bn457, bns457)
@@ -591,7 +596,8 @@ if 'center' in extent:
     # apply fill mask and scaling factors
     .map(apply_fill_mask)
     .map(apply_scale_factors)
-    .map(apply_realistic_mask))
+    .map(apply_realistic_mask)
+    .map(apply_high_aero_masks))
   
   # rename bands for ease
   locs_stack_ls89 = locs_stack_ls89.select(bn89, bns89)
