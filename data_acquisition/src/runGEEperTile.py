@@ -91,15 +91,12 @@ wrs = (ee.FeatureCollection('projects/ee-ls-c2-srst/assets/WRS2_descending')
 
 #grab images and apply scaling factors
 l7 = (ee.ImageCollection('LANDSAT/LE07/C02/T1_L2')
-    .map(apply_scale_factors)
     .filter(ee.Filter.lt('CLOUD_COVER', ee.Number.parse(str(cloud_thresh))))
     .filterDate(yml_start, yml_end))
 l5 = (ee.ImageCollection('LANDSAT/LT05/C02/T1_L2')
-    .map(apply_scale_factors)
     .filter(ee.Filter.lt('CLOUD_COVER', ee.Number.parse(str(cloud_thresh))))
     .filterDate(yml_start, yml_end))
 l4 = (ee.ImageCollection('LANDSAT/LT04/C02/T1_L2')
-    .map(apply_scale_factors)
     .filter(ee.Filter.lt('CLOUD_COVER', ee.Number.parse(str(cloud_thresh))))
     .filterDate(yml_start, yml_end))
     
@@ -119,17 +116,13 @@ bns457 = (['Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2',
   'temp_qa', 'ST_CDIST', 'ST_ATRAN', 'ST_DRAD', 'ST_EMIS',
   'ST_EMSD', 'ST_TRAD', 'ST_URAD'])
   
-# rename bands  
-ls457 = ls457.select(bn457, bns457)
 
 
 #grab images and apply scaling factors
 l8 = (ee.ImageCollection('LANDSAT/LC08/C02/T1_L2')
-    .map(apply_scale_factors)
     .filter(ee.Filter.lt('CLOUD_COVER', ee.Number.parse(str(cloud_thresh))))
     .filterDate(yml_start, yml_end))
 l9 = (ee.ImageCollection('LANDSAT/LC09/C02/T1_L2')
-    .map(apply_scale_factors)
     .filter(ee.Filter.lt('CLOUD_COVER', ee.Number.parse(str(cloud_thresh))))
     .filterDate(yml_start, yml_end))
 
@@ -148,9 +141,6 @@ bns89 = (['Aerosol','Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2',
   'temp_qa', 'ST_CDIST', 'ST_ATRAN', 'ST_DRAD', 'ST_EMIS',
   'ST_EMSD', 'ST_TRAD', 'ST_URAD'])
  
-# rename bands  
-ls89 = ls89.select(bn89, bns89)
-
 
 ##########################################
 ##---- LANDSAT 457 SITE ACQUISITION ----##
@@ -168,8 +158,16 @@ if 'site' in extent:
       
   ## process 457 stack
   #snip the ls data by the geometry of the location points    
-  locs_stack_ls457 = ls457.filterBounds(feat.geometry()) 
+  locs_stack_ls457 = (ls457
+    .filterBounds(feat.geometry()) 
+    # apply fill mask and scaling factors
+    .map(apply_fill_mask)
+    .map(apply_scale_factors)
+    .map(apply_realistic_mask))
   
+  # rename bands for ease
+  locs_stack_ls457 = locs_stack_ls457.select(bn457, bns457)
+
   # map the refpull function across the 'stack', flatten to an array
   if '1' in dswe:
     print('Starting Landsat 4, 5, 7 DSWE1 acquisition for site locations at tile ' + str(tiles))
@@ -246,7 +244,16 @@ if 'site' in extent:
     .map(dp_buff))
   
   # snip the ls data by the geometry of the location points    
-  locs_stack_ls89 = ls89.filterBounds(feat.geometry()) 
+  locs_stack_ls89 = (ls89
+    .filterBounds(feat.geometry()) 
+    # apply fill mask and scaling factors
+    .map(apply_fill_mask)
+    .map(apply_scale_factors)
+    .map(apply_realistic_mask))
+  
+  # rename bands for ease
+  locs_stack_ls89 = locs_stack_ls89.select(bn89, bns89)
+
   
   if '1' in dswe:
     print('Starting Landsat 8, 9 DSWE1 acquisition for site locations at tile ' + str(tiles))
@@ -320,9 +327,18 @@ if 'poly' in extent:
   ## get the polygon stack ##
   feat = poly_feat.filterBounds(geo)
     
-  # snip the ls data by the geometry of the location points    
-  poly_stack_ls457 = ls457.filterBounds(feat.geometry()) 
+  ## process 457 stack
+  #snip the ls data by the geometry of the location points    
+  locs_stack_ls457 = (ls457
+    .filterBounds(feat.geometry()) 
+    # apply fill mask and scaling factors
+    .map(apply_fill_mask)
+    .map(apply_scale_factors)
+    .map(apply_realistic_mask))
   
+  # rename bands for ease
+  locs_stack_ls457 = locs_stack_ls457.select(bn457, bns457)
+
   # map the refpull function across the 'stack', flatten to an array
   if '1' in dswe:
     print('Starting Landsat 4, 5, 7 DSWE1 acquisition for polygons at tile ' + str(tiles))
@@ -395,8 +411,17 @@ if 'poly' in extent:
   feat = poly_feat.filterBounds(geo)
     
   # snip the ls data by the geometry of the location points    
-  poly_stack_ls89 = ls89.filterBounds(feat.geometry()) 
+  locs_stack_ls89 = (ls89
+    .filterBounds(feat.geometry()) 
+    # apply fill mask and scaling factors
+    .map(apply_fill_mask)
+    .map(apply_scale_factors)
+    .map(apply_realistic_mask))
   
+  # rename bands for ease
+  locs_stack_ls89 = locs_stack_ls89.select(bn89, bns89)
+
+
   if '1' in dswe:
     print('Starting Landsat 8, 9 DSWE1 acquisition for polygons at tile ' + str(tiles))
     poly_out_89_D1 = poly_stack_ls89.map(ref_pull_89_DSWE1).flatten()
@@ -473,7 +498,16 @@ if 'center' in extent:
       
   ## process 457 stack
   #snip the ls data by the geometry of the location points    
-  locs_stack_ls457 = ls457.filterBounds(feat.geometry()) 
+  locs_stack_ls457 = (ls457
+    .filterBounds(feat.geometry()) 
+    # apply fill mask and scaling factors
+    .map(apply_fill_mask)
+    .map(apply_scale_factors)
+    .map(apply_realistic_mask))
+  
+  # rename bands for ease
+  locs_stack_ls457 = locs_stack_ls457.select(bn457, bns457)
+
   
   # map the refpull function across the 'stack', flatten to an array
   if '1' in dswe:
@@ -552,7 +586,16 @@ if 'center' in extent:
     .map(dp_buff))
   
   # snip the ls data by the geometry of the location points    
-  locs_stack_ls89 = ls89.filterBounds(feat.geometry()) 
+  locs_stack_ls89 = (ls89
+    .filterBounds(feat.geometry()) 
+    # apply fill mask and scaling factors
+    .map(apply_fill_mask)
+    .map(apply_scale_factors)
+    .map(apply_realistic_mask))
+  
+  # rename bands for ease
+  locs_stack_ls89 = locs_stack_ls89.select(bn89, bns89)
+
   
   if '1' in dswe:
     locs_out_89_D1 = locs_stack_ls89.map(ref_pull_89_DSWE1).flatten()
@@ -663,14 +706,14 @@ ls89_id_stack = ls89.aggregate_array('L1_LANDSAT_PRODUCT_ID').getInfo()
 ls457_id_stack = ls457.aggregate_array('L1_LANDSAT_PRODUCT_ID').getInfo()
 
 # open file in write mode and save each id as a row
-with open(('data_acquisition/out/L89_stack_ids_v'+str(date.today())+'.txt'), 'w') as fp:
+with open(('data_acquisition/out/L89_stack_ids_v'+str(date.today())+'_v3.txt'), 'w') as fp:
     for id in ls89_id_stack:
         # write each item on a new line
         fp.write("%s\n" % id)
     print('Done')
 
 # open file in write mode and save each id as a row
-with open(('data_acquisition/out/L457_stack_ids_v'+str(date.today())+'.txt'), 'w') as fp:
+with open(('data_acquisition/out/L457_stack_ids_v'+str(date.today())+'_v3.txt'), 'w') as fp:
     for id in ls457_id_stack:
         # write each item on a new line
         fp.write("%s\n" % id)

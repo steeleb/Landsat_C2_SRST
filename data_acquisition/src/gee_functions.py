@@ -322,6 +322,39 @@ def remove_geo(image):
   """
   return image.setGeometry(None)
 
+def apply_fill_mask(image):
+  b1_mask = image.select('SR_B1').gt(0)
+  b2_mask = image.select('SR_B2').gt(0)
+  b3_mask = image.select('SR_B3').gt(0)
+  b4_mask = image.select('SR_B4').gt(0)
+  b5_mask = image.select('SR_B5').gt(0)
+  b7_mask = image.select('SR_B7').gt(0)
+  fill_mask = b1_mask.eq(1)
+    .And(b2_mask.eq(1))
+    .And(b3_mask.eq(1))
+    .And(b4_mask.eq(1))
+    .And(b5_mask.eq(1))
+    .And(b7_mask.eq(1))
+  return image.updateMask(fill_mask.eq(1))
+
+
+# This should be applied AFTER scaling factors
+# Mask values less than -0.01
+def apply_realistic_mask(image):
+  b1_mask = image.select('SR_B1').gt(-0.01)
+  b2_mask = image.select('SR_B2').gt(-0.01)
+  b3_mask = image.select('SR_B3').gt(-0.01)
+  b4_mask = image.select('SR_B4').gt(-0.01)
+  b5_mask = image.select('SR_B5').gt(-0.01)
+  b7_mask = image.select('SR_B7').gt(-0.01)
+  realistic = b1_mask.eq(1)
+    .And(b2_mask.eq(1))
+    .And(b3_mask.eq(1))
+    .And(b4_mask.eq(1))
+    .And(b5_mask.eq(1))
+    .And(b7_mask.eq(1))
+  return image.updateMask(realistic.eq(1))
+
 
 ## Set up the reflectance pull
 def ref_pull_457_DSWE1(image):
