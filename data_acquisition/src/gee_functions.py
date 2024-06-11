@@ -329,12 +329,12 @@ def apply_fill_mask(image):
   b4_mask = image.select('SR_B4').gt(0)
   b5_mask = image.select('SR_B5').gt(0)
   b7_mask = image.select('SR_B7').gt(0)
-  fill_mask = b1_mask.eq(1)
+  fill_mask = (b1_mask.eq(1)
     .And(b2_mask.eq(1))
     .And(b3_mask.eq(1))
     .And(b4_mask.eq(1))
     .And(b5_mask.eq(1))
-    .And(b7_mask.eq(1))
+    .And(b7_mask.eq(1)))
   return image.updateMask(fill_mask.eq(1))
 
 
@@ -347,12 +347,12 @@ def apply_realistic_mask(image):
   b4_mask = image.select('SR_B4').gt(-0.01)
   b5_mask = image.select('SR_B5').gt(-0.01)
   b7_mask = image.select('SR_B7').gt(-0.01)
-  realistic = b1_mask.eq(1)
+  realistic = (b1_mask.eq(1)
     .And(b2_mask.eq(1))
     .And(b3_mask.eq(1))
     .And(b4_mask.eq(1))
     .And(b5_mask.eq(1))
-    .And(b7_mask.eq(1))
+    .And(b7_mask.eq(1)))
   return image.updateMask(realistic.eq(1))
 
 

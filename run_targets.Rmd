@@ -16,9 +16,9 @@ Running this pipeline requires access to both the successfully run a branch of t
 
 For testing purposes, this pipeline (v3) has been modified from the original version to:
 
-1) remove the SR mask from the LS4-7 pull
+1)  remove the SR mask from the LS4-7 pull
 
-2) fill mask (0 are masked) and realistic values filtered (Rrs \>-0.01)
+2)  fill mask (0 are masked) and realistic values filtered (Rrs \>-0.01)
 
 ## Install necessary packages
 
