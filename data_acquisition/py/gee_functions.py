@@ -85,27 +85,6 @@ def cf_mask(image):
   return image.addBands(cloudqa)
 
 
-def sr_cloud_mask(image):
-  """Masks any pixles in Landsat 4-7 that are contaminated by the inputs of 
-  the atmospheric processing steps
-
-  Args:
-      image: ee.Image of an ee.ImageCollection
-
-  Returns:
-      ee.Image with additional band called 'sr_cloud', where pixels are given values
-      based on the SR_CLOUD_QA band informaiton. Generally speaking, 0 is clear, values
-      greater than 0 are obstructed by clouds and/or snow/ice specifically from atmospheric
-      processing steps
-  """
-  srCloudQA = image.select('cloud_qa')
-  srMask = (srCloudQA.bitwiseAnd(1 << 1).rename('sr_cloud') # cloud
-    .where(srCloudQA.bitwiseAnd(1 << 2), ee.Image(2)) # cloud shadow
-    .where(srCloudQA.bitwiseAnd(1 << 3), ee.Image(3)) # adjacent to cloud
-    .where(srCloudQA.bitwiseAnd(1 << 4), ee.Image(4))) # snow/ice
-  return image.addBands(srMask)
-
-
 def sr_aerosol(image):
   """Flags any pixels in Landsat 8 and 9 that have 'medium' or 'high' aerosol QA flags from the
   SR_QA_AEROSOL band.
@@ -322,7 +301,16 @@ def remove_geo(image):
   """
   return image.setGeometry(None)
 
+
 def apply_fill_mask(image):
+  """ mask any fill values (0) in scaled raster
+  
+  Args:
+      image: ee.Image of an ee.ImageCollection
+
+  Returns:
+      an ee.Image where any values previously 0 are masked
+  """
   b1_mask = image.select('SR_B1').gt(0)
   b2_mask = image.select('SR_B2').gt(0)
   b3_mask = image.select('SR_B3').gt(0)
@@ -341,6 +329,14 @@ def apply_fill_mask(image):
 # This should be applied AFTER scaling factors
 # Mask values less than -0.01
 def apply_realistic_mask(image):
+  """ mask out unrealistic SR values (those less than -0.01)
+  
+  Args:
+      image: ee.Image of an ee.ImageCollection
+
+  Returns:
+      an ee.Image where any re-scaled values <-0.01 are masked
+  """
   b1_mask = image.select('SR_B1').gt(-0.01)
   b2_mask = image.select('SR_B2').gt(-0.01)
   b3_mask = image.select('SR_B3').gt(-0.01)
@@ -357,6 +353,16 @@ def apply_realistic_mask(image):
 
 # mask high opacity (>0.3 after scaling) pixels
 def apply_opac_mask(image):
+  """ mask out instances where atmospheric opacity is greater than 0.3 in Landsat 
+      5&7
+  
+  Args:
+      image: ee.Image of an ee.ImageCollection
+
+  Returns:
+      an ee.Image where any pixels with SR_ATMOS_OPACITY greater than 0.3 are
+      masked
+  """
   opac = image.select("SR_ATMOS_OPACITY").multiply(0.001).lt(0.3)
   return image.updateMask(opac)
 
@@ -394,6 +400,15 @@ def extract_qa_bits(qa_band, start_bit, end_bit, band_name):
 
 # mask for high aerosol
 def apply_high_aero_mask(image):
+  """ mask out high aerosol pixels in Landsat 8/9 images
+  
+  Args:
+      image: ee.Image of an ee.ImageCollection
+
+  Returns:
+      an ee.Image where any pixels with SR_QA_AEROSOL greater than or equal to 
+      3 are masked
+  """
   qa_aero = image.select('SR_QA_AEROSOL')
   aero = extract_qa_bits(qa_aero, 6, 8, 'aero_level')
   aero_mask = aero.lt(3)
