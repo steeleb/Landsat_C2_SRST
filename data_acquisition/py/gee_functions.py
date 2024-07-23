@@ -539,7 +539,7 @@ def ref_pull_457_DSWE3(image):
                                   'mean_Swir1', 'mean_Swir2', 
                                   'mean_SurfaceTemp']))
           .addBands(image.select(['SurfaceTemp']))
-          .updateMask(d.eq(1)) # only high confidence water
+          .updateMask(d.eq(3)) # only vegetated water
           .updateMask(r.eq(1)) #1 == no saturated pixels
           .updateMask(f.eq(0)) #no snow or clouds
           .updateMask(hs.eq(1)) # only illuminated pixels
@@ -617,7 +617,7 @@ def ref_pull_89_DSWE1(image):
                                 'mean_Swir1', 'mean_Swir2', 
                                 'mean_SurfaceTemp']))
           .addBands(image.select(['SurfaceTemp']))
-          .updateMask(d.eq(3)) # only vegetated water
+          .updateMask(d.eq(1)) # only high confidence water
           .updateMask(r.eq(1)) # 1 == no saturated pixels
           .updateMask(f.eq(0)) # no snow or clouds
           .updateMask(hs.eq(1)) # only illuminated pixels
