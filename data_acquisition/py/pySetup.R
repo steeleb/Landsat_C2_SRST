@@ -4,10 +4,11 @@ library('reticulate')
 
 try(install_miniconda())
 
-py_install(envname = 'env/', c('earthengine-api', 'pandas', 'fiona', 'pyreadr'), 
+py_install(envname = 'env/', 
+           c('earthengine-api', 'pandas', 'fiona', 'pyreadr'), 
            python_version = 3.8)
 
-#create a conda environment named 'apienv' with the packages you need
+#create a conda environment named 'env' with the packages you need
 conda_create(envname = file.path(getwd(), 'env'),
              python_version = 3.8,
              packages = c('earthengine-api', 'pandas', 'fiona', 'pyreadr'))

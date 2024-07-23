@@ -2,7 +2,7 @@ library(targets)
 library(tarchetypes)
 library(reticulate)
 
-yaml_file <- "nw-poudre-v4-config.yml"
+yaml_file <- "nw-poudre-historical-config.yml"
 
 # MUST READ ---------------------------------------------------------------
 
