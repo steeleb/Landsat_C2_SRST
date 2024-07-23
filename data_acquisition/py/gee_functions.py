@@ -322,83 +322,6 @@ def remove_geo(image):
   """
   return image.setGeometry(None)
 
-def apply_fill_mask(image):
-  b1_mask = image.select('SR_B1').gt(0)
-  b2_mask = image.select('SR_B2').gt(0)
-  b3_mask = image.select('SR_B3').gt(0)
-  b4_mask = image.select('SR_B4').gt(0)
-  b5_mask = image.select('SR_B5').gt(0)
-  b7_mask = image.select('SR_B7').gt(0)
-  fill_mask = (b1_mask.eq(1)
-    .And(b2_mask.eq(1))
-    .And(b3_mask.eq(1))
-    .And(b4_mask.eq(1))
-    .And(b5_mask.eq(1))
-    .And(b7_mask.eq(1)))
-  return image.updateMask(fill_mask.eq(1))
-
-
-# This should be applied AFTER scaling factors
-# Mask values less than -0.01
-def apply_realistic_mask(image):
-  b1_mask = image.select('SR_B1').gt(-0.01)
-  b2_mask = image.select('SR_B2').gt(-0.01)
-  b3_mask = image.select('SR_B3').gt(-0.01)
-  b4_mask = image.select('SR_B4').gt(-0.01)
-  b5_mask = image.select('SR_B5').gt(-0.01)
-  b7_mask = image.select('SR_B7').gt(-0.01)
-  realistic = (b1_mask.eq(1)
-    .And(b2_mask.eq(1))
-    .And(b3_mask.eq(1))
-    .And(b4_mask.eq(1))
-    .And(b5_mask.eq(1))
-    .And(b7_mask.eq(1)))
-  return image.updateMask(realistic.eq(1))
-
-# mask high opacity (>0.3 after scaling) pixels
-def apply_opac_mask(image):
-  opac = image.select("SR_ATMOS_OPACITY").multiply(0.001).lt(0.3)
-  return image.updateMask(opac)
-
-
-# function to split QA bits
-def extract_qa_bits(qa_band, start_bit, end_bit, band_name):
-  """
-  Extracts specified quality assurance (QA) bits from a QA band. This function originated
-  from https://calekochenour.github.io/remote-sensing-textbook/03-beginner/chapter13-data-quality-bitmasks.html
-
-  Args:
-      qa_band (ee.Image): The earth engine image QA band to extract the bits from.
-      start_bit (int): The start bit of the QA bits to extract.
-      end_bit (int): The end bit of the QA bits to extract (not inclusive)
-      band_name (str): The name to give to the output band.
-
-  Returns:
-      ee.Image: A single band image of the extracted QA bit values.
-  """
-  # Initialize QA bit string/pattern to check QA band against
-  qa_bits = 0
-  # Add each specified QA bit flag value/string/pattern to the QA bits to check/extract
-  for bit in range(end_bit):
-    qa_bits += (1 << bit)
-  # Return a single band image of the extracted QA bit values
-  return (qa_band
-    # Rename output band to specified name
-    .select([0], [band_name])
-    # Check QA band against specified QA bits to see what QA flag values are set
-    .bitwiseAnd(qa_bits)
-    # Get value that matches bitmask documentation
-    # (0 or 1 for single bit,  0-3 or 0-N for multiple bits)
-    .rightShift(start_bit))
-
-
-# mask for high aerosol
-def apply_high_aero_mask(image):
-  qa_aero = image.select('SR_QA_AEROSOL')
-  aero = extract_qa_bits(qa_aero, 6, 8, 'aero_level')
-  aero_mask = aero.lt(3)
-  return image.updateMask(aero_mask)
-
 
 ## Set up the reflectance pull
 def ref_pull_457_DSWE1(image):
@@ -415,14 +338,16 @@ def ref_pull_457_DSWE1(image):
   r = add_rad_mask(image).select('radsat')
   # process image with cfmask
   f = cf_mask(image).select('cfmask')
+  # process image with st SR cloud mask
+  s = sr_cloud_mask(image).select('sr_cloud')
   # where the f mask is > 2 (clouds and cloud shadow), call that 1 (otherwise 0) and rename as clouds.
   clouds = f.gte(1).rename('clouds')
   #apply dswe function
   d = DSWE(image).select('dswe')
-  pCount = d.gt(0).rename('dswe_gt0').updateMask(f.eq(0)).updateMask(r.eq(1))
-  dswe1 = d.eq(1).rename('dswe1').updateMask(f.eq(0)).updateMask(r.eq(1))
+  pCount = d.gt(0).rename('dswe_gt0').updateMask(f.eq(0)).updateMask(r.eq(1)).updateMask(s.eq(0)).selfMask()
+  dswe1 = d.eq(1).rename('dswe1').updateMask(f.eq(0)).updateMask(r.eq(1)).updateMask(s.eq(0)).selfMask()
   # band where dswe is 3 and apply all masks
-  dswe3 = d.eq(3).rename('dswe3').updateMask(f.eq(0)).updateMask(r.eq(1))
+  dswe3 = d.eq(3).rename('dswe3').updateMask(f.eq(0)).updateMask(r.eq(1)).updateMask(s.eq(0)).selfMask()
   #calculate hillshade
   h = calc_hill_shades(image, wrs.geometry()).select('hillShade')
   #calculate hillshadow
@@ -450,6 +375,7 @@ def ref_pull_457_DSWE1(image):
             .updateMask(d.eq(1)) # only high confidence water
             .updateMask(r.eq(1)) #1 == no saturated pixels
             .updateMask(f.eq(0)) #no snow or clouds
+            .updateMask(s.eq(0)) # no SR processing artefacts
             .updateMask(hs.eq(1)) # only illuminated pixels
             .addBands(pCount) 
             .addBands(dswe1)
@@ -492,14 +418,16 @@ def ref_pull_457_DSWE3(image):
   r = add_rad_mask(image).select('radsat')
   # process image with cfmask
   f = cf_mask(image).select('cfmask')
+  # process image with st SR cloud mask
+  s = sr_cloud_mask(image).select('sr_cloud')
   # where the f mask is > 2 (clouds and cloud shadow), call that 1 (otherwise 0) and rename as clouds.
   clouds = f.gte(1).rename('clouds')
   #apply dswe function
   d = DSWE(image).select('dswe')
-  pCount = d.gt(0).rename('dswe_gt0').updateMask(f.eq(0)).updateMask(r.eq(1))
-  dswe1 = d.eq(1).rename('dswe1').updateMask(f.eq(0)).updateMask(r.eq(1))
+  pCount = d.gt(0).rename('dswe_gt0').updateMask(f.eq(0)).updateMask(r.eq(1)).updateMask(s.eq(0)).selfMask()
+  dswe1 = d.eq(1).rename('dswe1').updateMask(f.eq(0)).updateMask(r.eq(1)).updateMask(s.eq(0)).selfMask()
   # band where dswe is 3 and apply all masks
-  dswe3 = d.eq(3).rename('dswe3').updateMask(f.eq(0)).updateMask(r.eq(1))
+  dswe3 = d.eq(3).rename('dswe3').updateMask(f.eq(0)).updateMask(r.eq(1)).updateMask(s.eq(0)).selfMask()
   #calculate hillshade
   h = calc_hill_shades(image, wrs.geometry()).select('hillShade')
   #calculate hillshadow
@@ -527,6 +455,7 @@ def ref_pull_457_DSWE3(image):
           .updateMask(d.eq(1)) # only high confidence water
           .updateMask(r.eq(1)) #1 == no saturated pixels
           .updateMask(f.eq(0)) #no snow or clouds
+          .updateMask(s.eq(0)) # no SR processing artefacts
           .updateMask(hs.eq(1)) # only illuminated pixels
           .addBands(pCount) 
           .addBands(dswe1)

@@ -20,7 +20,7 @@ yaml_file <- "nw-poudre-v4-config.yml"
 # Set up python virtual environment ---------------------------------------
 
 if (!dir.exists("env")) {
-  tar_source("data_acquisition/src/pySetup.R")
+  tar_source("data_acquisition/py/pySetup.R")
 } else {
   use_condaenv(file.path(getwd(), "env"))
 }
@@ -28,8 +28,8 @@ if (!dir.exists("env")) {
 
 # Source functions --------------------------------------------------------
 
-tar_source("data_acquisition/src/general_functions.R")
-source_python("data_acquisition/src/gee_functions.py")
+tar_source("data_acquisition/src/")
+source_python("data_acquisition/py/gee_functions.py")
 
 
 # Define {targets} workflow -----------------------------------------------

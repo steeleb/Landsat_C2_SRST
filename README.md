@@ -5,11 +5,10 @@ products for lakes and reservoirs from point locations or lake polygons. The out
 of this workflow is stored in your Google Drive as tabular summaries of band data 
 for your area of interest.
 
-## Scope of this branch
+This repository is covered by the MIT use license. We request that all downstream 
+uses of this work be available to the public when possible.
 
-This repository acquires historical data for all lakes and reservoirs greater 
-than 1 ha for the Cache La Poudre HUC08 watershed.
-
+Primary repository contact: B Steele <b dot steele at colostate dot edu>
 
 ## Repository Overview
 
@@ -35,10 +34,21 @@ This token is valid for 7 days from the time of authentication.
 
 ## Completing the config.yml file
 
-See the config file 'northern-poudre-historical-config.yml'. This pull gathers 
-the polygon-Chebyshev center point (aka, point of inaccessibility), full lake area summary,
-and sampling point locations for all NW lakes/reservoirs and all reservoirs 
-within the CLP greater than 1 ha.
+Configuration of the config.yml file is necessary for this workflow to function.
+
+**[[this section to contain a bunch more info later]]**
+
+### Local Settings
+
+location file: must contain lat, lon, uniqueid
+
+### Google Settings
+
+### Temporal Settings
+
+### Spatial Settings
+
+### Google Earth Engine Settings
 
 ## Running the workflow
 
