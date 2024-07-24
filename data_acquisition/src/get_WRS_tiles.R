@@ -6,47 +6,45 @@
 #' 
 #' @param detection_method optimal shapefile from get_WRS_detection()
 #' @param yaml contents of the yaml .csv file
+#' @param locs sf object of user-provided locations for Landsat acqusition
+#' @param poly sf object of polygon areas for Landsat acquisition
+#' @param centers sf object of polygon centers for Landsat acqusition
 #' @returns list of WRS2 tiles
 #' 
 #' 
-get_WRS_tiles <- function(detection_method, yaml) {
-  WRS <- read_sf('data_acquisition/in/WRS2_descending.shp')
-  if (detection_method == 'site') {
-    locations <- tar_read(locs)
-    locs <- st_as_sf(locations, 
-                     coords = c('Longitude', 'Latitude'), 
+get_WRS_tiles <- function(detection_method, yaml, locs, poly, centers) {
+  WRS <- read_sf("data_acquisition/in/WRS2_descending.shp")
+  if (detection_method == "site") {
+    locs <- st_as_sf(locs, 
+                     coords = c("Longitude", "Latitude"), 
                      crs = yaml$location_crs[1])
     if (st_crs(locs) == st_crs(WRS)) {
       WRS_subset <- WRS[locs,]
     } else {
-      locs = st_transform(locs, st_crs(WRS))
+      locs <- st_transform(locs, st_crs(WRS))
       WRS_subset <- WRS[locs,]
     }
-    write_csv(st_drop_geometry(WRS_subset), 'data_acquisition/out/WRS_subset_list.csv')
+    write_csv(st_drop_geometry(WRS_subset), "data_acquisition/out/WRS_subset_list.csv")
     return(WRS_subset$PR)
   } else {
-    if (detection_method == 'centers') {
-      centers <- tar_read(centers)
-      centers_cntrd <- st_centroid(centers)
-      if (st_crs(centers_cntrd) == st_crs(WRS)) {
-        WRS_subset <- WRS[centers_cntrd,]
+    if (detection_method == "centers") {
+      if (st_crs(centers) == st_crs(WRS)) {
+        WRS_subset <- WRS[centers,]
       } else {
-        centers_cntrd = st_transform(centers_cntrd, st_crs(WRS))
-        WRS_subset <- WRS[centers_cntrd,]
+        centers <- st_transform(centers, st_crs(WRS))
+        WRS_subset <- WRS[centers,]
       }
-      write_csv(st_drop_geometry(WRS_subset), 'data_acquisition/out/WRS_subset_list.csv')
+      write_csv(st_drop_geometry(WRS_subset), "data_acquisition/out/WRS_subset_list.csv")
       return(WRS_subset$PR)
     } else {
-      if (detection_method == 'polygon') {
-        poly <- tar_read(polygons)
-        poly_cntrd <- st_centroid(poly)
-        if (st_crs(poly_cntrd) == st_crs(WRS)) {
-          WRS_subset <- WRS[poly_cntrd,]
+      if (detection_method == "polygon") {
+        if (st_crs(poly) == st_crs(WRS)) {
+          WRS_subset <- WRS[poly,]
         } else {
-          poly_cntrd = st_transform(poly_cntrd, st_crs(WRS))
-          WRS_subset <- WRS[poly_cntrd,]
+          poly <- st_transform(poly, st_crs(WRS))
+          WRS_subset <- WRS[poly,]
         }
-        write_csv(st_drop_geometry(WRS_subset), 'data_acquisition/out/WRS_subset_list.csv')
+        write_csv(st_drop_geometry(WRS_subset), "data_acquisition/out/WRS_subset_list.csv")
         return(WRS_subset$PR)
       }
     }
