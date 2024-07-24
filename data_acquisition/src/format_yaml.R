@@ -31,8 +31,9 @@ format_yaml <-  function(yml_file) {
   # re-orient to make it easy to grab necessary info in future functions
   unnested <- unnested %>% 
     select(desc, param) %>% 
-    pivot_wider(names_from = desc, values_from = param)
-  write_csv(unnested, 'data_acquisition/in/yml.csv')
-  'data_acquisition/in/yml.csv'
+    pivot_wider(names_from = desc, 
+                values_from = param)
+  write_csv(unnested, "data_acquisition/in/yml.csv")
+  "data_acquisition/in/yml.csv"
 }
 

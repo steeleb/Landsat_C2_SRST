@@ -11,7 +11,7 @@
 #' 
 #' 
 grab_locs <- function(yaml) {
-  if (grepl('site', yaml$extent[1])) {
+  if (grepl("site", yaml$extent[1])) {
     locs <- read_csv(file.path(yaml$data_dir, yaml$location_file))
     # store yaml info as objects
     lat <- yaml$latitude
@@ -19,11 +19,11 @@ grab_locs <- function(yaml) {
     id <- yaml$unique_id
     # apply objects to tibble
     locs <- locs %>% 
-      rename_with(~c('Latitude', 'Longitude', 'id'), any_of(c(lat, lon, id)))
-    write_csv(locs, 'data_acquisition/in/locs.csv')
-    return('data_acquisition/in/locs.csv')
+      rename_with(~c("Latitude", "Longitude", "id"), any_of(c(lat, lon, id)))
+    write_csv(locs, "data_acquisition/in/locs.csv")
+    return("data_acquisition/in/locs.csv")
   } else {
-    message('Not configured to use site locations.')
+    message("Not configured to use site locations.")
   }
 }
 
