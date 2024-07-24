@@ -19,11 +19,7 @@ yaml_file <- "nw-poudre-historical-config.yml"
 
 # Set up python virtual environment ---------------------------------------
 
-if (!dir.exists("env")) {
-  tar_source("data_acquisition/py/pySetup.R")
-} else {
-  use_condaenv(file.path(getwd(), "env"))
-}
+tar_source("data_acquisition/py/pySetup.R")
 
 
 # Source functions --------------------------------------------------------
@@ -44,7 +40,8 @@ list(
     name = config_file,
     command = yaml_file,
     read = read_yaml(!!.x),
-    packages = 'yaml'
+    packages = "yaml",
+    cue = tar_cue("always")
   ),
   
   # load, format, save yml as a csv
@@ -53,7 +50,7 @@ list(
     command = {
       # make sure that {targets} runs the config_file target before this target
       config_file 
-      format_yaml(yaml_file)
+      format_yaml(yml_file = yaml_file)
     },
     packages = c("yaml", "tidyverse") #for some reason, you have to load TV.
   ),
@@ -69,7 +66,7 @@ list(
   # load, format, save user locations as an updated csv called locs.csv
   tar_target(
     name = locs_save,
-    command = grab_locs(yml),
+    command = grab_locs(yaml = yml),
     packages = "readr"
   ),
   
@@ -84,7 +81,8 @@ list(
   # use location shapefile and configurations to get polygons from NHDPlusv2
   tar_target(
     name = poly_save,
-    command = get_NHD(locs, yml),
+    command = get_NHD(locations = locs, 
+                      yaml = yml),
     packages = c("nhdplusTools", "sf", "tidyverse")
   ),
   
@@ -100,7 +98,8 @@ list(
   # use `polygons` sfc to calculate Chebyshev centers
   tar_target(
     name = centers_save,
-    command = calc_center(polygons, yml),
+    command = calc_center(poly = polygons, 
+                          yaml = yml),
     packages = c("sf", "polylabelr", "tidyverse")
   ),
   
@@ -116,19 +115,17 @@ list(
   # get WRS tile acquisition method from yaml
   tar_target(
     name = WRS_detection_method,
-    command = {
-      locs
-      centers
-      polygons
-      get_WRS_detection(yml)
-    },
-    packages = "readr"
+    command = get_WRS_detection(yaml = yml),
   ),
   
   # get WRS tiles
   tar_target(
     name = WRS_tiles,
-    command = get_WRS_tiles(WRS_detection_method, yml, locs, centers, polygons),
+    command = get_WRS_tiles(detection_method = WRS_detection_method, 
+                            yaml = yml, 
+                            locs = locs,
+                            centers = centers,
+                            poly = polygons),
     packages = c("readr", "sf")
   ),
   
@@ -140,23 +137,6 @@ list(
       locs
       polygons
       centers
-      csv_to_eeFeat
-      apply_scale_factors
-      dp_buff
-      DSWE
-      Mbsrv
-      Ndvi
-      Mbsrn
-      Mndwi
-      Awesh
-      add_rad_mask
-      sr_cloud_mask
-      sr_aerosol
-      cf_mask
-      calc_hill_shadows
-      calc_hill_shades
-      remove_geo
-      maximum_no_of_tasks
       ref_pull_457_DSWE1
       ref_pull_89_DSWE1
       ref_pull_457_DSWE3
