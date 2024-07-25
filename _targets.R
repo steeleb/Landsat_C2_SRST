@@ -138,7 +138,9 @@ list(
       polygons
       centers
       ref_pull_457_DSWE1
+      ref_pull_457_DSWE1a
       ref_pull_89_DSWE1
+      ref_pull_89_DSWE1a
       ref_pull_457_DSWE3
       ref_pull_89_DSWE3
       run_GEE_per_tile(WRS_tiles)

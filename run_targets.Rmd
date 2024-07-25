@@ -62,9 +62,10 @@ To authenticate your GEE account, we will use a Python environment created in th
 source('data_acquisition/py/pySetup.R')
 ```
 
+### Authenticate your instance of GEE
+
 ```{python}
-import ee
-ee.Authenticate()
+ee.Authenticate(auth_mode = "gcloud")
 ```
 
 ### Initializing your instance of GEE
