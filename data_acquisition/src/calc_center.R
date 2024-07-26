@@ -36,8 +36,8 @@ calc_center <- function(poly, yaml) {
       # for any given polygon using Google Earth Engine JavaScript API 
       # (Version v1). Zenodo. https://doi.org/10.5281/zenodo.4136755
       coord_for_UTM <- one_wbd %>% st_coordinates()
-      mean_x <- mean(coord_for_UTM[,1])
-      mean_y <- mean(coord_for_UTM[,2])
+      mean_x <- mean(coord_for_UTM[ ,1])
+      mean_y <- mean(coord_for_UTM[ ,2])
       # calculate the UTM zone using the mean value of Longitude for the polygon
       utm_suffix <- as.character(ceiling((mean_x + 180) / 6))
       utm_code <- if_else(mean_y >= 0,
