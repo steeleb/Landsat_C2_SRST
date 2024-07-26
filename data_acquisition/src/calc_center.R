@@ -30,7 +30,7 @@ calc_center <- function(poly, yaml) {
     for (i in 1:length(poly[[1]])) {
       poi_df  <- poi_df %>% add_row()
       # grab one polygon
-      one_wbd <- poly[i,]
+      one_wbd <- poly[i, ]
       # get coordinates to calculate UTM zone. This is an adaptation of code from
       # Xiao Yang's code in EE - Yang, Xiao. (2020). Deepest point calculation 
       # for any given polygon using Google Earth Engine JavaScript API 
