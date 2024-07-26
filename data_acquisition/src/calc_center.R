@@ -50,8 +50,8 @@ calc_center <- function(poly, yaml) {
                                  crs = utm_code)
       # get UTM coordinates
       coord <- one_wbd_utm %>% st_coordinates()
-      x <- coord[,1]
-      y <- coord[,2]
+      x <- coord[ ,1]
+      y <- coord[ ,2]
       # using coordinates, get the poi distance
       poly_poi <- poi(x,y, precision = 0.01) 
         
