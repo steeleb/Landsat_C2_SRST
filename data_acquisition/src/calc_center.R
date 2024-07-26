@@ -65,8 +65,8 @@ calc_center <- function(poly, yaml) {
       point <- st_transform(st_sfc(point), crs = "EPSG:4326")
       
       new_coords <- point %>% st_coordinates()
-      poi_df$poi_longitude[i] <- new_coords[,1]
-      poi_df$poi_latitude[i] <- new_coords[,2]    
+      poi_df$poi_longitude[i] <- new_coords[ ,1]
+      poi_df$poi_latitude[i] <- new_coords[ ,2]    
     }
     # merge the poi information with the original polygon info
     poly_poi <- poly %>%
