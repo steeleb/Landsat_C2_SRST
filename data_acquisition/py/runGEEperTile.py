@@ -94,16 +94,25 @@ if 'center' in extent:
 wrs = (ee.FeatureCollection('projects/ee-ls-c2-srst/assets/WRS2_descending')
   .filterMetadata('PR', 'equals', tiles))
 
+wrs_path = tiles[:3]
+wrs_row = tiles[-3:]
+
 #grab images and apply scaling factors
 l7 = (ee.ImageCollection('LANDSAT/LE07/C02/T1_L2')
     .filter(ee.Filter.lt('CLOUD_COVER', ee.Number.parse(str(cloud_thresh))))
-    .filterDate(yml_start, yml_end))
+    .filterDate(yml_start, yml_end)
+    .filter(ee.Filter.eq('WRS_PATH', wrs_path))
+    .filter(ee.Filter.eq('WRS_ROW', wrs_row)))
 l5 = (ee.ImageCollection('LANDSAT/LT05/C02/T1_L2')
     .filter(ee.Filter.lt('CLOUD_COVER', ee.Number.parse(str(cloud_thresh))))
-    .filterDate(yml_start, yml_end))
+    .filterDate(yml_start, yml_end)
+    .filter(ee.Filter.eq('WRS_PATH', wrs_path))
+    .filter(ee.Filter.eq('WRS_ROW', wrs_row)))
 l4 = (ee.ImageCollection('LANDSAT/LT04/C02/T1_L2')
     .filter(ee.Filter.lt('CLOUD_COVER', ee.Number.parse(str(cloud_thresh))))
-    .filterDate(yml_start, yml_end))
+    .filterDate(yml_start, yml_end)
+    .filter(ee.Filter.eq('WRS_PATH', wrs_path))
+    .filter(ee.Filter.eq('WRS_ROW', wrs_row)))
     
 # merge collections by image processing groups
 ls457 = (ee.ImageCollection(l4.merge(l5).merge(l7))
@@ -126,10 +135,15 @@ bns457 = (['Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2',
 #grab images and apply scaling factors
 l8 = (ee.ImageCollection('LANDSAT/LC08/C02/T1_L2')
     .filter(ee.Filter.lt('CLOUD_COVER', ee.Number.parse(str(cloud_thresh))))
-    .filterDate(yml_start, yml_end))
+    .filterDate(yml_start, yml_end)
+    .filter(ee.Filter.eq('WRS_PATH', wrs_path))
+    .filter(ee.Filter.eq('WRS_ROW', wrs_row)))
 l9 = (ee.ImageCollection('LANDSAT/LC09/C02/T1_L2')
     .filter(ee.Filter.lt('CLOUD_COVER', ee.Number.parse(str(cloud_thresh))))
-    .filterDate(yml_start, yml_end))
+    .filterDate(yml_start, yml_end)
+    .filter(ee.Filter.eq('WRS_PATH', wrs_path))
+    .filter(ee.Filter.eq('WRS_ROW', wrs_row)))
+
 
 # merge collections by image processing groups
 ls89 = ee.ImageCollection(l8.merge(l9)).filterBounds(wrs)  
@@ -491,8 +505,8 @@ print('completed Landsat 8, 9 metadata acquisition for tile ' + str(tiles))
 ##---- DOCUMENT Landsat IDs ACQUIRED   ----##
 #############################################
 
-ls89_id_stack = ls89.aggregate_array('L1_LANDSAT_PRODUCT_ID').getInfo()
-ls457_id_stack = ls457.aggregate_array('L1_LANDSAT_PRODUCT_ID').getInfo()
+ls89_id_stack = ls89.aggregate_array('LANDSAT_PRODUCT_ID').getInfo()
+ls457_id_stack = ls457.aggregate_array('LANDSAT_PRODUCT_ID').getInfo()
 
 # open file in write mode and save each id as a row
 with open(('data_acquisition/out/L89_stack_ids_v'+run_date+'.txt'), 'w') as fp:
