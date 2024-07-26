@@ -3,7 +3,6 @@ import ee
 import time
 from datetime import date, datetime
 import os 
-import fiona
 from pandas import read_csv
 
 # get locations and yml from data folder
@@ -94,8 +93,8 @@ if 'center' in extent:
 wrs = (ee.FeatureCollection('projects/ee-ls-c2-srst/assets/WRS2_descending')
   .filterMetadata('PR', 'equals', tiles))
 
-wrs_path = tiles[:3]
-wrs_row = tiles[-3:]
+wrs_path = int(tiles[:3])
+wrs_row = int(tiles[-3:])
 
 #grab images and apply scaling factors
 l7 = (ee.ImageCollection('LANDSAT/LE07/C02/T1_L2')
@@ -130,7 +129,6 @@ bns457 = (['Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2',
   'temp_qa', 'ST_CDIST', 'ST_ATRAN', 'ST_DRAD', 'ST_EMIS',
   'ST_EMSD', 'ST_TRAD', 'ST_URAD'])
   
-
 
 #grab images and apply scaling factors
 l8 = (ee.ImageCollection('LANDSAT/LC08/C02/T1_L2')
@@ -500,25 +498,3 @@ meta_dataOut_89.start()
 
 print('completed Landsat 8, 9 metadata acquisition for tile ' + str(tiles))
 
-
-#############################################
-##---- DOCUMENT Landsat IDs ACQUIRED   ----##
-#############################################
-
-ls89_id_stack = ls89.aggregate_array('LANDSAT_PRODUCT_ID').getInfo()
-ls457_id_stack = ls457.aggregate_array('LANDSAT_PRODUCT_ID').getInfo()
-
-# open file in write mode and save each id as a row
-with open(('data_acquisition/out/L89_stack_ids_v'+run_date+'.txt'), 'w') as fp:
-    for id in ls89_id_stack:
-        # write each item on a new line
-        fp.write("%s\n" % id)
-    print('Done')
-
-# open file in write mode and save each id as a row
-with open(('data_acquisition/out/L457_stack_ids_v'+run_date+'.txt'), 'w') as fp:
-    for id in ls457_id_stack:
-        # write each item on a new line
-        fp.write("%s\n" % id)
-    print('Done')
-    
