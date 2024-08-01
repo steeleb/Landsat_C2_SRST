@@ -130,7 +130,7 @@ bns457 = (['Blue', 'Green', 'Red', 'Nir', 'Swir1', 'Swir2',
   'ST_EMSD', 'ST_TRAD', 'ST_URAD'])
   
 
-#grab images and apply scaling factors
+#grab image stacks
 l8 = (ee.ImageCollection('LANDSAT/LC08/C02/T1_L2')
     .filter(ee.Filter.lt('CLOUD_COVER', ee.Number.parse(str(cloud_thresh))))
     .filterDate(yml_start, yml_end)
