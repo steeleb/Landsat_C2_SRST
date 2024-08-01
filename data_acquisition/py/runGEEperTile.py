@@ -115,8 +115,7 @@ l4 = (ee.ImageCollection('LANDSAT/LT04/C02/T1_L2')
     .filter(ee.Filter.eq('WRS_ROW', wrs_row)))
     
 # merge collections by image processing groups
-ls457 = (ee.ImageCollection(l4.merge(l5).merge(l7))
-    .filterBounds(wrs))  
+ls457 = ee.ImageCollection(l4.merge(l5).merge(l7))
     
 # existing band names
 bn457 = (['SR_B1', 'SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B7', 
@@ -145,7 +144,7 @@ l9 = (ee.ImageCollection('LANDSAT/LC09/C02/T1_L2')
 
 
 # merge collections by image processing groups
-ls89 = ee.ImageCollection(l8.merge(l9)).filterBounds(wrs)  
+ls89 = ee.ImageCollection(l8.merge(l9))
     
 # existing band names
 bn89 = (['SR_B1', 'SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B6', 'SR_B7', 
@@ -190,9 +189,9 @@ for e in extent:
   locs_stack_ls457 = (ls457
     .filterBounds(feat.geometry()) 
     # apply fill mask and scaling factors
-    .map(apply_fill_mask)
+    .map(apply_fill_mask_457)
     .map(apply_scale_factors)
-    .map(apply_realistic_mask)
+    .map(apply_realistic_mask_457)
     .map(apply_opac_mask))
   
   # rename bands for ease
@@ -342,9 +341,9 @@ for e in extent:
   locs_stack_ls89 = (ls89
     .filterBounds(feat.geometry()) 
     # apply fill mask and scaling factors
-    .map(apply_fill_mask)
+    .map(apply_fill_mask_89)
     .map(apply_scale_factors)
-    .map(apply_realistic_mask)
+    .map(apply_realistic_mask_89)
     .map(apply_high_aero_mask))
   
   # rename bands for ease
